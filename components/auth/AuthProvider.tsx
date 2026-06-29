@@ -11,7 +11,7 @@ import {
 import type { Role } from "@/types";
 import type { UserProfile } from "@/lib/auth/types";
 import { ROLE_HOME_ROUTES, ROLE_LABELS } from "@/lib/auth/types";
-import { getSupabaseBrowserClient } from "@/lib/auth/client";
+import { createClientOrNull } from "@/lib/supabase/client";
 
 const DEV_ROLE_KEY = "dev-role";
 const DEV_IMPERSONATE_KEY = "dev-impersonate";
@@ -61,13 +61,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (storedRole && ROLE_HOME_ROUTES[storedRole]) setDevRoleState(storedRole);
       setDevImpersonatingState(localStorage.getItem(DEV_IMPERSONATE_KEY) === "true");
     }
-    loadProfile();
+    void loadProfile();
 
-    const supabase = getSupabaseBrowserClient();
+    const supabase = createClientOrNull();
+    if (!supabase) return;
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(() => {
-      loadProfile();
+      void loadProfile();
     });
     return () => subscription.unsubscribe();
   }, [loadProfile]);
@@ -84,8 +86,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(async () => {
     await fetch("/api/auth/logout", { method: "POST" });
-    const supabase = getSupabaseBrowserClient();
-    await supabase.auth.signOut();
+    const supabase = createClientOrNull();
+    if (supabase) await supabase.auth.signOut();
     setProfile(null);
     window.location.href = "/login";
   }, []);
@@ -118,14 +120,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signOut,
     ]
   );
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
-        Loading...
-      </div>
-    );
-  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

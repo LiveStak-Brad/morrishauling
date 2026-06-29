@@ -88,6 +88,22 @@ checks.push(
   )
 );
 
+checks.push(
+  assert(
+    "Auth me route handles Supabase misconfiguration",
+    read("app/api/auth/me/route.ts").includes("isSupabaseConfigured") &&
+      read("app/api/auth/me/route.ts").includes("catch")
+  )
+);
+
+checks.push(
+  assert(
+    "Public providers do not block render on auth loading",
+    !read("components/auth/AuthProvider.tsx").includes('if (loading) {\n    return (\n      <div className="flex min-h-screen items-center justify-center') &&
+      !read("lib/company-context.tsx").includes("if (!hydrated)")
+  )
+);
+
 const failed = checks.filter((c) => !c.ok);
 for (const c of checks) {
   console.log(c.ok ? "PASS" : "FAIL", c.name, c.detail);
@@ -99,8 +115,15 @@ if (failed.length > 0) {
 }
 
 console.log("\nAll prelaunch deploy static checks passed.");
-console.log("\nManual Vercel env (set in dashboard):");
+console.log("\nManual Vercel env (set in dashboard for Production + Preview):");
 console.log("  APP_STATUS=prelaunch");
+console.log("  NEXT_PUBLIC_APP_STATUS=prelaunch");
+console.log("  NEXT_PUBLIC_USE_SUPABASE=true");
+console.log("  NEXT_PUBLIC_SUPABASE_URL");
+console.log("  NEXT_PUBLIC_SUPABASE_ANON_KEY");
+console.log("  SUPABASE_SERVICE_ROLE_KEY");
+console.log("  STAFF_OWNER_EMAILS");
 console.log("  DEMO_DATA — unset or false");
 console.log("  ALLOW_PUBLIC_BOOKING — unset");
 console.log("  NEXT_PUBLIC_ALLOW_PUBLIC_BOOKING — unset");
+console.log("\nAfter adding/changing env vars, redeploy (env changes require a new build).");

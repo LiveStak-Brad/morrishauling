@@ -1,8 +1,15 @@
 import { createBrowserClient } from "@supabase/ssr";
 
+export function isSupabaseConfigured() {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim()
+  );
+}
+
 export function createClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
 
   if (!url || !key) {
     throw new Error(
@@ -13,9 +20,12 @@ export function createClient() {
   return createBrowserClient(url, key);
 }
 
-export function isSupabaseConfigured() {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+/** Returns null instead of throwing — use on public pages at startup. */
+export function createClientOrNull() {
+  if (!isSupabaseConfigured()) return null;
+  try {
+    return createClient();
+  } catch {
+    return null;
+  }
 }

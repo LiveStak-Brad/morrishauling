@@ -18,11 +18,8 @@ interface CompanyContextValue {
 const CompanyContext = createContext<CompanyContextValue | null>(null);
 
 export function CompanyProvider({ children }: { children: React.ReactNode }) {
-  const [hydrated, setHydrated] = useState(false);
-
   useEffect(() => {
     applyBrandTheme(morrisConfig.brandColors);
-    setHydrated(true);
   }, []);
 
   const value = useMemo(
@@ -33,17 +30,7 @@ export function CompanyProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
-  if (!hydrated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
-        Loading...
-      </div>
-    );
-  }
-
-  return (
-    <CompanyContext.Provider value={value}>{children}</CompanyContext.Provider>
-  );
+  return <CompanyContext.Provider value={value}>{children}</CompanyContext.Provider>;
 }
 
 export function useCompany() {

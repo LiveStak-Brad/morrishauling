@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { validateProductionEnv } from "@/lib/env/production";
 import { checkStorageHealth } from "@/lib/storage/health";
 
@@ -22,14 +22,19 @@ const CORE_TABLES = [
 ];
 
 /** Minimal public health — no schema, env, or storage details. */
-export async function getPublicSupabaseHealth(): Promise<{ ok: boolean }> {
+export async function getPublicSupabaseHealth(): Promise<{ ok: boolean; error?: string }> {
+  if (!isSupabaseConfigured()) {
+    return { ok: false, error: "missing_env" };
+  }
   try {
     const supabase = await createClient();
     const { error } = await supabase.from("companies").select("id").limit(1);
     const connected = !error || error.code !== "PGRST205";
-    return { ok: connected };
-  } catch {
-    return { ok: false };
+    return connected ? { ok: true } : { ok: false, error: error?.code ?? "db_error" };
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "unknown";
+    console.error("[health/supabase]", message);
+    return { ok: false, error: "client_error" };
   }
 }
 
