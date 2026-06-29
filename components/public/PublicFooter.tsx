@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
+import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
 import { PRELAUNCH_SERVICE_AREA } from "@/lib/public-copy";
 
 export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | "company" }) {
@@ -24,8 +25,11 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
               </>
             ) : (
               <>
-                <p className="text-lg font-bold">{morrisServicesConfig.publicBrandName}</p>
-                <p className="mt-1 text-sm text-white/70">{morrisServicesConfig.parentLegalName}</p>
+                <MorrisServicesLogo height={72} href={undefined} className="max-h-16 md:max-h-[4.5rem]" />
+                <p className="mt-3 text-sm text-white/70">{morrisServicesConfig.parentLegalName}</p>
+                <p className="mt-1 text-xs font-medium uppercase tracking-wide text-brand-primary/90">
+                  {morrisServicesConfig.brandTagline}
+                </p>
               </>
             )}
             <p className="mt-4 text-sm leading-relaxed text-white/80">

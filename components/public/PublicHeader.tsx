@@ -7,6 +7,7 @@ import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import { isPublicPrelaunch } from "@/lib/public-site";
 import { CompanyLogo } from "@/components/brand/CompanyLogo";
+import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
 import { ButtonLink } from "@/components/ui/button-link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -125,14 +126,7 @@ export function PublicHeader({
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 md:h-[4.25rem]">
         {variant === "umbrella" ? (
-          <Link href="/" className="shrink-0">
-            <span className="text-lg font-bold tracking-tight text-white md:text-xl">
-              {morrisServicesConfig.publicBrandName}
-            </span>
-            <span className="hidden text-[10px] font-medium text-white/60 sm:block">
-              {morrisServicesConfig.parentLegalName}
-            </span>
-          </Link>
+          <MorrisServicesLogo height={52} priority className="max-h-11 sm:max-h-12 md:max-h-14" />
         ) : (
           <div className="flex min-w-0 shrink flex-col">
             <CompanyLogo
