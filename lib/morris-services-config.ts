@@ -17,8 +17,10 @@ export type FutureCompany = {
 export const morrisServicesConfig = {
   parentLegalName: "Morris Service Group LLC",
   publicBrandName: "Morris Services",
+  logo: "/MorrisServicesLogo.png",
   publicWebsite: "https://morris-services.com",
   tagline: "Professional Local Service Companies",
+  brandTagline: "One Company. Multiple Solutions. Real Results.",
   serviceCategoriesLine: "Residential · Commercial · Property Services",
   footerMission:
     "Our goal is to become the most trusted local service company in Missouri by building great businesses one at a time.",

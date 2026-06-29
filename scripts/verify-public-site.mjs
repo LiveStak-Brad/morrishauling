@@ -18,7 +18,7 @@ function assert(name, ok, detail = "") {
 }
 
 const PUBLIC_COPY_FILES = [
-  "app/page.tsx",
+  "components/public/MorrisServicesHomePage.tsx",
   "components/public/HaulingHomePage.tsx",
   "app/book/page.tsx",
   "app/pricing/page.tsx",
@@ -54,9 +54,9 @@ checks.push(
 checks.push(
   assert(
     "Morris Services portal prelaunch copy",
-    read("app/page.tsx").includes("morrisServicesConfig.publicBrandName") &&
-      read("app/page.tsx").includes("Launching Soon") &&
-      !read("app/page.tsx").includes("Rated 4.9")
+    read("components/public/MorrisServicesHomePage.tsx").includes("morrisServicesConfig.publicBrandName") &&
+      read("components/public/MorrisServicesHomePage.tsx").includes("Launching Soon") &&
+      !read("components/public/MorrisServicesHomePage.tsx").includes("Rated 4.9")
   )
 );
 
