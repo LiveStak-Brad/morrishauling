@@ -124,9 +124,14 @@ export function PublicHeader({
                 : "morris-glass border-b border-white/40"
       )}
     >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 md:h-[4.25rem]">
+      <div
+        className={cn(
+          "mx-auto flex max-w-6xl items-center justify-between gap-2 px-4",
+          variant === "umbrella" ? "h-[4.5rem] md:h-20" : "h-16 md:h-[4.25rem]"
+        )}
+      >
         {variant === "umbrella" ? (
-          <MorrisServicesLogo height={52} priority onDark className="max-h-11 sm:max-h-12 md:max-h-14" />
+          <MorrisServicesLogo height={64} priority onDark className="max-h-14 sm:max-h-16 md:max-h-[4.5rem]" />
         ) : (
           <div className="flex min-w-0 shrink flex-col">
             <CompanyLogo

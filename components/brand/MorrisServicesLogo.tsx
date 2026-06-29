@@ -6,8 +6,8 @@ import { morrisServicesConfig } from "@/lib/morris-services-config";
 import { cn } from "@/lib/utils";
 
 /** Intrinsic dimensions after background removal (public/MorrisServicesLogo.png). */
-const LOGO_WIDTH = 1258;
-const LOGO_HEIGHT = 819;
+const LOGO_WIDTH = 1334;
+const LOGO_HEIGHT = 820;
 
 interface MorrisServicesLogoProps {
   className?: string;
@@ -20,7 +20,7 @@ interface MorrisServicesLogoProps {
 
 export function MorrisServicesLogo({
   className,
-  height = 52,
+  height = 64,
   priority = false,
   href = "/",
   onDark = false,

@@ -25,7 +25,7 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
               </>
             ) : (
               <>
-                <MorrisServicesLogo height={72} href={undefined} onDark className="max-h-16 md:max-h-[4.5rem]" />
+                <MorrisServicesLogo height={88} href={undefined} onDark className="max-h-20 md:max-h-24" />
                 <p className="mt-3 text-sm text-white/70">{morrisServicesConfig.parentLegalName}</p>
                 <p className="mt-1 text-xs font-medium uppercase tracking-wide text-brand-primary/90">
                   {morrisServicesConfig.brandTagline}

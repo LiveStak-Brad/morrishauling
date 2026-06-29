@@ -57,11 +57,11 @@ export function MorrisServicesHomePage() {
             style={{ animationFillMode: "forwards" }}
           >
             <MorrisServicesLogo
-              height={180}
+              height={260}
               href={undefined}
               priority
               onDark
-              className="mx-auto w-full max-h-44 sm:max-h-52 md:max-h-60 lg:max-h-72"
+              className="mx-auto w-full max-w-3xl max-h-52 sm:max-h-60 md:max-h-72 lg:max-h-80 xl:max-h-[22rem]"
             />
           </div>
 
@@ -210,7 +210,7 @@ export function MorrisServicesHomePage() {
 
         <PremiumCard className="mt-12 overflow-hidden border-brand-primary/15 bg-gradient-to-r from-brand-primary/5 via-white to-brand-primary/5 p-6 sm:mt-16 sm:p-8 md:mt-20">
           <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
-            <MorrisServicesLogo height={80} href={undefined} className="shrink-0 max-h-16 md:max-h-20" />
+            <MorrisServicesLogo height={96} href={undefined} className="shrink-0 max-h-20 md:max-h-24" />
             <div className="flex-1">
               <p className="text-lg font-bold sm:text-xl">{morrisServicesConfig.footerMission}</p>
               <p className="mt-2 text-sm text-muted-foreground">
