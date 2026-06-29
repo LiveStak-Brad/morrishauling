@@ -60,6 +60,7 @@ export function MorrisServicesHomePage() {
               height={180}
               href={undefined}
               priority
+              onDark
               className="mx-auto w-full max-h-44 sm:max-h-52 md:max-h-60 lg:max-h-72"
             />
           </div>

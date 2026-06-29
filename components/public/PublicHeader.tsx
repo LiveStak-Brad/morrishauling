@@ -126,7 +126,7 @@ export function PublicHeader({
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 md:h-[4.25rem]">
         {variant === "umbrella" ? (
-          <MorrisServicesLogo height={52} priority className="max-h-11 sm:max-h-12 md:max-h-14" />
+          <MorrisServicesLogo height={52} priority onDark className="max-h-11 sm:max-h-12 md:max-h-14" />
         ) : (
           <div className="flex min-w-0 shrink flex-col">
             <CompanyLogo
