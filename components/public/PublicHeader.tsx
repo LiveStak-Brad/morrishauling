@@ -84,7 +84,7 @@ function NavLink({
           "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
           active
             ? "bg-brand-primary text-white shadow-sm"
-            : "hover:bg-muted lg:text-white/90 lg:hover:bg-white/10 lg:hover:text-white"
+            : "text-foreground hover:bg-muted lg:text-white/90 lg:hover:bg-white/10 lg:hover:text-white"
         )}
       >
         {label}
@@ -135,7 +135,7 @@ export function PublicHeader({
         floatAll
           ? "border-b border-white/10 bg-black/60 shadow-lg backdrop-blur-md"
           : floatDesktop
-            ? "morris-glass border-b border-white/40 lg:border-white/10 lg:bg-black/60 lg:shadow-lg lg:backdrop-blur-md"
+            ? "max-lg:morris-glass border-b border-white/40 lg:border-white/10 lg:bg-black/60 lg:shadow-lg lg:backdrop-blur-md"
             : variant === "umbrella"
               ? "border-b border-white/10 bg-black/65 shadow-lg backdrop-blur-md"
               : transparent
