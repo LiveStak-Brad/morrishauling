@@ -74,6 +74,7 @@ export interface ServiceCatalogItem {
 export interface BrandingConfig {
   logo: string;
   heroBanner: string;
+  heroBannerMobile: string;
   phone: string;
   email: string;
   companyAddress: string;
@@ -317,6 +318,7 @@ export function normalizeBranding(raw: unknown): BrandingConfig {
   return {
     logo: o.logo ?? morrisConfig.logo,
     heroBanner: o.heroBanner ?? morrisConfig.heroBanner ?? "",
+    heroBannerMobile: o.heroBannerMobile ?? morrisConfig.heroBannerMobile ?? "",
     phone: o.phone ?? morrisConfig.phone,
     email: o.email ?? morrisConfig.email,
     companyAddress: o.companyAddress ?? morrisConfig.companyAddress ?? "",

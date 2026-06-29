@@ -37,8 +37,8 @@ export function HaulingHomePage() {
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-background">
       <CompanyBreadcrumbBar />
       <HeroBanner>
-        <PublicHeader variant="company" floating />
-        <section className="relative mx-auto flex w-full max-w-6xl flex-col px-4 pb-6 pt-2 md:mt-auto md:pb-12 md:pt-28">
+        <PublicHeader variant="company" floating="desktop" />
+        <section className="relative mx-auto flex w-full max-w-6xl flex-col px-4 pb-6 pt-3 lg:mt-auto lg:pb-12 lg:pt-28">
           <div
             className="w-full md:ml-auto md:max-w-md lg:max-w-lg animate-slide-up opacity-0"
             style={{ animationFillMode: "forwards" }}

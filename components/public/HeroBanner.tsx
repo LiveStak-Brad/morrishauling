@@ -5,6 +5,10 @@ import type { ReactNode } from "react";
 import { useCompany } from "@/lib/company-context";
 import { cn } from "@/lib/utils";
 
+/** Panoramic desktop banner intrinsic dimensions (public/banner.png). */
+const DESKTOP_BANNER_WIDTH = 1962;
+const DESKTOP_BANNER_HEIGHT = 802;
+
 interface HeroBannerProps {
   children: ReactNode;
   className?: string;
@@ -12,42 +16,65 @@ interface HeroBannerProps {
 
 /**
  * Responsive marketing hero.
- * Mobile: brand artwork in a dedicated top strip; copy stacks below (no overlap).
- * Desktop: full-bleed image with bottom-weighted overlay for CTA card.
+ * Mobile / tablet: full artwork visible (object-contain), section grows with image height.
+ * Desktop (lg+): full-bleed cover with bottom-weighted overlay for CTA card.
  */
 export function HeroBanner({ children, className }: HeroBannerProps) {
   const { company } = useCompany();
-  const bannerSrc = company.heroBanner ?? "/banner.png";
+  const desktopBanner = company.heroBanner ?? "/banner.png";
+  const mobileBanner = company.heroBannerMobile ?? desktopBanner;
+  const hasMobileBanner =
+    Boolean(company.heroBannerMobile) && mobileBanner !== desktopBanner;
+
+  const bannerAlt = `${company.companyName} — launching soon`;
 
   return (
     <div
       className={cn(
-        "relative flex flex-col overflow-hidden bg-[#141414]",
+        "relative flex flex-col overflow-x-hidden bg-[#141414]",
         className
       )}
     >
-      {/* Mobile / small tablet: show full brand artwork without cropping the logo */}
-      <div className="relative w-full md:hidden">
-        <div className="relative aspect-[4/3] w-full min-h-[210px] max-h-[min(48vh,320px)] sm:max-h-[min(50vh,360px)]">
+      {/* Optional portrait-oriented mobile artwork */}
+      {hasMobileBanner ? (
+        <div className="relative w-full md:hidden">
           <Image
-            src={bannerSrc}
-            alt={`${company.companyName} — launching soon`}
-            fill
+            src={mobileBanner}
+            alt={bannerAlt}
+            width={1080}
+            height={1350}
             priority
-            className="object-cover object-[center_8%] sm:object-[center_10%]"
+            className="h-auto w-full max-w-full object-contain object-center"
             sizes="100vw"
           />
-          <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#141414] via-[#141414]/80 to-transparent"
-            aria-hidden
-          />
         </div>
+      ) : null}
+
+      {/* Phones (no dedicated mobile asset) + tablets: panoramic banner, never cropped */}
+      <div
+        className={cn(
+          "relative flex w-full justify-center bg-[#141414] lg:hidden",
+          hasMobileBanner && "hidden md:flex"
+        )}
+      >
+        <Image
+          src={desktopBanner}
+          alt={bannerAlt}
+          width={DESKTOP_BANNER_WIDTH}
+          height={DESKTOP_BANNER_HEIGHT}
+          priority={!hasMobileBanner}
+          className={cn(
+            "h-auto w-full max-w-full object-contain object-center",
+            "md:max-h-[min(50vh,440px)] md:w-auto"
+          )}
+          sizes="(max-width: 1023px) 100vw"
+        />
       </div>
 
       {/* Desktop: full-bleed background */}
-      <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden>
+      <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden>
         <Image
-          src={bannerSrc}
+          src={desktopBanner}
           alt=""
           fill
           priority
@@ -58,7 +85,7 @@ export function HeroBanner({ children, className }: HeroBannerProps) {
         <div className="absolute inset-y-0 right-0 w-[45%] bg-gradient-to-l from-black/50 to-transparent" />
       </div>
 
-      <div className="relative z-10 flex flex-col md:min-h-[min(85vh,780px)]">{children}</div>
+      <div className="relative z-10 flex flex-col lg:min-h-[min(85vh,780px)]">{children}</div>
     </div>
   );
 }

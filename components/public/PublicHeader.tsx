@@ -43,11 +43,14 @@ function NavLink({
   label,
   pathname,
   onDark,
+  overlayOnLg,
 }: {
   href: string;
   label: string;
   pathname: string;
   onDark?: boolean;
+  /** Light nav on small screens, overlay styling from lg (hero desktop layout). */
+  overlayOnLg?: boolean;
 }) {
   const path = href.split("?")[0].split("#")[0];
   const active =
@@ -66,6 +69,22 @@ function NavLink({
           active
             ? "bg-brand-primary text-white shadow-sm"
             : "text-white/90 hover:bg-white/10 hover:text-white"
+        )}
+      >
+        {label}
+      </Link>
+    );
+  }
+
+  if (overlayOnLg) {
+    return (
+      <Link
+        href={href}
+        className={cn(
+          "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
+          active
+            ? "bg-brand-primary text-white shadow-sm"
+            : "hover:bg-muted lg:text-white/90 lg:hover:bg-white/10 lg:hover:text-white"
         )}
       >
         {label}
@@ -93,12 +112,16 @@ export function PublicHeader({
 }: {
   variant?: "umbrella" | "company";
   transparent?: boolean;
-  floating?: boolean;
+  /** true = always overlay hero; "desktop" = sticky bar below banner on mobile/tablet */
+  floating?: boolean | "desktop";
 }) {
   const { company } = useCompany();
   const pathname = usePathname();
   const mainLinks = variant === "umbrella" ? umbrellaLinks : companyLinks;
-  const onDark = floating || transparent || variant === "umbrella";
+  const floatDesktop = floating === "desktop";
+  const floatAll = floating === true;
+  const onDark = floatAll || transparent || variant === "umbrella";
+  const overlayOnLg = floatDesktop && variant === "company";
   const homeHref = variant === "company" ? "/junk-removal" : "/";
   const bookingCta = isPublicPrelaunch() ? "Booking info" : "Book service";
 
@@ -106,14 +129,18 @@ export function PublicHeader({
     <header
       className={cn(
         "z-50 transition-all duration-300",
-        floating ? "absolute inset-x-0 top-0" : "sticky top-0",
-        floating
+        floatAll && "absolute inset-x-0 top-0",
+        floatDesktop && "sticky top-0 lg:absolute lg:inset-x-0 lg:top-0",
+        !floatAll && !floatDesktop && "sticky top-0",
+        floatAll
           ? "border-b border-white/10 bg-black/60 shadow-lg backdrop-blur-md"
-          : variant === "umbrella"
-            ? "border-b border-white/10 bg-black/65 shadow-lg backdrop-blur-md"
-            : transparent
-              ? "border-b border-white/20 bg-black/25 backdrop-blur-md"
-              : "morris-glass border-b border-white/40"
+          : floatDesktop
+            ? "morris-glass border-b border-white/40 lg:border-white/10 lg:bg-black/60 lg:shadow-lg lg:backdrop-blur-md"
+            : variant === "umbrella"
+              ? "border-b border-white/10 bg-black/65 shadow-lg backdrop-blur-md"
+              : transparent
+                ? "border-b border-white/20 bg-black/25 backdrop-blur-md"
+                : "morris-glass border-b border-white/40"
       )}
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 md:h-[4.25rem]">
@@ -129,17 +156,21 @@ export function PublicHeader({
         ) : (
           <div className="flex min-w-0 shrink flex-col">
             <CompanyLogo
-              height={floating ? 56 : 56}
-              width={floating ? 220 : 220}
+              height={floatAll || floatDesktop ? 56 : 56}
+              width={floatAll || floatDesktop ? 220 : 220}
               priority
               href={homeHref}
-              onDark={floating}
-              className={floating ? "!h-12 !w-12 md:!h-14 md:!w-14" : undefined}
+              onDark={floatAll || floatDesktop}
+              className={
+                floatAll || floatDesktop ? "!h-12 !w-12 md:!h-14 md:!w-14" : undefined
+              }
             />
             <span
               className={cn(
                 "truncate text-[10px] font-medium leading-tight",
-                floating ? "text-white/80" : "text-muted-foreground"
+                floatAll || floatDesktop
+                  ? "text-muted-foreground lg:text-white/80"
+                  : "text-muted-foreground"
               )}
             >
               A {morrisServicesConfig.publicBrandName} Company
@@ -154,7 +185,13 @@ export function PublicHeader({
           )}
         >
           {mainLinks.map((link) => (
-            <NavLink key={link.href} {...link} pathname={pathname} onDark={onDark} />
+            <NavLink
+              key={link.href}
+              {...link}
+              pathname={pathname}
+              onDark={onDark}
+              overlayOnLg={overlayOnLg}
+            />
           ))}
           {variant === "umbrella" && (
             <>
@@ -174,10 +211,17 @@ export function PublicHeader({
               "hidden rounded-full sm:inline-flex",
               onDark
                 ? "border-white/35 bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
-                : "border-brand-primary/20 hover:bg-brand-primary/5"
+                : overlayOnLg
+                  ? "border-brand-primary/20 hover:bg-brand-primary/5 lg:border-white/35 lg:bg-black/30 lg:text-white lg:backdrop-blur-sm lg:hover:bg-black/50 lg:hover:text-white"
+                  : "border-brand-primary/20 hover:bg-brand-primary/5"
             )}
           >
-            <Phone className={cn("mr-1.5 h-4 w-4", onDark ? "text-white" : "text-brand-primary")} />
+            <Phone
+              className={cn(
+                "mr-1.5 h-4 w-4",
+                onDark ? "text-white" : overlayOnLg ? "text-brand-primary lg:text-white" : "text-brand-primary"
+              )}
+            />
             <span className="font-semibold">{company.phone}</span>
           </a>
 
@@ -187,7 +231,7 @@ export function PublicHeader({
               size="sm"
               className={cn(
                 "hidden rounded-full bg-brand-primary shadow-md hover:bg-brand-primary/90 sm:inline-flex",
-                onDark && "bg-brand-primary hover:bg-brand-primary/90"
+                (onDark || overlayOnLg) && "bg-brand-primary hover:bg-brand-primary/90"
               )}
             >
               <Sparkles className="mr-1.5 h-4 w-4" />
@@ -201,7 +245,8 @@ export function PublicHeader({
                 buttonVariants({ size: "icon", variant: "ghost" }),
                 "rounded-full",
                 variant === "company" ? "md:hidden" : "lg:hidden",
-                onDark && "text-white hover:bg-white/15 hover:text-white"
+                onDark && "text-white hover:bg-white/15 hover:text-white",
+                overlayOnLg && "lg:text-white lg:hover:bg-white/15 lg:hover:text-white"
               )}
             >
               <Menu className="h-5 w-5" />

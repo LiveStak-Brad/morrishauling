@@ -44,6 +44,8 @@ export const morrisConfig = {
   companyName: "Morris Hauling & Junk Removal",
   logo: "/logo.png",
   heroBanner: "/banner.png",
+  /** Optional portrait hero for phones; leave empty to scale the desktop banner with object-contain */
+  heroBannerMobile: "",
   phone: "(636) 751-4645",
   email: "info@morrisjunk.com",
   companyAddress: "Warrenton, Lincoln & St. Charles Counties, MO",

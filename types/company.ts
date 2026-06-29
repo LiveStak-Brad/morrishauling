@@ -124,8 +124,10 @@ export interface CompanyConfig {
   companyId: string;
   companyName: string;
   logo: string;
-  /** Optional hero / marketing banner image */
+  /** Optional hero / marketing banner image (wide, desktop) */
   heroBanner?: string;
+  /** Optional portrait-oriented hero for phones; falls back to heroBanner */
+  heroBannerMobile?: string;
   phone: string;
   email: string;
   companyAddress?: string;

@@ -45,8 +45,17 @@ export function BrandingSection({ initial }: { initial: unknown }) {
               <Input className="mt-1" value={branding.logo} onChange={(e) => set("logo", e.target.value)} placeholder="/logo.png" />
             </div>
             <div>
-              <Label>Hero banner</Label>
+              <Label>Hero banner (desktop)</Label>
               <Input className="mt-1" value={branding.heroBanner} onChange={(e) => set("heroBanner", e.target.value)} placeholder="/banner.png" />
+            </div>
+            <div>
+              <Label>Hero banner (mobile, optional)</Label>
+              <Input
+                className="mt-1"
+                value={branding.heroBannerMobile}
+                onChange={(e) => set("heroBannerMobile", e.target.value)}
+                placeholder="/banner-mobile.png"
+              />
             </div>
           </div>
         </div>
