@@ -40,32 +40,23 @@ export function MorrisServicesHomePage() {
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-background">
       <PublicHeader variant="umbrella" />
 
-      <section className="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
-        <div className="morris-hero-pattern pointer-events-none absolute inset-0 opacity-40" aria-hidden />
+      <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-white via-rose-50/30 to-background">
+        <div className="morris-hero-pattern pointer-events-none absolute inset-0 opacity-50" aria-hidden />
         <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center_top,_rgba(255,255,255,0.12)_0%,transparent_50%)]"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[min(55vh,28rem)] max-w-5xl bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.14)_0%,transparent_70%)]"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute -right-24 top-1/4 h-72 w-72 rounded-full bg-brand-primary/10 blur-3xl"
+          className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(ellipse_at_top,_rgba(155,27,48,0.08)_0%,transparent_65%)]"
           aria-hidden
         />
 
-        <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-4 py-14 text-center sm:py-16 md:py-20 lg:py-28">
+        <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-4 py-12 text-center sm:py-14 md:py-16 lg:py-20">
           <div
             className="w-full max-w-3xl animate-slide-up opacity-0"
             style={{ animationFillMode: "forwards" }}
           >
             <MorrisServicesLogo
-              height={260}
+              height={280}
               href={undefined}
               priority
-              panel="lg"
-              className="mx-auto w-full max-h-52 sm:max-h-60 md:max-h-72 lg:max-h-80 xl:max-h-[22rem]"
+              className="mx-auto w-full max-h-48 sm:max-h-56 md:max-h-64 lg:max-h-72 xl:max-h-80"
             />
           </div>
 
@@ -73,14 +64,14 @@ export function MorrisServicesHomePage() {
             {morrisServicesConfig.brandTagline}
           </p>
           <h1 className="sr-only">{morrisServicesConfig.publicBrandName}</h1>
-          <p className="mt-4 max-w-2xl text-lg font-medium leading-snug text-white/90 sm:text-xl md:text-2xl">
+          <p className="mt-4 max-w-2xl text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
             {morrisServicesConfig.tagline}
           </p>
-          <p className="mt-2 max-w-xl text-sm text-white/65 sm:text-base">
+          <p className="mt-2 max-w-xl text-base text-muted-foreground sm:text-lg">
             {morrisServicesConfig.serviceCategoriesLine}
           </p>
 
-          <div className="mt-3 inline-flex max-w-full items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-medium text-white/80 sm:px-4 sm:text-xs">
+          <div className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-border bg-white/80 px-3 py-1.5 text-[11px] font-medium text-muted-foreground shadow-sm sm:px-4 sm:text-xs">
             <Building2 className="h-3.5 w-3.5 shrink-0 text-brand-primary" />
             <span className="truncate">{morrisServicesConfig.parentLegalName}</span>
           </div>
@@ -89,17 +80,12 @@ export function MorrisServicesHomePage() {
             <ButtonLink
               href="/#companies"
               size="lg"
-              className="h-12 min-h-[48px] w-full rounded-xl bg-brand-primary px-8 text-base font-semibold shadow-lg hover:bg-brand-primary/90 sm:w-auto"
+              className="h-12 min-h-[48px] w-full rounded-xl bg-brand-primary px-8 text-base font-semibold shadow-md hover:bg-brand-primary/90 sm:w-auto"
             >
               Explore Services
               <ArrowRight className="ml-2 h-5 w-5" />
             </ButtonLink>
-            <ButtonLink
-              href="/about"
-              size="lg"
-              variant="outline"
-              className="h-12 min-h-[48px] w-full rounded-xl border-white/35 bg-white/10 text-base font-semibold text-white hover:bg-white/20 hover:text-white sm:w-auto"
-            >
+            <ButtonLink href="/about" size="lg" variant="outline" className="h-12 min-h-[48px] w-full rounded-xl sm:w-auto">
               About Us
             </ButtonLink>
           </div>
@@ -112,7 +98,7 @@ export function MorrisServicesHomePage() {
             ].map(({ icon: Icon, label }) => (
               <div
                 key={label}
-                className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs font-medium text-white/85 backdrop-blur-sm sm:text-sm"
+                className="flex items-center justify-center gap-2 rounded-xl border border-border bg-white/90 px-3 py-3 text-xs font-medium text-foreground shadow-sm sm:text-sm"
               >
                 <Icon className="h-4 w-4 shrink-0 text-brand-primary" />
                 <span>{label}</span>
@@ -131,15 +117,15 @@ export function MorrisServicesHomePage() {
           />
           <PremiumCard className="overflow-hidden border-brand-primary/20 p-0" glow>
             <div className="grid lg:grid-cols-5">
-              <div className="flex flex-col items-center bg-gradient-to-br from-brand-primary/12 via-brand-primary/5 to-transparent p-6 text-center sm:p-8 lg:col-span-2 lg:items-start lg:text-left">
-                <div className="relative mb-5 rounded-full bg-white p-2 shadow-lg ring-1 ring-black/5">
-                  <div className="absolute -inset-2 rounded-full bg-brand-primary/15 blur-xl" aria-hidden />
+              <div className="flex flex-col items-center bg-gradient-to-br from-brand-primary/10 via-brand-primary/5 to-white p-6 text-center sm:p-8 lg:col-span-2 lg:items-start lg:text-left">
+                <div className="relative mb-5">
+                  <div className="absolute -inset-2 rounded-full bg-brand-primary/10 blur-xl" aria-hidden />
                   <Image
                     src="/logo.png"
                     alt={hauling.name}
                     width={120}
                     height={120}
-                    className="relative h-24 w-24 rounded-full object-cover object-center sm:h-28 sm:w-28"
+                    className="relative h-24 w-24 rounded-full object-cover object-center ring-2 ring-brand-primary/20 shadow-md sm:h-28 sm:w-28"
                   />
                 </div>
                 <CompanyStatusBadge status="launching_soon" className="mb-4" />
@@ -158,7 +144,7 @@ export function MorrisServicesHomePage() {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </ButtonLink>
               </div>
-              <div className="flex flex-col justify-center border-t border-border bg-muted/20 p-6 sm:p-8 lg:col-span-3 lg:border-l lg:border-t-0 lg:p-10">
+              <div className="flex flex-col justify-center border-t border-border bg-white p-6 sm:p-8 lg:col-span-3 lg:border-l lg:border-t-0 lg:p-10">
                 <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">What to expect</p>
                 <p className="mt-3 text-base font-medium leading-relaxed sm:text-lg">{PRELAUNCH_HAULING_INTRO}</p>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
@@ -193,8 +179,8 @@ export function MorrisServicesHomePage() {
                 <PremiumCard
                   key={co.name}
                   className={cn(
-                    "p-5 opacity-0 animate-slide-up sm:p-6",
-                    "border-dashed border-border bg-muted/20"
+                    "bg-white p-5 opacity-0 animate-slide-up sm:p-6",
+                    "border-dashed border-border"
                   )}
                   style={{ animationDelay: `${i * 0.05}s`, animationFillMode: "forwards" }}
                 >
@@ -212,9 +198,9 @@ export function MorrisServicesHomePage() {
           </div>
         </section>
 
-        <PremiumCard className="mt-12 overflow-hidden border-brand-primary/15 bg-gradient-to-r from-brand-primary/5 via-white to-brand-primary/5 p-6 sm:mt-16 sm:p-8 md:mt-20">
+        <PremiumCard className="mt-12 border-brand-primary/15 bg-white p-6 sm:mt-16 sm:p-8 md:mt-20">
           <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
-            <MorrisServicesLogo height={96} href={undefined} panel="md" className="shrink-0 max-h-20 md:max-h-24" />
+            <MorrisServicesLogo height={96} href={undefined} className="shrink-0 max-h-20 md:max-h-24" />
             <div className="flex-1">
               <p className="text-lg font-bold sm:text-xl">{morrisServicesConfig.footerMission}</p>
               <p className="mt-2 text-sm text-muted-foreground">

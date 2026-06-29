@@ -102,7 +102,7 @@ export function PublicHeader({
   const mainLinks = variant === "umbrella" ? umbrellaLinks : companyLinks;
   const floatDesktop = floating === "desktop";
   const floatAll = floating === true;
-  const onDark = floatAll || transparent || variant === "umbrella" || floatDesktop;
+  const onDark = floatAll || transparent || floatDesktop;
   const homeHref = variant === "company" ? "/junk-removal" : "/";
   const bookingCta = isPublicPrelaunch() ? "Booking info" : "Book service";
 
@@ -118,7 +118,7 @@ export function PublicHeader({
           : floatDesktop
             ? "border-b max-lg:border-white/10 max-lg:bg-[#1a1a1a]/95 max-lg:backdrop-blur-md lg:border-white/10 lg:bg-black/60 lg:shadow-lg lg:backdrop-blur-md"
             : variant === "umbrella"
-              ? "border-b border-white/10 bg-black/65 shadow-lg backdrop-blur-md"
+              ? "morris-glass border-b border-white/40 shadow-sm"
               : transparent
                 ? "border-b border-white/20 bg-black/25 backdrop-blur-md"
                 : "morris-glass border-b border-white/40"
@@ -131,7 +131,7 @@ export function PublicHeader({
         )}
       >
         {variant === "umbrella" ? (
-          <MorrisServicesLogo height={64} priority panel="sm" className="max-h-14 sm:max-h-16 md:max-h-[4.5rem]" />
+          <MorrisServicesLogo height={64} priority className="max-h-12 sm:max-h-14 md:max-h-16" />
         ) : (
           <div className="flex min-w-0 shrink flex-col">
             <CompanyLogo

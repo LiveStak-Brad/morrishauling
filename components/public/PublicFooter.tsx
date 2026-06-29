@@ -5,17 +5,34 @@ import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
 import { PRELAUNCH_SERVICE_AREA } from "@/lib/public-copy";
+import { cn } from "@/lib/utils";
 
 export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | "company" }) {
   const { company } = useCompany();
   const hauling = morrisServicesConfig.operatingCompanies[0];
+  const isUmbrella = variant === "umbrella";
 
   return (
-    <footer className="border-t border-border bg-slate-950 text-white">
+    <footer
+      className={cn(
+        "border-t",
+        isUmbrella
+          ? "border-border bg-gradient-to-b from-muted/30 to-background text-foreground"
+          : "border-border bg-slate-950 text-white"
+      )}
+    >
       <div className="mx-auto max-w-6xl px-4 py-10">
         <div className="grid gap-8 md:grid-cols-3">
           <div>
-            {variant === "company" ? (
+            {isUmbrella ? (
+              <>
+                <MorrisServicesLogo height={88} href={undefined} className="max-h-20 md:max-h-24" />
+                <p className="mt-3 text-sm text-muted-foreground">{morrisServicesConfig.parentLegalName}</p>
+                <p className="mt-1 text-xs font-medium uppercase tracking-wide text-brand-primary">
+                  {morrisServicesConfig.brandTagline}
+                </p>
+              </>
+            ) : (
               <>
                 <p className="text-lg font-bold">{hauling.name}</p>
                 <p className="mt-1 text-sm text-white/70">
@@ -23,25 +40,37 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                 </p>
                 <p className="mt-1 text-xs text-white/50">{morrisServicesConfig.parentLegalName}</p>
               </>
-            ) : (
-              <>
-                <MorrisServicesLogo height={88} href={undefined} panel="sm" className="max-h-20 md:max-h-24" />
-                <p className="mt-3 text-sm text-white/70">{morrisServicesConfig.parentLegalName}</p>
-                <p className="mt-1 text-xs font-medium uppercase tracking-wide text-brand-primary/90">
-                  {morrisServicesConfig.brandTagline}
-                </p>
-              </>
             )}
-            <p className="mt-4 text-sm leading-relaxed text-white/80">
+            <p className={cn("mt-4 text-sm leading-relaxed", isUmbrella ? "text-muted-foreground" : "text-white/80")}>
               {morrisServicesConfig.footerMission}
             </p>
           </div>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-white/60">
-              {variant === "company" ? hauling.name : "Explore"}
+            <p
+              className={cn(
+                "text-sm font-semibold uppercase tracking-wide",
+                isUmbrella ? "text-muted-foreground" : "text-white/60"
+              )}
+            >
+              {isUmbrella ? "Explore" : hauling.name}
             </p>
             <nav className="mt-3 flex flex-col gap-2 text-sm">
-              {variant === "company" ? (
+              {isUmbrella ? (
+                <>
+                  <Link href="/" className="text-foreground/90 hover:text-brand-primary hover:underline">
+                    Home
+                  </Link>
+                  <Link href="/about" className="text-foreground/90 hover:text-brand-primary hover:underline">
+                    About
+                  </Link>
+                  <Link href="/contact" className="text-foreground/90 hover:text-brand-primary hover:underline">
+                    Contact
+                  </Link>
+                  <Link href={hauling.hubPath} className="text-foreground/90 hover:text-brand-primary hover:underline">
+                    {hauling.name}
+                  </Link>
+                </>
+              ) : (
                 <>
                   <Link href="/junk-removal" className="text-white/90 hover:text-white hover:underline">
                     Home
@@ -58,41 +87,44 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                   <Link href="/careers" className="text-white/90 hover:text-white hover:underline">
                     Careers
                   </Link>
-                </>
-              ) : (
-                <>
                   <Link href="/" className="text-white/90 hover:text-white hover:underline">
-                    Home
-                  </Link>
-                  <Link href="/about" className="text-white/90 hover:text-white hover:underline">
-                    About
-                  </Link>
-                  <Link href="/contact" className="text-white/90 hover:text-white hover:underline">
-                    Contact
-                  </Link>
-                  <Link href={hauling.hubPath} className="text-white/90 hover:text-white hover:underline">
-                    {hauling.name}
+                    ← {morrisServicesConfig.publicBrandName}
                   </Link>
                 </>
               )}
-              <Link href="/" className="text-white/90 hover:text-white hover:underline">
-                ← {morrisServicesConfig.publicBrandName}
-              </Link>
             </nav>
           </div>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-white/60">Contact</p>
-            <p className="mt-3 text-sm text-white/80">
-              <a href={`tel:${company.phone}`} className="font-semibold text-white hover:underline">
+            <p
+              className={cn(
+                "text-sm font-semibold uppercase tracking-wide",
+                isUmbrella ? "text-muted-foreground" : "text-white/60"
+              )}
+            >
+              Contact
+            </p>
+            <p className="mt-3 text-sm">
+              <a
+                href={`tel:${company.phone}`}
+                className={cn(
+                  "font-semibold hover:underline",
+                  isUmbrella ? "text-brand-primary" : "text-white"
+                )}
+              >
                 {company.phone}
               </a>
             </p>
-            <p className="mt-2 text-sm text-white/70">
+            <p className={cn("mt-2 text-sm", isUmbrella ? "text-muted-foreground" : "text-white/70")}>
               Preparing to serve {company.serviceArea.label ?? PRELAUNCH_SERVICE_AREA}
             </p>
           </div>
         </div>
-        <p className="mt-8 border-t border-white/10 pt-6 text-center text-xs text-white/50">
+        <p
+          className={cn(
+            "mt-8 border-t pt-6 text-center text-xs",
+            isUmbrella ? "border-border text-muted-foreground" : "border-white/10 text-white/50"
+          )}
+        >
           © {new Date().getFullYear()} {morrisServicesConfig.parentLegalName}. All rights reserved.
         </p>
       </div>
