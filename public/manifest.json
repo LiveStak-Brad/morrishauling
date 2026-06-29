@@ -1,7 +1,7 @@
 {
-  "name": "Morris Hauling & Junk Removal",
-  "short_name": "Morris Hauling",
-  "description": "Premium junk removal serving Warren, Lincoln & St. Charles Counties",
+  "name": "Morris Services",
+  "short_name": "Morris Services",
+  "description": "Professional local service companies in Missouri — Morris Hauling & Junk Removal launching soon.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FAFAFA",

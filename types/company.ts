@@ -87,8 +87,28 @@ export interface DumpSite {
   id: string;
   name: string;
   address: string;
+  city?: string;
+  state?: string;
   location: LatLng;
+  /** @deprecated use baseFee */
   feePerLoad?: number;
+  acceptedMaterials?: string[];
+  feeType?: "flat" | "weight" | "per_item" | "mixed";
+  baseFee?: number;
+  perTonFee?: number;
+  perItemFee?: number;
+  minimumFee?: number;
+  notes?: string;
+  status?: "active" | "inactive";
+}
+
+export interface OperatingBase {
+  id: string;
+  name: string;
+  city: string;
+  state: string;
+  location: LatLng;
+  isPrimary: boolean;
 }
 
 export interface CompanyEmployee {
@@ -96,6 +116,8 @@ export interface CompanyEmployee {
   name: string;
   role: "driver" | "helper" | "lead";
   phone: string;
+  /** Profile photo URL for dispatch UI */
+  avatarUrl?: string;
 }
 
 export interface CompanyConfig {
@@ -106,6 +128,7 @@ export interface CompanyConfig {
   heroBanner?: string;
   phone: string;
   email: string;
+  companyAddress?: string;
   website: string;
   serviceArea: ServiceArea;
   brandColors: BrandColors;
@@ -114,9 +137,15 @@ export interface CompanyConfig {
   estimateDisclaimer: string;
   paymentOptions: PaymentOptionsConfig;
   financingOptions: FinancingOptionsConfig;
+  operationsGoals?: {
+    dailyRevenueGoal: number;
+    weeklyPayrollAmount: number;
+    payrollDueLabel: string;
+  };
   employees: CompanyEmployee[];
   trucks: Truck[];
   trailers: Trailer[];
   dumpSites: DumpSite[];
+  operatingBases?: OperatingBase[];
   yardLocation?: LatLng;
 }

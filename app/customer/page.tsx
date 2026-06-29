@@ -12,11 +12,12 @@ import {
   Upload,
 } from "lucide-react";
 import { useCompany } from "@/lib/company-context";
-import { getJobs, DEMO_CUSTOMER_IDS } from "@/lib/mock-data";
+import { useCustomerPortal } from "@/hooks/useCustomerPortal";
 import { ButtonLink } from "@/components/ui/button-link";
 import { PremiumCard } from "@/components/morris/PremiumCard";
 import { StatusChip } from "@/components/morris/StatusChip";
 import { JobCard } from "@/components/customer/JobCard";
+import { CustomerLoginPrompt } from "@/components/customer/CustomerLoginPrompt";
 import { FloatingActionButton } from "@/components/morris/Fab";
 import { Timeline, type TimelineStep } from "@/components/morris/Timeline";
 
@@ -38,9 +39,9 @@ function getJobTimeline(status: string): TimelineStep[] {
 }
 
 export default function CustomerDashboard() {
-  const { company, companyId } = useCompany();
-  const customerId = DEMO_CUSTOMER_IDS[companyId];
-  const jobs = getJobs(companyId).filter((j) => j.customerId === customerId);
+  const { company } = useCompany();
+  const { data, loading, requiresLogin } = useCustomerPortal();
+  const jobs = data?.jobs ?? [];
   const activeJob = jobs.find((j) =>
     ["submitted", "estimated", "scheduled", "in_progress"].includes(j.status)
   );
@@ -52,9 +53,24 @@ export default function CustomerDashboard() {
     { href: "#", icon: Gift, label: "Refer", color: "bg-orange-500" },
   ];
 
+  if (requiresLogin) {
+    return (
+      <div className="min-h-screen bg-background p-6">
+        <CustomerLoginPrompt redirectPath="/customer" />
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background p-6">
+        <p className="text-muted-foreground">Loading your account…</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background pb-32">
-      {/* Hero header */}
       <div className="relative overflow-hidden morris-gradient-bg px-4 pb-8 pt-6 text-white">
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
         <p className="text-sm font-medium text-white/70">Welcome back</p>
@@ -82,7 +98,6 @@ export default function CustomerDashboard() {
       </div>
 
       <main className="mx-auto max-w-lg px-4 -mt-4 md:max-w-2xl">
-        {/* Quick actions */}
         <div className="grid grid-cols-4 gap-2">
           {quickActions.map((action) => (
             <Link
@@ -114,11 +129,20 @@ export default function CustomerDashboard() {
               View all
             </ButtonLink>
           </div>
-          <div className="space-y-3">
-            {jobs.slice(0, 3).map((job) => (
-              <JobCard key={job.id} job={job} href={`/customer/jobs/${job.id}`} />
-            ))}
-          </div>
+          {jobs.length === 0 ? (
+            <PremiumCard className="p-8 text-center text-muted-foreground">
+              <p>No jobs yet.</p>
+              <ButtonLink href="/book" className="mt-4">
+                Book your first pickup
+              </ButtonLink>
+            </PremiumCard>
+          ) : (
+            <div className="space-y-3">
+              {jobs.slice(0, 3).map((job) => (
+                <JobCard key={job.id} job={job} href={`/customer/jobs/${job.id}`} />
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="mt-8">

@@ -2,46 +2,18 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useCompany } from "@/lib/company-context";
-import {
-  getInvoice,
-  getJobByCompany,
-  getCustomer,
-  getPaymentsForInvoice,
-  getFinancingByJob,
-} from "@/lib/mock-data";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
-import { InvoiceDetailView } from "@/components/invoices/InvoiceDetailView";
-import { PaymentSummaryCard } from "@/components/payments/PaymentSummaryCard";
-import { derivePaymentStatus } from "@/lib/payment-utils";
+import { AdminInvoiceDetail } from "@/components/admin/AdminInvoiceDetail";
 import { ArrowLeft } from "lucide-react";
 
 export default function AdminInvoiceDetailPage() {
   const params = useParams();
   const invoiceId = params.id as string;
-  const { companyId } = useCompany();
-
-  const invoice = getInvoice(companyId, invoiceId);
-  if (!invoice) {
-    return (
-      <AdminPageShell title="Invoice not found">
-        <Link href="/admin/invoices" className="text-brand-primary underline">
-          Back to invoices
-        </Link>
-      </AdminPageShell>
-    );
-  }
-
-  const job = getJobByCompany(companyId, invoice.jobId);
-  const customer = getCustomer(companyId, invoice.customerId);
-  const payments = getPaymentsForInvoice(companyId, invoice.id);
-  const financing = getFinancingByJob(companyId, invoice.jobId);
-  const status = derivePaymentStatus(invoice, financing);
 
   return (
     <AdminPageShell
-      title={invoice.invoiceNumber}
-      description={`${job?.address.street ?? "Job"} · Admin view`}
+      title="Invoice detail"
+      description="View, edit, and manage invoice payments"
       action={
         <Link
           href="/admin/invoices"
@@ -52,22 +24,7 @@ export default function AdminInvoiceDetailPage() {
         </Link>
       }
     >
-      <div className="max-w-3xl space-y-6">
-        <PaymentSummaryCard
-          balanceDue={invoice.balanceDue}
-          total={invoice.total}
-          amountPaid={invoice.amountPaid}
-          status={status}
-          invoiceNumber={invoice.invoiceNumber}
-        />
-        <InvoiceDetailView
-          invoice={invoice}
-          job={job}
-          customer={customer}
-          payments={payments}
-          financing={financing}
-        />
-      </div>
+      <AdminInvoiceDetail invoiceId={invoiceId} />
     </AdminPageShell>
   );
 }

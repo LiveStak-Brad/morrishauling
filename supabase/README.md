@@ -1,56 +1,87 @@
-# Supabase setup — Morris Hauling
+# Supabase — Morris Operations Database
 
-## 1. Environment (already in `.env.local`)
+## Required environment variables
 
-| Variable | Purpose |
-|----------|---------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Publishable / anon key (client-safe) |
-| `SUPABASE_DB_PASSWORD` | DB password for `npm run db:migrate` only |
-| `SUPABASE_SERVICE_ROLE_KEY` | Optional — server admin / seed scripts |
-| `NEXT_PUBLIC_USE_SUPABASE` | `true` = hydrate app from Supabase |
+| Variable | Required for | Where to find |
+|----------|--------------|---------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | All Supabase reads/writes | Supabase → Settings → API |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Client + RLS-scoped server reads | Supabase → Settings → API → `anon` |
+| `SUPABASE_SERVICE_ROLE_KEY` | **All file uploads**, signed URLs, invoice PDFs, storage health tests | Supabase → Settings → API → `service_role` (server-only — never expose to browser) |
+| `NEXT_PUBLIC_USE_SUPABASE` | Set `true` for production data | `.env.local` |
 
-**Never commit `.env.local` or share service role keys publicly.**
+Without `SUPABASE_SERVICE_ROLE_KEY`, Admin → Settings will show database tables as OK but storage upload/signed-URL tests as **not tested**. Buckets may still exist in your Supabase project.
 
-## 2. Create tables
+## Demo data (`DEMO_DATA`)
 
-**Option A — Supabase Dashboard (recommended if migrate script fails)**
+Set `DEMO_DATA=true` **only** when you want fake operational seed data (mock employees, simulated dispatch, mock command-center fallback). Normal local development with Supabase should leave this **unset** or `false`.
 
-1. Open [Supabase Dashboard](https://supabase.com/dashboard) → your project → **SQL Editor**
-2. Paste contents of `supabase/migrations/001_initial_schema.sql`
-3. Click **Run**
-
-**Option B — CLI script**
+Verify locally:
 
 ```bash
-npm run db:migrate
+node scripts/verify-storage-readiness.mjs
+node scripts/smoke-test-production-workflows.mjs
 ```
 
-## 3. Seed demo data
+## Storage buckets
 
-```bash
-npm run db:seed
-```
+Private buckets (signed URLs only):
 
-## 4. Verify
+- `job-photos` — booking + employee before/after photos
+- `employee-documents` — employee uploads + profile avatars
+- `applicant-documents` — resume, license, certifications
+- `hr-documents` — company forms / policy PDFs (versioned)
+- `invoice-pdfs` — generated invoice PDFs
 
-```bash
-npm run dev
-```
+Health: `GET /api/health/supabase` — per-table status + per-bucket upload/signed-URL probe (requires service role key).
 
-- Health check: `GET /api/health/supabase`
-- Data sync: `GET /api/data/store?companyId=morris-hauling`
+## Migration 032 (document uploads)
 
-## Architecture
+Tables: `employee_document_uploads`, `applicant_documents`, `document_audit_log`  
+Columns: `employees.avatar_storage_path`, `document_templates.storage_path`, `document_template_versions.storage_path`
 
-- `lib/supabase/client.ts` — browser client
-- `lib/supabase/server.ts` — server components / route handlers
-- `lib/supabase/queries.ts` — row ↔ TypeScript mappers
-- `app/api/data/store/route.ts` — loads company data into the app
-- `components/data/DataHydrator.tsx` — merges Supabase data into the in-memory store on load
+Apply: `supabase/migrations/032_document_uploads_and_avatars.sql` (or `npm run db:migrate`)
 
-Writes still update the local store first; Supabase sync on write can be added per entity via `lib/supabase/queries.ts` upsert helpers.
 
-## Security note
+### Core (001)
+- `companies`, `profiles`, `jobs`, `invoices`, `payments`, `financing_requests`
 
-RLS policies are **open for development** (`using (true)`). Tighten before production and add Supabase Auth.
+### Operations (002)
+- `customers`, `employees`
+- `job_photos`, `job_notes`, `estimates`
+- `trucks`, `trailers`, `dump_sites`, `service_areas`
+- `routes`, `route_stops`, `job_assignments`
+- `activity_log`, `notifications`, `company_settings`
+- `financing_payments`
+
+## Setup
+
+1. Run **001** then **002** in Supabase SQL Editor (or `npm run db:migrate` if DB connection works)
+2. `npm run db:seed`
+3. Set `NEXT_PUBLIC_USE_SUPABASE=true` in `.env.local`
+4. `npm run dev`
+
+## Data layer
+
+`lib/db/` — async functions with mock fallback when Supabase unavailable or `USE_SUPABASE=false`:
+
+- Dashboards: `getCustomerDashboard`, `getAdminDashboard`, `getEmployeeDashboard`, `getPlannerDashboard`
+- Jobs: `getJobs`, `getJobById`, `createJobFromBooking`, `updateJobStatus`, `assignJobToEmployee`
+- Invoices/Payments: `getInvoices`, `getInvoiceById`, `createPayment`
+- Financing: `getFinancingRequests`, `createFinancingRequest`, `approveFinancingRequest`, `denyFinancingRequest`
+- Ops: `getDumpSites`, `getServiceAreas`, `getActivityLog`, `createRoute`, `updateRouteStop`
+
+Client hydration: `GET /api/data/store?companyId=morris-hauling` → `DataHydrator`
+
+Health: `GET /api/health/supabase` — per-table status
+
+## Auth
+
+Run **003_auth_profiles_rls.sql** after 002 to enable role-based RLS.
+
+Set `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` for server-side registration and writes.
+
+Routes:
+- `/login`, `/register` — customer self-registration
+- `/account` — profile & sign out
+- Protected: `/customer`, `/employee`, `/planner`, `/admin`
+

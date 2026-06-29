@@ -1,31 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useCompany } from "@/lib/company-context";
-import {
-  getInvoice,
-  getJobByCompany,
-  getPaymentsForInvoice,
-  getFinancingByJob,
-} from "@/lib/mock-data";
+import { useCustomerPortal } from "@/hooks/useCustomerPortal";
+import { CustomerLoginPrompt } from "@/components/customer/CustomerLoginPrompt";
 import { PaymentSummaryCard } from "@/components/payments/PaymentSummaryCard";
 import { PaymentStatusStepper } from "@/components/payments/PaymentStatusStepper";
 import { PaymentCheckout } from "@/components/payments/PaymentCheckout";
 import { InvoiceDetailView } from "@/components/invoices/InvoiceDetailView";
 import { derivePaymentStatus } from "@/lib/payment-utils";
-import { getCustomer, DEMO_CUSTOMER_IDS } from "@/lib/mock-data";
 import { ArrowLeft } from "lucide-react";
 import { PremiumCard } from "@/components/morris/PremiumCard";
 
 export default function CustomerPaymentDetailPage() {
   const params = useParams();
   const invoiceId = params.id as string;
-  const { companyId } = useCompany();
+  const { data, loading, requiresLogin, refresh } = useCustomerPortal();
   const [tick, setTick] = useState(0);
 
-  const invoice = getInvoice(companyId, invoiceId);
+  const invoice = data?.invoices.find((i) => i.id === invoiceId);
+  const job = invoice ? data?.jobs.find((j) => j.id === invoice.jobId) : undefined;
+  const payments =
+    data?.payments.filter(
+      (p) => p.invoiceId === invoiceId || (invoice && p.jobId === invoice.jobId)
+    ) ?? [];
+  const financing = invoice
+    ? data?.financing.find((f) => f.jobId === invoice.jobId)
+    : undefined;
+
+  useEffect(() => {
+    void tick;
+  }, [tick]);
+
+  if (requiresLogin) {
+    return (
+      <main className="p-6">
+        <CustomerLoginPrompt redirectPath={`/customer/payments/${invoiceId}`} />
+      </main>
+    );
+  }
+
+  if (loading) {
+    return <main className="p-6 text-muted-foreground">Loading invoice…</main>;
+  }
+
   if (!invoice) {
     return (
       <main className="p-6 text-center">
@@ -37,10 +56,6 @@ export default function CustomerPaymentDetailPage() {
     );
   }
 
-  const job = getJobByCompany(companyId, invoice.jobId);
-  const payments = getPaymentsForInvoice(companyId, invoice.id);
-  const financing = getFinancingByJob(companyId, invoice.jobId);
-  const customer = getCustomer(companyId, DEMO_CUSTOMER_IDS[companyId]);
   const status = derivePaymentStatus(invoice, financing);
 
   return (
@@ -79,7 +94,10 @@ export default function CustomerPaymentDetailPage() {
             <PaymentCheckout
               key={tick}
               invoice={invoice}
-              onComplete={() => setTick((t) => t + 1)}
+              onComplete={() => {
+                setTick((t) => t + 1);
+                refresh();
+              }}
             />
           </section>
         )}
@@ -89,10 +107,11 @@ export default function CustomerPaymentDetailPage() {
           <InvoiceDetailView
             invoice={invoice}
             job={job}
-            customer={customer}
             payments={payments}
             financing={financing}
-            showActions={false}
+            showActions
+            showSendAction={false}
+            pdfDownloadPath={`/api/customer/invoices/${invoiceId}/pdf`}
           />
         </section>
       </div>

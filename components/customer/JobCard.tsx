@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ChevronRight, MapPin, Calendar } from "lucide-react";
 import { PremiumCard } from "@/components/morris/PremiumCard";
 import { StatusChip } from "@/components/morris/StatusChip";
+import { JobServiceBadge } from "@/components/jobs/JobServiceBadge";
+import { JobCardHaulingExtras, JobCardJunkExtras } from "@/components/jobs/ServiceLineJobViews";
 
 const STATUS_CONFIG: Record<
   JobStatus,
@@ -23,9 +25,10 @@ const STATUS_CONFIG: Record<
 interface JobCardProps {
   job: Job;
   href?: string;
+  showInternalProfit?: boolean;
 }
 
-export function JobCard({ job, href }: JobCardProps) {
+export function JobCard({ job, href, showInternalProfit }: JobCardProps) {
   const status = STATUS_CONFIG[job.status];
 
   const content = (
@@ -33,16 +36,21 @@ export function JobCard({ job, href }: JobCardProps) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
+            <JobServiceBadge serviceType={job.serviceType ?? "junk_removal"} />
             <StatusChip label={status.label} variant={status.variant} pulse={job.status === "in_progress"} />
-            {job.estimate && (
+            {(job.estimate || job.pricingBreakdown) && (
               <span className="text-lg font-bold text-brand-primary">
-                ${job.estimate.total}
+                ${job.estimate?.total ?? job.pricingBreakdown?.reduce((s, l) => s + l.amount, 0)}
               </span>
             )}
           </div>
           <p className="mt-2 flex items-center gap-1.5 font-semibold">
             <MapPin className="h-4 w-4 shrink-0 text-brand-primary" />
-            <span className="truncate">{job.address.street}</span>
+            <span className="truncate">
+              {job.serviceType === "hauling_transport" && job.haulingDetails
+                ? `${job.haulingDetails.pickup.city} → ${job.haulingDetails.delivery.city}`
+                : job.address.street}
+            </span>
           </p>
           <p className="mt-0.5 text-sm text-muted-foreground">
             {job.address.city}, {job.address.state}
@@ -56,20 +64,8 @@ export function JobCard({ job, href }: JobCardProps) {
         </div>
         <ChevronRight className="mt-2 h-5 w-5 shrink-0 text-muted-foreground" />
       </div>
-      {job.estimate && (
-        <div className="mt-3">
-          <div className="mb-1 flex justify-between text-xs text-muted-foreground">
-            <span>Trailer load</span>
-            <span>{job.estimate.trailerPercent}%</span>
-          </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-brand-primary to-[#C8102E]"
-              style={{ width: `${Math.min(job.estimate.trailerPercent, 100)}%` }}
-            />
-          </div>
-        </div>
-      )}
+      <JobCardHaulingExtras job={job} showInternalProfit={showInternalProfit} />
+      <JobCardJunkExtras job={job} showInternalProfit={showInternalProfit} />
     </PremiumCard>
   );
 

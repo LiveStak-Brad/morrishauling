@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { Job } from "@/types/job";
 import type { Invoice } from "@/types/payment";
 import { useCompany } from "@/lib/company-context";
-import { updateJob } from "@/lib/mock-data";
+import { mutateJobFields } from "@/lib/api/mutations";
 import { PremiumCard } from "@/components/morris/PremiumCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,8 +55,8 @@ export function FieldPaymentCollection({
   const baseTotal = invoice?.total ?? job.estimate?.total ?? 0;
   const adjustedTotal = baseTotal + adjustment;
 
-  const selectMethod = (method: Job["fieldPaymentMethod"]) => {
-    updateJob(companyId, job.id, {
+  const selectMethod = async (method: Job["fieldPaymentMethod"]) => {
+    await mutateJobFields(companyId, job.id, {
       fieldPaymentMethod: method,
       paymentCollected: method === "cash" || method === "check",
     });
@@ -65,8 +65,8 @@ export function FieldPaymentCollection({
     onUpdate?.();
   };
 
-  const saveAdjustment = () => {
-    updateJob(companyId, job.id, {
+  const saveAdjustment = async () => {
+    await mutateJobFields(companyId, job.id, {
       finalPriceAdjustment: adjustment,
       finalPriceAdjustmentReason: reason,
       extraFees: adjustment,
@@ -77,8 +77,8 @@ export function FieldPaymentCollection({
     onUpdate?.();
   };
 
-  const captureApproval = () => {
-    updateJob(companyId, job.id, { customerApprovalCaptured: true });
+  const captureApproval = async () => {
+    await mutateJobFields(companyId, job.id, { customerApprovalCaptured: true });
     setApprovalCaptured(true);
     onUpdate?.();
   };

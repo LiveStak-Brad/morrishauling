@@ -1,43 +1,38 @@
 "use client";
 
-import { CompanyLogo } from "@/components/brand/CompanyLogo";
-import { useCompany } from "@/lib/company-context";
+import { useEffect, useState } from "react";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BrandingSection } from "@/components/admin/settings/BrandingSection";
+import { Loader2 } from "lucide-react";
 
 export default function AdminBrandingPage() {
-  const { company } = useCompany();
-  const { brandColors } = company;
+  const [branding, setBranding] = useState<unknown>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/admin/company-settings")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok) setBranding(d.settings?.["branding.config"]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
-    <AdminPageShell title="Branding">
-      <Card className="mb-4">
-        <CardHeader>
-          <CardTitle>Logo</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CompanyLogo height={64} width={220} className="!h-16 !w-16" />
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Brand colors</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {Object.entries(brandColors).map(([key, value]) => (
-            <div key={key} className="flex items-center gap-2">
-              <div
-                className="h-8 w-8 rounded border"
-                style={{ backgroundColor: value }}
-              />
-              <div>
-                <p className="text-xs capitalize">{key}</p>
-                <p className="text-xs text-muted-foreground">{value}</p>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+    <AdminPageShell
+      title="Branding"
+      description="Logo, colors, contact info, and service area messaging."
+    >
+      {loading ? (
+        <div className="flex items-center gap-2 text-muted-foreground py-8">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          Loading branding…
+        </div>
+      ) : (
+        <div className="max-w-3xl">
+          <BrandingSection initial={branding} />
+        </div>
+      )}
     </AdminPageShell>
   );
 }

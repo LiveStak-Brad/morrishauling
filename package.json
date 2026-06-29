@@ -9,7 +9,13 @@
     "lint": "eslint",
     "db:migrate": "node scripts/db-migrate.mjs",
     "db:seed": "node scripts/db-seed.mjs",
-    "db:setup": "node scripts/db-migrate.mjs && node scripts/db-seed.mjs"
+    "db:setup": "node scripts/db-migrate.mjs && node scripts/db-seed.mjs",
+    "auth:create-staff": "node scripts/create-staff-user.mjs",
+    "auth:verify": "node scripts/auth-verify.mjs",
+    "db:apply": "node scripts/apply-migration-pooler.mjs",
+    "verify:launch-blockers": "node scripts/verify-launch-blockers.mjs",
+    "verify:public-site": "node scripts/verify-public-site.mjs",
+    "verify:prelaunch-deploy": "node scripts/verify-prelaunch-deploy.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -20,6 +26,7 @@
     "date-fns": "^4.4.0",
     "lucide-react": "^1.22.0",
     "next": "16.2.9",
+    "pdf-lib": "^1.17.1",
     "react": "19.2.4",
     "react-day-picker": "^10.0.1",
     "react-dom": "19.2.4",
@@ -30,6 +37,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

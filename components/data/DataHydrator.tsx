@@ -2,16 +2,18 @@
 
 import { useEffect } from "react";
 import { useCompany } from "@/lib/company-context";
+import { isDemoDataEnabled } from "@/lib/is-demo-data";
 import { applySupabaseStore } from "@/lib/mock-data";
 
 /**
- * On app load, pull company data from Supabase when enabled and merge into the local store.
+ * Legacy bridge: sync Supabase data into the local mock store for demo/dev only.
  */
 export function DataHydrator() {
   const { companyId } = useCompany();
 
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_USE_SUPABASE !== "true") return;
+    if (!isDemoDataEnabled()) return;
 
     fetch(`/api/data/store?companyId=${encodeURIComponent(companyId)}`)
       .then((r) => r.json())

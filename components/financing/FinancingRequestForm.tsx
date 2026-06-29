@@ -15,22 +15,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCompany } from "@/lib/company-context";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { getFinancingProviders } from "@/lib/financing-provider";
-import { DEMO_CUSTOMER_IDS } from "@/lib/mock-data";
 import { Loader2 } from "lucide-react";
 
 interface FinancingRequestFormProps {
   jobId: string;
   totalAmount: number;
+  customerId?: string;
   onSubmitted?: () => void;
 }
 
 export function FinancingRequestForm({
   jobId,
   totalAmount,
+  customerId: customerIdProp,
   onSubmitted,
 }: FinancingRequestFormProps) {
   const { company, companyId } = useCompany();
+  const { customerId: authCustomerId } = useAuth();
+  const customerId = customerIdProp ?? authCustomerId;
   const [downPayment, setDownPayment] = useState(100);
   const [numberOfPayments, setNumberOfPayments] = useState(4);
   const [frequency, setFrequency] = useState<PaymentFrequency>("monthly");
@@ -43,13 +47,13 @@ export function FinancingRequestForm({
   const activeProvider = providers.find((p) => p.isAvailable()) ?? providers[0];
 
   const handleSubmit = async () => {
-    if (!termsAccepted) return;
+    if (!termsAccepted || !customerId) return;
     setLoading(true);
     try {
       await activeProvider.requestPlan({
         companyId,
         jobId,
-        customerId: DEMO_CUSTOMER_IDS[companyId],
+        customerId,
         provider: company.financingOptions.inHouseEnabled ? "in_house" : "klarna",
         totalAmount,
         downPayment,

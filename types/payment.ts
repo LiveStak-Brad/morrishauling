@@ -44,6 +44,7 @@ export interface Payment {
   companyId: string;
   jobId: string;
   invoiceId?: string;
+  customerId?: string;
   amount: number;
   method: PaymentMethod;
   timing: PaymentTiming;
@@ -67,11 +68,12 @@ export interface Invoice {
   total: number;
   amountPaid: number;
   balanceDue: number;
-  status: "draft" | "sent" | "paid" | "partial" | "overdue";
+  status: "draft" | "sent" | "paid" | "partial" | "overdue" | "void";
   paymentStatus: AccountPaymentStatus;
   dueDate?: string;
   terms?: string;
   finalPriceNotes?: string;
+  pdfStoragePath?: string;
   createdAt: string;
 }
 

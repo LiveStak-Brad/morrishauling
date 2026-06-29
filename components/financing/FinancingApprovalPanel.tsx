@@ -4,7 +4,7 @@ import type { FinancingRequest } from "@/types/financing";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { inHouseFinancingProvider } from "@/lib/financing-provider";
+import { mutateApproveFinancing, mutateDenyFinancing } from "@/lib/api/mutations";
 import { useCompany } from "@/lib/company-context";
 import { useState } from "react";
 
@@ -24,16 +24,22 @@ export function FinancingApprovalPanel({
 
   const handleApprove = async (id: string) => {
     setLoading(id);
-    await inHouseFinancingProvider.approve(id, companyId);
-    setLoading(null);
-    onUpdate?.();
+    try {
+      await mutateApproveFinancing(companyId, id);
+    } finally {
+      setLoading(null);
+      onUpdate?.();
+    }
   };
 
   const handleDeny = async (id: string) => {
     setLoading(id);
-    await inHouseFinancingProvider.deny(id, companyId, "Does not meet criteria");
-    setLoading(null);
-    onUpdate?.();
+    try {
+      await mutateDenyFinancing(companyId, id, "Does not meet criteria");
+    } finally {
+      setLoading(null);
+      onUpdate?.();
+    }
   };
 
   if (pending.length === 0) {

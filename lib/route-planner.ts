@@ -1,7 +1,8 @@
 import type { CompanyConfig, LatLng } from "@/types";
 import type { Job } from "@/types/job";
 import type { RoutePlan, RoutePlanInput, RouteStop, RouteWarning } from "@/types/route";
-import { getJob } from "@/lib/mock-data";
+import { isDemoDataEnabled } from "@/lib/is-demo-data";
+import { getJob as mockGetJob } from "@/lib/mock-data";
 
 export interface RoutePlanner {
   planRoute(input: RoutePlanInput, company: CompanyConfig, jobs?: Job[]): RoutePlan;
@@ -73,7 +74,13 @@ function sortByNearestNeighbor(jobs: Job[], start: LatLng): Job[] {
 
 export class DefaultRoutePlanner implements RoutePlanner {
   planRoute(input: RoutePlanInput, company: CompanyConfig, jobsArg?: Job[]): RoutePlan {
-    const jobs = (jobsArg ?? input.jobIds.map((id) => getJob(id)).filter(Boolean)) as Job[];
+    const jobs = (
+      jobsArg?.length
+        ? jobsArg
+        : isDemoDataEnabled()
+          ? input.jobIds.map((id) => mockGetJob(id)).filter(Boolean)
+          : []
+    ) as Job[];
     const trailer = company.trailers.find((t) => t.id === input.trailerId);
     const capacity = trailer?.capacityPercent ?? 100;
 

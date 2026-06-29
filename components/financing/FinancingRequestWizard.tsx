@@ -4,8 +4,8 @@ import { useMemo, useState } from "react";
 import type { EmploymentStatus, PaymentFrequency } from "@/types/financing";
 import { FINANCING_DISCLAIMER } from "@/types/financing";
 import { useCompany } from "@/lib/company-context";
-import { inHouseFinancingProvider } from "@/lib/financing-provider";
-import { DEMO_CUSTOMER_IDS } from "@/lib/mock-data";
+import { mutateFinancingRequest } from "@/lib/api/mutations";
+import { useAuth } from "@/components/auth/AuthProvider";
 import {
   calculateFinancingBreakdown,
 } from "@/lib/payment-utils";
@@ -40,6 +40,7 @@ export function FinancingRequestWizard({
   onSubmitted,
 }: FinancingRequestWizardProps) {
   const { company, companyId } = useCompany();
+  const { customerId: authCustomerId } = useAuth();
   const [downPayment, setDownPayment] = useState(200);
   const [numberOfPayments, setNumberOfPayments] = useState(6);
   const [frequency, setFrequency] = useState<PaymentFrequency>("weekly");
@@ -66,14 +67,14 @@ export function FinancingRequestWizard({
         : "monthly";
 
   const handleSubmit = async () => {
-    if (!termsAccepted || !company.financingOptions.inHouseEnabled) return;
+    if (!termsAccepted || !company.financingOptions.inHouseEnabled || !authCustomerId) return;
     setLoading(true);
     try {
-      await inHouseFinancingProvider.requestPlan({
+      await mutateFinancingRequest(companyId, {
         companyId,
         jobId,
         invoiceId,
-        customerId: DEMO_CUSTOMER_IDS[companyId],
+        customerId: authCustomerId,
         provider: "in_house",
         totalAmount,
         downPayment,

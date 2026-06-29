@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
-import {
-  fetchFinancingFromSupabase,
-  fetchInvoicesFromSupabase,
-  fetchJobsFromSupabase,
-  fetchPaymentsFromSupabase,
-  fetchUsersFromSupabase,
-  isSupabaseTablesReady,
-  useSupabaseData,
-} from "@/lib/supabase/queries";
+import { enforceRateLimit } from "@/lib/api/rate-limit";
+import { requireApiProfile } from "@/lib/api/require-profile";
+import { getCompanyStore } from "@/lib/db";
 
 export async function GET(request: Request) {
+  const limited = enforceRateLimit(request, {
+    key: "data-store",
+    limit: 30,
+    windowMs: 60_000,
+  });
+  if (limited) return limited;
+
+  const profile = await requireApiProfile();
+  if (profile instanceof Response) return profile;
+
   const { searchParams } = new URL(request.url);
   const companyId = searchParams.get("companyId");
 
@@ -17,39 +21,11 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "companyId required" }, { status: 400 });
   }
 
-  if (!useSupabaseData()) {
-    return NextResponse.json({ source: "mock", tablesReady: false });
-  }
-
-  const tablesReady = await isSupabaseTablesReady();
-  if (!tablesReady) {
-    return NextResponse.json({
-      source: "mock",
-      tablesReady: false,
-      message: "Run npm run db:setup or paste supabase/migrations/001_initial_schema.sql in Supabase SQL Editor",
-    });
-  }
-
   try {
-    const [jobs, invoices, payments, financingRequests, users] = await Promise.all([
-      fetchJobsFromSupabase(companyId),
-      fetchInvoicesFromSupabase(companyId),
-      fetchPaymentsFromSupabase(companyId),
-      fetchFinancingFromSupabase(companyId),
-      fetchUsersFromSupabase(companyId),
-    ]);
-
-    return NextResponse.json({
-      source: "supabase",
-      tablesReady: true,
-      jobs,
-      invoices,
-      payments,
-      financingRequests,
-      users,
-    });
+    const store = await getCompanyStore(companyId, profile);
+    return NextResponse.json(store);
   } catch (e) {
     const message = e instanceof Error ? e.message : "Unknown error";
-    return NextResponse.json({ source: "mock", tablesReady: false, error: message });
+    return NextResponse.json({ source: "mock", tablesReady: false, error: message }, { status: 500 });
   }
 }

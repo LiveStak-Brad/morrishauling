@@ -5,7 +5,8 @@ export type Role =
   | "employee"
   | "planner"
   | "admin"
-  | "platform_admin";
+  | "hr"
+  | "office_admin";
 
 export interface User {
   id: string;
@@ -19,6 +20,9 @@ export interface User {
 export interface Customer extends User {
   role: "customer";
   address?: string;
+  callbackDueAt?: string;
+  callbackNotes?: string;
+  callbackStatus?: import("./operations-depth").CallbackStatus;
 }
 
 export interface Employee extends User {

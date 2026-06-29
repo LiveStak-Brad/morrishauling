@@ -17,5 +17,6 @@ export {
   getFinancingRequest,
   createFinancingRequest,
   updateFinancingRequest,
+  DEMO_CUSTOMER_ID,
   DEMO_CUSTOMER_IDS,
 } from "@/lib/mock-data";

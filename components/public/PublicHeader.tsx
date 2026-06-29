@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Phone, Sparkles } from "lucide-react";
 import { useCompany } from "@/lib/company-context";
+import { morrisServicesConfig } from "@/lib/morris-services-config";
+import { isPublicPrelaunch } from "@/lib/public-site";
 import { CompanyLogo } from "@/components/brand/CompanyLogo";
 import { ButtonLink } from "@/components/ui/button-link";
 import { buttonVariants } from "@/components/ui/button";
@@ -16,47 +18,153 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-const navLinks = [
+const umbrellaLinks = [
   { href: "/", label: "Home" },
+  { href: "/#companies", label: "Our Companies" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+];
+
+const companyLinks = [
+  { href: "/junk-removal", label: "Home" },
   { href: "/services", label: "Services" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/book", label: "Book Now" },
+  { href: "/careers", label: "Careers" },
   { href: "/login", label: "My Account" },
 ];
 
+const loginLinks = [
+  { href: "/login?portal=customer", label: "Customer Login" },
+  { href: "/login?portal=staff", label: "Staff Login" },
+];
+
+function NavLink({
+  href,
+  label,
+  pathname,
+  onDark,
+}: {
+  href: string;
+  label: string;
+  pathname: string;
+  onDark?: boolean;
+}) {
+  const path = href.split("?")[0].split("#")[0];
+  const active =
+    path === "/junk-removal"
+      ? pathname === "/junk-removal"
+      : path === "/"
+        ? pathname === "/"
+        : pathname === path || pathname.startsWith(`${path}/`);
+
+  if (onDark) {
+    return (
+      <Link
+        href={href}
+        className={cn(
+          "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
+          active
+            ? "bg-brand-primary text-white shadow-sm"
+            : "text-white/90 hover:bg-white/10 hover:text-white"
+        )}
+      >
+        {label}
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
+        active ? "bg-brand-primary text-white shadow-sm" : "hover:bg-muted"
+      )}
+    >
+      {label}
+    </Link>
+  );
+}
+
 export function PublicHeader({
+  variant = "umbrella",
   transparent = false,
   floating = false,
 }: {
+  variant?: "umbrella" | "company";
   transparent?: boolean;
-  /** Absolutely positioned over hero imagery — no bar, no blur */
   floating?: boolean;
 }) {
   const { company } = useCompany();
   const pathname = usePathname();
+  const mainLinks = variant === "umbrella" ? umbrellaLinks : companyLinks;
+  const onDark = floating || transparent || variant === "umbrella";
+  const homeHref = variant === "company" ? "/junk-removal" : "/";
+  const bookingCta = isPublicPrelaunch() ? "Booking info" : "Book service";
 
   return (
     <header
       className={cn(
         "z-50 transition-all duration-300",
+        floating ? "absolute inset-x-0 top-0" : "sticky top-0",
         floating
-          ? "absolute inset-x-0 top-0 border-0 bg-transparent"
-          : "sticky top-0",
-        !floating &&
-          (transparent
-            ? "border-b border-white/20 bg-black/25 backdrop-blur-md"
-            : "morris-glass border-b border-white/40")
+          ? "border-b border-white/10 bg-black/60 shadow-lg backdrop-blur-md"
+          : variant === "umbrella"
+            ? "border-b border-white/10 bg-black/65 shadow-lg backdrop-blur-md"
+            : transparent
+              ? "border-b border-white/20 bg-black/25 backdrop-blur-md"
+              : "morris-glass border-b border-white/40"
       )}
     >
-      <div className="mx-auto flex h-16 max-w-lg items-center justify-between px-4 md:h-[4.25rem] md:max-w-6xl">
-        <CompanyLogo
-          height={floating ? 72 : 56}
-          width={floating ? 280 : 220}
-          priority
-          href="/"
-          onDark={floating}
-          className={floating ? "md:!h-[4.75rem] md:!w-[4.75rem]" : undefined}
-        />
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 md:h-[4.25rem]">
+        {variant === "umbrella" ? (
+          <Link href="/" className="shrink-0">
+            <span className="text-lg font-bold tracking-tight text-white md:text-xl">
+              {morrisServicesConfig.publicBrandName}
+            </span>
+            <span className="hidden text-[10px] font-medium text-white/60 sm:block">
+              {morrisServicesConfig.parentLegalName}
+            </span>
+          </Link>
+        ) : (
+          <div className="flex min-w-0 shrink flex-col">
+            <CompanyLogo
+              height={floating ? 56 : 56}
+              width={floating ? 220 : 220}
+              priority
+              href={homeHref}
+              onDark={floating}
+              className={floating ? "!h-12 !w-12 md:!h-14 md:!w-14" : undefined}
+            />
+            <span
+              className={cn(
+                "truncate text-[10px] font-medium leading-tight",
+                floating ? "text-white/80" : "text-muted-foreground"
+              )}
+            >
+              A {morrisServicesConfig.publicBrandName} Company
+            </span>
+          </div>
+        )}
+
+        <nav
+          className={cn(
+            "hidden flex-1 flex-wrap items-center justify-center gap-0.5 xl:gap-1",
+            variant === "company" ? "md:flex" : "lg:flex"
+          )}
+        >
+          {mainLinks.map((link) => (
+            <NavLink key={link.href} {...link} pathname={pathname} onDark={onDark} />
+          ))}
+          {variant === "umbrella" && (
+            <>
+              <span className="mx-1 hidden h-4 w-px bg-white/25 lg:block" />
+              {loginLinks.map((link) => (
+                <NavLink key={link.href} {...link} pathname={pathname} onDark />
+              ))}
+            </>
+          )}
+        </nav>
 
         <div className="flex items-center gap-2">
           <a
@@ -64,70 +172,107 @@ export function PublicHeader({
             className={cn(
               buttonVariants({ size: "sm", variant: "outline" }),
               "hidden rounded-full sm:inline-flex",
-              floating || transparent
-                ? "border-white/40 bg-black/30 text-white backdrop-blur-sm hover:bg-black/45 hover:text-white"
+              onDark
+                ? "border-white/35 bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
                 : "border-brand-primary/20 hover:bg-brand-primary/5"
             )}
           >
-            <Phone
-              className={cn(
-                "mr-1.5 h-4 w-4",
-                floating || transparent ? "text-white" : "text-brand-primary"
-              )}
-            />
+            <Phone className={cn("mr-1.5 h-4 w-4", onDark ? "text-white" : "text-brand-primary")} />
             <span className="font-semibold">{company.phone}</span>
           </a>
 
-          <ButtonLink
-            href="/book"
-            size="sm"
-            className={cn(
-              "hidden rounded-full shadow-md sm:inline-flex",
-              floating || transparent
-                ? "bg-brand-primary hover:bg-brand-primary/90"
-                : "bg-brand-primary hover:bg-brand-primary/90"
-            )}
-          >
-            <Sparkles className="mr-1.5 h-4 w-4" />
-            Book Now
-          </ButtonLink>
+          {variant === "company" && (
+            <ButtonLink
+              href="/book"
+              size="sm"
+              className={cn(
+                "hidden rounded-full bg-brand-primary shadow-md hover:bg-brand-primary/90 sm:inline-flex",
+                onDark && "bg-brand-primary hover:bg-brand-primary/90"
+              )}
+            >
+              <Sparkles className="mr-1.5 h-4 w-4" />
+              {bookingCta}
+            </ButtonLink>
+          )}
 
           <Sheet>
             <SheetTrigger
               className={cn(
                 buttonVariants({ size: "icon", variant: "ghost" }),
-                "rounded-full md:hidden",
-                (floating || transparent) && "text-white hover:bg-white/15 hover:text-white"
+                "rounded-full",
+                variant === "company" ? "md:hidden" : "lg:hidden",
+                onDark && "text-white hover:bg-white/15 hover:text-white"
               )}
             >
               <Menu className="h-5 w-5" />
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] morris-glass">
+            <SheetContent
+              side="right"
+              className={cn(
+                "w-[min(100vw-2rem,320px)]",
+                onDark ? "border-border bg-slate-950 text-white" : "morris-glass"
+              )}
+            >
               <SheetHeader>
-                <SheetTitle className="text-left">{company.companyName}</SheetTitle>
+                <SheetTitle className={cn("text-left", onDark && "text-white")}>
+                  {variant === "umbrella"
+                    ? morrisServicesConfig.publicBrandName
+                    : company.companyName}
+                </SheetTitle>
               </SheetHeader>
               <nav className="mt-8 flex flex-col gap-1">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      "rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-                      pathname === link.href
-                        ? "bg-brand-primary text-white"
-                        : "hover:bg-muted"
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {mainLinks.map((link) => {
+                  const path = link.href.split("?")[0].split("#")[0];
+                  const active =
+                    path === "/junk-removal"
+                      ? pathname === "/junk-removal"
+                      : path === "/"
+                        ? pathname === "/"
+                        : pathname === path || pathname.startsWith(`${path}/`);
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={cn(
+                        "rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                        active
+                          ? "bg-brand-primary text-white"
+                          : onDark
+                            ? "text-white/90 hover:bg-white/10"
+                            : "hover:bg-muted"
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+                {variant === "umbrella" &&
+                  loginLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="rounded-xl px-4 py-3 text-sm font-medium text-white/90 hover:bg-white/10"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
                 <a
                   href={`tel:${company.phone}`}
-                  className="mt-4 flex items-center gap-2 rounded-xl bg-brand-primary/10 px-4 py-3 text-sm font-semibold text-brand-primary"
+                  className={cn(
+                    "mt-4 flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold",
+                    onDark
+                      ? "bg-brand-primary text-white"
+                      : "bg-brand-primary/10 text-brand-primary"
+                  )}
                 >
                   <Phone className="h-4 w-4" />
                   {company.phone}
                 </a>
+                {variant === "company" && (
+                  <ButtonLink href="/book" className="mt-2 w-full rounded-xl">
+                    {bookingCta}
+                  </ButtonLink>
+                )}
               </nav>
             </SheetContent>
           </Sheet>

@@ -1,15 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FinancingRequest } from "@/types/financing";
-import {
-  getCustomer,
-  getFinancingRequests,
-  getJobByCompany,
-  getInvoice,
-  getPaymentsForCustomer,
-} from "@/lib/mock-data";
+import type { Customer } from "@/types/user";
+import type { Invoice, Job, Payment } from "@/types";
 import { useCompany } from "@/lib/company-context";
+import { mutateApproveFinancing, mutateDenyFinancing } from "@/lib/api/mutations";
 import { inHouseFinancingProvider } from "@/lib/financing-provider";
 import { calculateFinancingBreakdown } from "@/lib/payment-utils";
 import { PremiumCard } from "@/components/morris/PremiumCard";
@@ -54,9 +50,17 @@ function RiskBadge({ score }: { score?: number }) {
 
 function ApplicantCard({
   request,
+  customer,
+  job,
+  invoice,
+  history,
   onUpdate,
 }: {
   request: FinancingRequest;
+  customer?: Customer;
+  job?: Job;
+  invoice?: Invoice;
+  history: Payment[];
   onUpdate?: () => void;
 }) {
   const { companyId } = useCompany();
@@ -69,12 +73,6 @@ function ApplicantCard({
   const [denyReason, setDenyReason] = useState("");
   const [notesDraft, setNotesDraft] = useState(request.internalNotes ?? "");
 
-  const customer = getCustomer(companyId, request.customerId);
-  const job = getJobByCompany(companyId, request.jobId);
-  const invoice = request.invoiceId
-    ? getInvoice(companyId, request.invoiceId)
-    : undefined;
-  const history = getPaymentsForCustomer(companyId, request.customerId);
   const breakdown = calculateFinancingBreakdown(
     request.totalAmount,
     downPayment,
@@ -83,27 +81,33 @@ function ApplicantCard({
 
   const handleApprove = async () => {
     setLoading(true);
-    await inHouseFinancingProvider.approve(request.id, companyId, {
-      downPayment,
-      numberOfPayments: numPayments,
-      internalNotes,
-    });
-    setLoading(false);
-    setApproveOpen(false);
-    onUpdate?.();
+    try {
+      await mutateApproveFinancing(companyId, request.id, {
+        downPayment,
+        numberOfPayments: numPayments,
+        internalNotes,
+      });
+    } finally {
+      setLoading(false);
+      setApproveOpen(false);
+      onUpdate?.();
+    }
   };
 
   const handleDeny = async () => {
     setLoading(true);
-    await inHouseFinancingProvider.deny(
-      request.id,
-      companyId,
-      denyReason || "Does not meet criteria",
-      internalNotes
-    );
-    setLoading(false);
-    setDenyOpen(false);
-    onUpdate?.();
+    try {
+      await mutateDenyFinancing(
+        companyId,
+        request.id,
+        denyReason || "Does not meet criteria",
+        { internalNotes }
+      );
+    } finally {
+      setLoading(false);
+      setDenyOpen(false);
+      onUpdate?.();
+    }
   };
 
   const handleSaveNotes = async () => {
@@ -430,9 +434,65 @@ function ApplicantCard({
 
 export function FinancingApprovalCenter({ onUpdate }: FinancingApprovalCenterProps) {
   const { companyId } = useCompany();
-  const requests = getFinancingRequests(companyId);
+  const [requests, setRequests] = useState<FinancingRequest[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(() => {
+    setLoading(true);
+    Promise.all([
+      fetch("/api/admin/financing").then((r) => r.json()),
+      fetch("/api/admin/customers").then((r) => r.json()),
+      fetch("/api/admin/jobs").then((r) => r.json()),
+      fetch("/api/admin/invoices").then((r) => r.json()),
+      fetch("/api/admin/payments").then((r) => r.json()),
+    ])
+      .then(([fin, cust, jobRes, inv, pay]) => {
+        if (fin.ok) setRequests(fin.requests ?? []);
+        if (cust.ok) setCustomers(cust.customers ?? []);
+        if (jobRes.ok) setJobs(jobRes.jobs ?? []);
+        if (inv.ok) setInvoices(inv.invoices ?? []);
+        if (pay.ok) setPayments(pay.payments ?? []);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh, companyId]);
+
+  const customerMap = useMemo(() => new Map(customers.map((c) => [c.id, c])), [customers]);
+  const jobMap = useMemo(() => new Map(jobs.map((j) => [j.id, j])), [jobs]);
+  const invoiceMap = useMemo(() => new Map(invoices.map((i) => [i.id, i])), [invoices]);
+
   const pending = requests.filter((r) => r.status === "pending");
   const other = requests.filter((r) => r.status !== "pending");
+
+  if (loading) {
+    return <p className="text-muted-foreground text-sm py-8 text-center">Loading financing requests…</p>;
+  }
+
+  const renderCard = (request: FinancingRequest) => {
+    const jobIds = new Set(jobs.filter((j) => j.customerId === request.customerId).map((j) => j.id));
+    const history = payments.filter((p) => jobIds.has(p.jobId));
+    return (
+      <ApplicantCard
+        key={request.id}
+        request={request}
+        customer={customerMap.get(request.customerId)}
+        job={jobMap.get(request.jobId)}
+        invoice={request.invoiceId ? invoiceMap.get(request.invoiceId) : undefined}
+        history={history}
+        onUpdate={() => {
+          refresh();
+          onUpdate?.();
+        }}
+      />
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -453,9 +513,7 @@ export function FinancingApprovalCenter({ onUpdate }: FinancingApprovalCenterPro
         <section>
           <h2 className="mb-4 text-lg font-bold">Pending approval</h2>
           <div className="space-y-4">
-            {pending.map((r) => (
-              <ApplicantCard key={r.id} request={r} onUpdate={onUpdate} />
-            ))}
+            {pending.map((r) => renderCard(r))}
           </div>
         </section>
       )}
@@ -464,9 +522,7 @@ export function FinancingApprovalCenter({ onUpdate }: FinancingApprovalCenterPro
         <section>
           <h2 className="mb-4 text-lg font-bold">All requests</h2>
           <div className="space-y-4">
-            {other.map((r) => (
-              <ApplicantCard key={r.id} request={r} onUpdate={onUpdate} />
-            ))}
+            {other.map((r) => renderCard(r))}
           </div>
         </section>
       )}

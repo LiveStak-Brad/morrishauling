@@ -29,6 +29,7 @@ loadEnvLocal();
 
 const projectRef = "wfdfyhrdqpozyavxxgob";
 const password = process.env.SUPABASE_DB_PASSWORD;
+const poolerHost = process.env.SUPABASE_POOLER_HOST ?? "aws-1-us-east-2.pooler.supabase.com";
 if (!password) {
   console.error("Missing SUPABASE_DB_PASSWORD in .env.local");
   process.exit(1);
@@ -36,6 +37,7 @@ if (!password) {
 
 const encoded = encodeURIComponent(password);
 const hosts = [
+  poolerHost,
   `db.${projectRef}.supabase.co`,
   `aws-0-us-east-1.pooler.supabase.com`,
 ];

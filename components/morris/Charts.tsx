@@ -1,11 +1,11 @@
 "use client";
 
-import type { RevenueDataPoint } from "@/lib/mock-analytics";
+import type { DataPoint } from "@/types/operations-command-center";
 import { cn } from "@/lib/utils";
 import { PremiumCard } from "./PremiumCard";
 
 interface MiniBarChartProps {
-  data: RevenueDataPoint[];
+  data: DataPoint[];
   title?: string;
   className?: string;
 }

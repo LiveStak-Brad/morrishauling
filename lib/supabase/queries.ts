@@ -8,6 +8,9 @@ import type {
 import type { Customer, Employee } from "@/types/user";
 import { createClient } from "@/lib/supabase/server";
 
+/** @deprecated Use isDbReady from lib/db instead */
+export { isDbReady as isSupabaseTablesReady } from "@/lib/db/operations";
+
 function rowToJob(row: {
   id: string;
   company_id: string;
@@ -26,7 +29,8 @@ function rowToJob(row: {
     companyId: row.company_id,
     customerId: row.customer_id,
     status: row.status as Job["status"],
-    junkType: row.junk_type || payload.junkType || "",
+    serviceType: payload.serviceType ?? "junk_removal",
+    junkType: row.junk_type || payload.junkType || "general",
     scheduledDate: row.scheduled_date ?? payload.scheduledDate,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -198,7 +202,7 @@ export async function fetchUsersFromSupabase(companyId: string): Promise<User[]>
   return (data ?? []).map(rowToUser);
 }
 
-export async function isSupabaseTablesReady(): Promise<boolean> {
+export async function isSupabaseTablesReadyLegacy(): Promise<boolean> {
   try {
     const supabase = await createClient();
     const { error } = await supabase.from("companies").select("id").limit(1);

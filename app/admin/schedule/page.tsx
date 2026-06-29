@@ -1,24 +1,40 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useCompany } from "@/lib/company-context";
-import { getJobs } from "@/lib/mock-data";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
-import { JobCard } from "@/components/customer/JobCard";
+import { AdminScheduleManager } from "@/components/admin/AdminScheduleManager";
+import type { Job } from "@/types/job";
+import type { ScheduleSlot } from "@/types/schedule";
 
 export default function AdminSchedulePage() {
   const { companyId } = useCompany();
-  const jobs = getJobs(companyId).filter((j) => j.scheduledDate);
+  const today = new Date().toISOString().split("T")[0];
+  const [initialSlots, setInitialSlots] = useState<ScheduleSlot[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([
+      fetch(`/api/schedule/slots?companyId=${encodeURIComponent(companyId)}&fromDate=${today}&days=30&includeClosed=1`).then((r) => r.json()),
+      fetch("/api/admin/jobs").then((r) => r.json()),
+    ])
+      .then(([slotsRes, jobsRes]) => {
+        if (slotsRes.ok && slotsRes.slots) setInitialSlots(slotsRes.slots);
+        if (jobsRes.ok) setJobs(jobsRes.jobs ?? []);
+      })
+      .catch(() => undefined)
+      .finally(() => setLoading(false));
+  }, [companyId, today]);
 
   return (
     <AdminPageShell title="Schedule">
-      <div className="space-y-3">
-        {jobs.map((job) => (
-          <div key={job.id}>
-            <p className="mb-1 text-xs text-muted-foreground">{job.scheduledDate}</p>
-            <JobCard job={job} />
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <p className="text-muted-foreground">Loading schedule…</p>
+      ) : (
+        <AdminScheduleManager companyId={companyId} initialSlots={initialSlots} jobs={jobs} />
+      )}
     </AdminPageShell>
   );
 }

@@ -1,27 +1,29 @@
 "use client";
 
-import { useCompany } from "@/lib/company-context";
+import { Suspense } from "react";
+import Link from "next/link";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
-import { Card, CardContent } from "@/components/ui/card";
+import { DisposalManagementDashboard } from "@/components/disposal/DisposalManagementDashboard";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export default function AdminDumpSitesPage() {
-  const { company } = useCompany();
-
   return (
-    <AdminPageShell title="Dump sites">
-      <div className="space-y-3">
-        {company.dumpSites.map((d) => (
-          <Card key={d.id}>
-            <CardContent className="p-4">
-              <p className="font-medium">{d.name}</p>
-              <p className="text-sm text-muted-foreground">{d.address}</p>
-              {d.feePerLoad && (
-                <p className="text-sm">Fee: ${d.feePerLoad}/load</p>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+    <AdminPageShell
+      title="Disposal Management"
+      description="Facility directory, material routing, and intelligent dispatch recommendations"
+      action={
+        <Link href="/admin/dump-sites/new">
+          <Button size="sm">
+            <Plus className="mr-1.5 h-4 w-4" />
+            Add facility
+          </Button>
+        </Link>
+      }
+    >
+      <Suspense fallback={<p className="text-muted-foreground">Loading…</p>}>
+        <DisposalManagementDashboard />
+      </Suspense>
     </AdminPageShell>
   );
 }

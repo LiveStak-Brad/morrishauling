@@ -32,12 +32,14 @@ const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { href: "/customer/jobs", label: "Jobs", icon: Briefcase },
     { href: "/book", label: "Book", icon: CalendarPlus },
     { href: "/customer/payments", label: "Pay", icon: CreditCard },
-    { href: "/login", label: "Account", icon: User },
+    { href: "/account", label: "Account", icon: User },
   ],
   employee: [
-    { href: "/employee", label: "Today", icon: Truck },
-    { href: "/employee", label: "Route", icon: Map, match: "/employee" },
-    { href: "/login", label: "Profile", icon: User },
+    { href: "/employee", label: "Home", icon: Home },
+    { href: "/employee/clock", label: "Clock", icon: Truck },
+    { href: "/employee/schedule", label: "Route", icon: Map },
+    { href: "/employee/documents", label: "Docs", icon: Briefcase },
+    { href: "/employee/profile", label: "Profile", icon: User },
   ],
   planner: [
     { href: "/planner", label: "Dispatch", icon: Radio },
@@ -49,8 +51,17 @@ const NAV_BY_ROLE: Record<Role, NavItem[]> = {
     { href: "/admin/jobs", label: "Jobs", icon: Briefcase },
     { href: "/admin/settings", label: "Settings", icon: Settings },
   ],
-  platform_admin: [
-    { href: "/platform", label: "Platform", icon: LayoutDashboard },
+  hr: [
+    { href: "/admin/hr", label: "HR", icon: LayoutDashboard },
+    { href: "/admin/hr/applicants", label: "Hiring", icon: Briefcase },
+    { href: "/admin/hr/employees", label: "Staff", icon: User },
+    { href: "/admin/hr/payroll", label: "Payroll", icon: CreditCard },
+  ],
+  office_admin: [
+    { href: "/admin/hr", label: "HR", icon: LayoutDashboard },
+    { href: "/admin/hr/employees", label: "Staff", icon: User },
+    { href: "/admin/hr/payroll", label: "Payroll", icon: CreditCard },
+    { href: "/account", label: "Account", icon: User },
   ],
 };
 

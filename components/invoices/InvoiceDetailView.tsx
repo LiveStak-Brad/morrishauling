@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { Invoice, Payment } from "@/types/payment";
 import type { Job } from "@/types/job";
 import type { Customer } from "@/types/user";
@@ -15,6 +16,7 @@ import { PaymentActivityTimeline } from "@/components/payments/PaymentActivityTi
 import { buildPaymentActivity } from "@/lib/payment-utils";
 import { formatCurrency, formatDate } from "@/components/payments/payment-ui";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/lib/toast";
 import {
   Camera,
   Download,
@@ -30,6 +32,8 @@ interface InvoiceDetailViewProps {
   payments: Payment[];
   financing?: FinancingRequest | null;
   showActions?: boolean;
+  showSendAction?: boolean;
+  pdfDownloadPath?: string;
 }
 
 export function InvoiceDetailView({
@@ -39,9 +43,35 @@ export function InvoiceDetailView({
   payments,
   financing,
   showActions = true,
+  showSendAction = true,
+  pdfDownloadPath,
 }: InvoiceDetailViewProps) {
   const status = derivePaymentStatus(invoice, financing);
   const activity = buildPaymentActivity(invoice, payments, financing);
+  const [pdfLoading, setPdfLoading] = useState(false);
+
+  const downloadPdf = async () => {
+    const path = pdfDownloadPath ?? `/api/admin/invoices/${invoice.id}/pdf`;
+    setPdfLoading(true);
+    try {
+      const res = await fetch(path);
+      const data = await res.json();
+      if (data.ok && data.url) {
+        window.open(data.url, "_blank", "noopener,noreferrer");
+      } else {
+        toast.error(data.error ?? "Failed to generate PDF");
+      }
+    } catch {
+      toast.error("Failed to generate PDF");
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
+  const sendInvoice = async () => {
+    await downloadPdf();
+    toast.info("Email provider not connected yet — PDF generated for download.");
+  };
 
   return (
     <div className="space-y-6">
@@ -58,13 +88,15 @@ export function InvoiceDetailView({
         </div>
         {showActions && (
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" disabled title="Coming soon">
-              <Send className="mr-2 h-4 w-4" />
-              Send invoice
-            </Button>
-            <Button variant="outline" size="sm" disabled title="Coming soon">
+            {showSendAction && (
+              <Button variant="outline" size="sm" onClick={() => void sendInvoice()} disabled={pdfLoading}>
+                <Send className="mr-2 h-4 w-4" />
+                Send invoice
+              </Button>
+            )}
+            <Button variant="outline" size="sm" onClick={() => void downloadPdf()} disabled={pdfLoading}>
               <Download className="mr-2 h-4 w-4" />
-              Download PDF
+              {pdfLoading ? "Generating…" : "Download PDF"}
             </Button>
           </div>
         )}
@@ -148,16 +180,24 @@ export function InvoiceDetailView({
           <Camera className="h-4 w-4" />
           Job photos
         </h3>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="flex aspect-square items-center justify-center rounded-xl bg-gray-100 text-xs text-muted-foreground"
-            >
-              Photo {i}
-            </div>
-          ))}
-        </div>
+        {job?.photos && job.photos.length > 0 ? (
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            {job.photos.map((photo) => (
+              <a
+                key={photo.id}
+                href={photo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative aspect-square overflow-hidden rounded-xl border bg-muted"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={photo.url} alt={photo.caption ?? "Job photo"} className="h-full w-full object-cover" />
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-3 text-sm text-muted-foreground">No photos attached to this job.</p>
+        )}
       </PremiumCard>
 
       {invoice.terms && (

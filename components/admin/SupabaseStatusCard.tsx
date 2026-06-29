@@ -5,14 +5,43 @@ import { PremiumCard } from "@/components/morris/PremiumCard";
 import { StatusChip } from "@/components/morris/StatusChip";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Database, ExternalLink } from "lucide-react";
+import { Database, ExternalLink, HardDrive } from "lucide-react";
+
+interface BucketStatus {
+  bucket: string;
+  exists: boolean | null;
+  canUpload: boolean;
+  canSignUrl: boolean;
+  skipped?: boolean;
+  error?: string;
+}
 
 interface SupabaseStatus {
   ok?: boolean;
   connected?: boolean;
   tablesReady?: boolean;
-  tableError?: string | null;
   error?: string;
+  migration032?: {
+    employee_document_uploads?: boolean;
+    applicant_documents?: boolean;
+    document_audit_log?: boolean;
+  };
+  production?: {
+    hasServiceRole?: boolean;
+  };
+  storage?: {
+    available: boolean;
+    serviceRoleConfigured?: boolean;
+    buckets: BucketStatus[];
+    warnings: string[];
+  };
+}
+
+function bucketLabel(b: BucketStatus): string {
+  if (b.skipped || b.exists === null) return "Not tested (service role key missing)";
+  if (b.exists && b.canUpload && b.canSignUrl) return "OK";
+  if (!b.exists) return b.error ?? "Bucket not found";
+  return b.error ?? "Unavailable";
 }
 
 export function SupabaseStatusCard() {
@@ -20,13 +49,31 @@ export function SupabaseStatusCard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/health/supabase")
-      .then((r) => r.json())
+    fetch("/api/admin/health/supabase", { credentials: "include" })
+      .then(async (r) => {
+        if (r.status === 403) {
+          const publicRes = await fetch("/api/health/supabase");
+          const publicData = await publicRes.json();
+          return {
+            ok: publicData.ok,
+            connected: publicData.ok,
+            tablesReady: publicData.ok,
+            error: "Sign in as admin for full diagnostics.",
+          } satisfies SupabaseStatus;
+        }
+        return r.json() as Promise<SupabaseStatus>;
+      })
       .then(setStatus)
       .finally(() => setLoading(false));
   }, []);
 
   const enabled = process.env.NEXT_PUBLIC_USE_SUPABASE === "true";
+  const hasServiceRole = status?.storage?.serviceRoleConfigured === true;
+  const storageOk = status?.storage?.available === true;
+  const migrationOk =
+    status?.migration032?.employee_document_uploads &&
+    status?.migration032?.applicant_documents &&
+    status?.migration032?.document_audit_log;
 
   return (
     <PremiumCard className="p-5">
@@ -57,20 +104,75 @@ export function SupabaseStatusCard() {
         <p className="mt-4 text-sm text-muted-foreground">Checking connection…</p>
       ) : (
         <div className="mt-4 space-y-2 text-sm">
-          {status?.tableError && (
-            <p className="rounded-lg bg-orange-50 p-3 text-orange-800">
-              {status.tableError}. Run the SQL migration in Supabase SQL Editor (see{" "}
-              <code className="text-xs">supabase/README.md</code>).
-            </p>
-          )}
           {status?.error && (
             <p className="rounded-lg bg-red-50 p-3 text-red-800">{status.error}</p>
           )}
           {status?.tablesReady && (
-            <p className="text-emerald-700">
-              API connected. App hydrates jobs, invoices, and payments on load.
+            <p className="text-emerald-700">Database tables reachable.</p>
+          )}
+          {migrationOk && (
+            <p className="text-emerald-700">Migration 032 tables present (uploads, applicant docs, audit log).</p>
+          )}
+
+          <div className="mt-4 flex items-center gap-2">
+            <HardDrive className="h-4 w-4 text-muted-foreground" />
+            <span className="font-semibold">Storage buckets</span>
+            {!loading && (
+              <StatusChip
+                label={
+                  !hasServiceRole
+                    ? "Key missing"
+                    : storageOk
+                      ? "Ready"
+                      : "Issues"
+                }
+                variant={storageOk ? "success" : "warning"}
+                className="ml-auto"
+              />
+            )}
+          </div>
+
+          {!hasServiceRole && (
+            <p className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-amber-950">
+              Storage buckets exist, but the service role key is missing, so upload/signed URL
+              tests cannot run locally. Add{" "}
+              <code className="text-xs">SUPABASE_SERVICE_ROLE_KEY</code> to{" "}
+              <code className="text-xs">.env.local</code> (Supabase → Settings → API →{" "}
+              <em>service_role</em>) and restart the dev server.
             </p>
           )}
+
+          {(status?.storage?.buckets ?? []).length > 0 && (
+            <ul className="space-y-1 text-xs">
+              {status?.storage?.buckets.map((b) => {
+                const ok = b.exists === true && b.canUpload && b.canSignUrl;
+                const skipped = b.skipped || b.exists === null;
+                return (
+                  <li key={b.bucket} className="flex justify-between gap-2">
+                    <span className="font-mono">{b.bucket}</span>
+                    <span
+                      className={
+                        ok
+                          ? "text-emerald-700"
+                          : skipped
+                            ? "text-muted-foreground"
+                            : "text-amber-700"
+                      }
+                    >
+                      {bucketLabel(b)}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+
+          {hasServiceRole && (status?.storage?.warnings ?? []).length > 0 && (
+            <p className="rounded-lg bg-amber-50 p-3 text-amber-900">
+              {status?.storage?.warnings.join(" · ")}
+            </p>
+          )}
+
           <div className="flex flex-wrap gap-2 pt-2">
             <a
               href="https://supabase.com/dashboard/project/wfdfyhrdqpozyavxxgob/sql/new"

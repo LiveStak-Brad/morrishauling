@@ -1,6 +1,19 @@
 // @supabase-table: jobs
 
 import type { LatLng } from "./company";
+import type {
+  EstimateType,
+  HaulingDetails,
+  PricingBreakdownLine,
+  ServiceType,
+} from "./hauling";
+
+export type { ServiceType, EstimateType, HaulingDetails, PricingBreakdownLine };
+export * from "./hauling";
+import type { JunkRemovalDetails, EstimateReviewStatus } from "./junk-removal";
+
+export type { JunkRemovalDetails, EstimateReviewStatus };
+export * from "./junk-removal";
 
 export type JobStatus =
   | "draft"
@@ -92,6 +105,7 @@ export interface Job {
   id: string;
   companyId: string;
   customerId: string;
+  serviceType: ServiceType;
   status: JobStatus;
   junkType: string;
   items: JunkItem[];
@@ -100,8 +114,17 @@ export interface Job {
   address: JobAddress;
   photos: JobPhoto[];
   estimate?: Estimate;
+  estimateType?: EstimateType;
+  pricingBreakdown?: PricingBreakdownLine[];
+  disclaimerAccepted?: boolean;
+  haulingDetails?: HaulingDetails;
+  junkRemovalDetails?: JunkRemovalDetails;
+  reviewStatus?: EstimateReviewStatus;
   warnings: EstimateWarning[];
   scheduledDate?: string;
+  selectedScheduleSlotId?: string;
+  scheduledWindowLabel?: string;
+  flexibleDiscountAmount?: number;
   routeOrder?: number;
   assignedTruckId?: string;
   assignedTrailerId?: string;

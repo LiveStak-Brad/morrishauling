@@ -27,25 +27,7 @@ export interface ActivityItem {
   amount?: number;
 }
 
-export function getMorrisKPIs(companyId: string): MorrisKPIs {
-  if (companyId === "greenbin-junk") {
-    return {
-      todayRevenue: 1840,
-      weekRevenue: 11200,
-      monthRevenue: 42800,
-      jobsToday: 4,
-      pendingEstimates: 2,
-      conversionRate: 68,
-      outstandingInvoices: 1200,
-      financingRequests: 0,
-      customerSatisfaction: 4.7,
-      averageTicket: 385,
-      repeatCustomerRate: 34,
-      employeeProductivity: 88,
-      profitMargin: 38,
-    };
-  }
-
+export function getMorrisKPIs(_companyId?: string): MorrisKPIs {
   return {
     todayRevenue: 4280,
     weekRevenue: 28450,
@@ -63,23 +45,21 @@ export function getMorrisKPIs(companyId: string): MorrisKPIs {
   };
 }
 
-export function getWeeklyRevenue(companyId: string): RevenueDataPoint[] {
-  const base = companyId === "morris-hauling" ? 4200 : 1800;
+export function getWeeklyRevenue(_companyId?: string): RevenueDataPoint[] {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   return days.map((label, i) => ({
     label,
-    value: Math.round(base * (0.7 + Math.sin(i) * 0.3 + i * 0.05)),
+    value: Math.round(4200 * (0.7 + Math.sin(i) * 0.3 + i * 0.05)),
   }));
 }
 
-export function getActivityFeed(companyId: string): ActivityItem[] {
-  const prefix = companyId === "morris-hauling" ? "m" : "g";
+export function getActivityFeed(_companyId?: string): ActivityItem[] {
   return [
     { id: "1", type: "payment", message: "Deposit received — Main St, St. Charles", time: "12 min ago", amount: 62 },
     { id: "2", type: "job", message: "Job scheduled — Oakwood Dr estate cleanout, Warrenton", time: "34 min ago" },
     { id: "3", type: "estimate", message: "New estimate submitted — Builder Way, O'Fallon", time: "1 hr ago", amount: 499 },
     { id: "4", type: "financing", message: "Financing request pending approval", time: "2 hr ago", amount: 614 },
     { id: "5", type: "review", message: "5-star review from Alex J.", time: "3 hr ago" },
-    { id: "6", type: "job", message: `Crew ${prefix}2 completed — Maple St, Troy`, time: "4 hr ago", amount: 349 },
+    { id: "6", type: "job", message: "Crew completed — Maple St, Troy", time: "4 hr ago", amount: 349 },
   ];
 }

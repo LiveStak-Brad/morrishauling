@@ -1,28 +1,47 @@
 "use client";
 
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useCompany } from "@/lib/company-context";
-import {
-  getInvoice,
-  getJobByCompany,
-  getFinancingByJob,
-} from "@/lib/mock-data";
+import { useCustomerPortal } from "@/hooks/useCustomerPortal";
+import { CustomerLoginPrompt } from "@/components/customer/CustomerLoginPrompt";
 import { FinancingRequestWizard } from "@/components/financing/FinancingRequestWizard";
 import { ArrowLeft } from "lucide-react";
-import { Suspense } from "react";
 
 function FinancingContent() {
   const searchParams = useSearchParams();
-  const { companyId } = useCompany();
-  const jobId = searchParams.get("job") ?? "job-m2";
+  const jobId = searchParams.get("job");
   const invoiceParam = searchParams.get("invoice");
-  const invoice =
-    invoiceParam ? getInvoice(companyId, invoiceParam) : undefined;
-  const job = getJobByCompany(companyId, jobId);
-  const financing = getFinancingByJob(companyId, jobId);
+  const { data, loading } = useCustomerPortal();
+
+  if (loading) {
+    return <p className="text-muted-foreground">Loading…</p>;
+  }
+
+  const job = jobId ? data?.jobs.find((j) => j.id === jobId) : data?.jobs[0];
+  const invoice = invoiceParam
+    ? data?.invoices.find((i) => i.id === invoiceParam)
+    : job
+      ? data?.invoices.find((i) => i.jobId === job.id)
+      : undefined;
+  const resolvedJobId = jobId ?? job?.id;
+  const financing = resolvedJobId
+    ? data?.financing.find((f) => f.jobId === resolvedJobId)
+    : undefined;
   const totalAmount =
-    invoice?.balanceDue ?? invoice?.total ?? job?.estimate?.total ?? 850;
+    invoice?.balanceDue ?? invoice?.total ?? job?.estimate?.total ?? 0;
+
+  if (!resolvedJobId) {
+    return (
+      <div className="rounded-xl border border-dashed p-8 text-center text-muted-foreground">
+        <p>No eligible job found for financing.</p>
+        <Link href="/book" className="mt-4 inline-block text-brand-primary underline">
+          Book a service
+        </Link>
+      </div>
+    );
+  }
 
   if (financing?.status === "pending") {
     return (
@@ -40,7 +59,7 @@ function FinancingContent() {
 
   return (
     <FinancingRequestWizard
-      jobId={jobId}
+      jobId={resolvedJobId}
       invoiceId={invoice?.id ?? invoiceParam ?? undefined}
       totalAmount={totalAmount}
     />
@@ -49,6 +68,15 @@ function FinancingContent() {
 
 export default function CustomerFinancingPage() {
   const { company } = useCompany();
+  const { requiresLogin } = useCustomerPortal();
+
+  if (requiresLogin) {
+    return (
+      <div className="min-h-screen bg-background p-6">
+        <CustomerLoginPrompt redirectPath="/customer/financing" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-32">

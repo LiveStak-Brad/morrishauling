@@ -2,16 +2,18 @@
 
 import { useEffect } from "react";
 import { CompanyProvider } from "@/lib/company-context";
-import { RoleProvider } from "@/lib/role-context";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { DataHydrator } from "@/components/data/DataHydrator";
+import { ToastProvider } from "@/components/ui/toast-provider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <CompanyProvider>
-      <RoleProvider>
+      <AuthProvider>
         <DataHydrator />
+        <ToastProvider />
         {children}
-      </RoleProvider>
+      </AuthProvider>
     </CompanyProvider>
   );
 }
