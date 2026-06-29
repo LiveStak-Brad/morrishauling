@@ -120,7 +120,7 @@ export function HaulingHomePage() {
         <section className="py-8">
           <SectionHeader
             title="What we're building"
-            subtitle="Professional junk removal planned for our Missouri launch"
+            subtitle={`Professional junk removal planned for ${PRELAUNCH_SERVICE_AREA}`}
             size="lg"
           />
           <div className="grid gap-4 md:grid-cols-3">

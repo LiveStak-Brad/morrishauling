@@ -1,7 +1,7 @@
 /** Prelaunch-safe public marketing copy (APP_STATUS=prelaunch). */
 
 export const PRELAUNCH_SERVICE_AREA =
-  "Warren, Lincoln, St. Charles, and surrounding Missouri counties";
+  "Warren, Lincoln & St. Charles Counties, MO";
 
 export const PRELAUNCH_HAULING_INTRO =
   "Morris Hauling & Junk Removal is the first service company under Morris Services — preparing professional junk removal and light hauling for launch.";

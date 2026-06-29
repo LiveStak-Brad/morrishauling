@@ -22,7 +22,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { PremiumCard } from "@/components/morris/PremiumCard";
 import { SectionHeader } from "@/components/morris/SectionHeader";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
-import { PRELAUNCH_HAULING_INTRO, PRELAUNCH_SCHEDULING_NOTE } from "@/lib/public-copy";
+import { PRELAUNCH_HAULING_INTRO, PRELAUNCH_SCHEDULING_NOTE, PRELAUNCH_SERVICE_AREA } from "@/lib/public-copy";
 import { cn } from "@/lib/utils";
 
 const futureCompanyIcons: Record<string, LucideIcon> = {
@@ -40,28 +40,32 @@ export function MorrisServicesHomePage() {
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-background">
       <PublicHeader variant="umbrella" />
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-brand-primary/35 text-white">
-        <div className="morris-hero-pattern pointer-events-none absolute inset-0 opacity-70" aria-hidden />
+      <section className="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+        <div className="morris-hero-pattern pointer-events-none absolute inset-0 opacity-40" aria-hidden />
         <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(155,27,48,0.22)_0%,transparent_55%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center_top,_rgba(255,255,255,0.12)_0%,transparent_50%)]"
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute -right-24 top-1/4 h-72 w-72 rounded-full bg-brand-primary/15 blur-3xl"
+          className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[min(55vh,28rem)] max-w-5xl bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.14)_0%,transparent_70%)]"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -right-24 top-1/4 h-72 w-72 rounded-full bg-brand-primary/10 blur-3xl"
           aria-hidden
         />
 
         <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-4 py-14 text-center sm:py-16 md:py-20 lg:py-28">
           <div
-            className="w-full max-w-2xl animate-slide-up opacity-0"
+            className="w-full max-w-3xl animate-slide-up opacity-0"
             style={{ animationFillMode: "forwards" }}
           >
             <MorrisServicesLogo
               height={260}
               href={undefined}
               priority
-              onDark
-              className="mx-auto w-full max-w-3xl max-h-52 sm:max-h-60 md:max-h-72 lg:max-h-80 xl:max-h-[22rem]"
+              panel="lg"
+              className="mx-auto w-full max-h-52 sm:max-h-60 md:max-h-72 lg:max-h-80 xl:max-h-[22rem]"
             />
           </div>
 
@@ -103,7 +107,7 @@ export function MorrisServicesHomePage() {
           <div className="mt-10 grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
             {[
               { icon: Rocket, label: "1 company preparing for launch" },
-              { icon: MapPin, label: "Missouri service area" },
+              { icon: MapPin, label: PRELAUNCH_SERVICE_AREA },
               { icon: Sparkles, label: "More brands on the horizon" },
             ].map(({ icon: Icon, label }) => (
               <div
@@ -128,14 +132,14 @@ export function MorrisServicesHomePage() {
           <PremiumCard className="overflow-hidden border-brand-primary/20 p-0" glow>
             <div className="grid lg:grid-cols-5">
               <div className="flex flex-col items-center bg-gradient-to-br from-brand-primary/12 via-brand-primary/5 to-transparent p-6 text-center sm:p-8 lg:col-span-2 lg:items-start lg:text-left">
-                <div className="relative mb-5">
-                  <div className="absolute -inset-2 rounded-full bg-brand-primary/20 blur-xl" aria-hidden />
+                <div className="relative mb-5 rounded-full bg-white p-2 shadow-lg ring-1 ring-black/5">
+                  <div className="absolute -inset-2 rounded-full bg-brand-primary/15 blur-xl" aria-hidden />
                   <Image
                     src="/logo.png"
                     alt={hauling.name}
                     width={120}
                     height={120}
-                    className="relative h-24 w-24 rounded-full object-cover object-center ring-4 ring-white shadow-lg sm:h-28 sm:w-28"
+                    className="relative h-24 w-24 rounded-full object-cover object-center sm:h-28 sm:w-28"
                   />
                 </div>
                 <CompanyStatusBadge status="launching_soon" className="mb-4" />
@@ -210,7 +214,7 @@ export function MorrisServicesHomePage() {
 
         <PremiumCard className="mt-12 overflow-hidden border-brand-primary/15 bg-gradient-to-r from-brand-primary/5 via-white to-brand-primary/5 p-6 sm:mt-16 sm:p-8 md:mt-20">
           <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
-            <MorrisServicesLogo height={96} href={undefined} className="shrink-0 max-h-20 md:max-h-24" />
+            <MorrisServicesLogo height={96} href={undefined} panel="md" className="shrink-0 max-h-20 md:max-h-24" />
             <div className="flex-1">
               <p className="text-lg font-bold sm:text-xl">{morrisServicesConfig.footerMission}</p>
               <p className="mt-2 text-sm text-muted-foreground">

@@ -53,7 +53,7 @@ export const morrisConfig = {
   serviceArea: {
     center: { lat: 38.788, lng: -90.497 },
     radiusMiles: 45,
-    label: "Warren, Lincoln & St. Charles Counties and surrounding areas",
+    label: "Warren, Lincoln & St. Charles Counties, MO",
     zipCodes: ["63301", "63303", "63304", "63368", "63376", "63383", "63379", "63390"],
   },
   brandColors: {

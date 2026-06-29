@@ -23,7 +23,7 @@ export const morrisServicesConfig = {
   brandTagline: "One Company. Multiple Solutions. Real Results.",
   serviceCategoriesLine: "Residential · Commercial · Property Services",
   footerMission:
-    "Our goal is to become the most trusted local service company in Missouri by building great businesses one at a time.",
+    "Our goal is to build trusted local service companies one at a time — starting in Warren, Lincoln & St. Charles Counties.",
   operatingCompanies: [
     {
       slug: "junk-removal",

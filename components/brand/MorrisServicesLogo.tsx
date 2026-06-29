@@ -9,13 +9,19 @@ import { cn } from "@/lib/utils";
 const LOGO_WIDTH = 1334;
 const LOGO_HEIGHT = 820;
 
+const panelClasses = {
+  sm: "rounded-xl bg-white px-3 py-2 shadow-md ring-1 ring-black/5",
+  md: "rounded-2xl bg-white px-5 py-4 shadow-lg ring-1 ring-black/5",
+  lg: "rounded-3xl bg-white px-6 py-6 shadow-2xl ring-1 ring-black/5 sm:px-10 sm:py-8",
+} as const;
+
 interface MorrisServicesLogoProps {
   className?: string;
   height?: number;
   priority?: boolean;
   href?: string;
-  /** On dark surfaces: multiply knocks out light PNG canvas */
-  onDark?: boolean;
+  /** Light panel behind logo for contrast on dark or busy backgrounds */
+  panel?: keyof typeof panelClasses;
 }
 
 export function MorrisServicesLogo({
@@ -23,7 +29,7 @@ export function MorrisServicesLogo({
   height = 64,
   priority = false,
   href = "/",
-  onDark = false,
+  panel,
 }: MorrisServicesLogoProps) {
   const image = (
     <Image
@@ -33,18 +39,14 @@ export function MorrisServicesLogo({
       height={LOGO_HEIGHT}
       priority={priority}
       unoptimized
-      className={cn(
-        "h-auto w-auto object-contain",
-        onDark && "mix-blend-screen contrast-[1.08] brightness-[1.06]",
-        className
-      )}
+      className={cn("block h-auto w-auto object-contain", className)}
       style={{ maxHeight: height }}
       sizes={`(max-width: 768px) ${Math.round(height * 3)}px, ${Math.round(height * 3.5)}px`}
     />
   );
 
-  const content = onDark ? (
-    <span className="inline-flex leading-none [&_img]:block">{image}</span>
+  const content = panel ? (
+    <span className={cn("inline-flex items-center justify-center", panelClasses[panel])}>{image}</span>
   ) : (
     image
   );

@@ -131,7 +131,7 @@ export function PublicHeader({
         )}
       >
         {variant === "umbrella" ? (
-          <MorrisServicesLogo height={64} priority onDark className="max-h-14 sm:max-h-16 md:max-h-[4.5rem]" />
+          <MorrisServicesLogo height={64} priority panel="sm" className="max-h-14 sm:max-h-16 md:max-h-[4.5rem]" />
         ) : (
           <div className="flex min-w-0 shrink flex-col">
             <CompanyLogo

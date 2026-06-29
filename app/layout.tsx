@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Morris Services | Professional Local Service Companies",
   description:
-    "Morris Services is building a family of trusted local service businesses in Missouri. Morris Hauling & Junk Removal is launching soon.",
+    "Morris Services is building trusted local service companies in Warren, Lincoln & St. Charles Counties, MO. Morris Hauling & Junk Removal is launching soon.",
   manifest: "/manifest.json",
   icons: {
     icon: "/logo.png",

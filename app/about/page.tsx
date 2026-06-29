@@ -8,7 +8,7 @@ import { PremiumCard } from "@/components/morris/PremiumCard";
 import { SectionHeader } from "@/components/morris/SectionHeader";
 import { ButtonLink } from "@/components/ui/button-link";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
-import { PRELAUNCH_HAULING_INTRO } from "@/lib/public-copy";
+import { PRELAUNCH_HAULING_INTRO, PRELAUNCH_SERVICE_AREA } from "@/lib/public-copy";
 
 export default function AboutPage() {
   const hauling = morrisServicesConfig.operatingCompanies[0];
@@ -29,7 +29,7 @@ export default function AboutPage() {
         <SectionHeader
           className="mt-10"
           title="Our first service company"
-          subtitle="Preparing for launch in Missouri"
+          subtitle={`Preparing for launch in ${PRELAUNCH_SERVICE_AREA}`}
           size="lg"
         />
         <PremiumCard className="p-6">
