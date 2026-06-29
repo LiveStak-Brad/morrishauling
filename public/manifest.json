@@ -1,0 +1,24 @@
+{
+  "name": "Morris Hauling & Junk Removal",
+  "short_name": "Morris Hauling",
+  "description": "Premium junk removal serving Warren, Lincoln & St. Charles Counties",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAFA",
+  "theme_color": "#9B1B30",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
