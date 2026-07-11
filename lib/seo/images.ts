@@ -78,6 +78,14 @@ export const MARKETING_IMAGES: Record<string, MarketingImage> = {
     credit: "Company-provided junk removal photo (public/junk.jpg)",
     representative: false,
   },
+  "furniture-removal": {
+    src: "/furniture.jpeg",
+    alt: "Dressers, armchair, and mattress staged outside for furniture removal",
+    width: 1600,
+    height: 800,
+    credit: "Company-provided furniture removal photo (public/furniture.jpeg)",
+    representative: false,
+  },
   "clean-living-room": {
     src: "/marketing/clean-living-room.jpg",
     alt: "Bright living room interior after clutter is cleared",

@@ -78,6 +78,13 @@ export const MARKETING_IMAGE_LICENSES: readonly MarketingImageLicense[] = [
     note: "Company-provided junk removal truck-load photo used on Morris Junk Removal marketing pages.",
   },
   {
+    key: "furniture-removal",
+    localPath: "/furniture.jpeg",
+    sourceUrl: null,
+    license: "Company-provided",
+    note: "Company-provided furniture/mattress curb photo used on furniture removal pages.",
+  },
+  {
     key: "clean-living-room",
     localPath: "/marketing/clean-living-room.jpg",
     sourceUrl: null,
