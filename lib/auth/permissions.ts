@@ -2,6 +2,8 @@ import type { Role } from "@/types";
 import type { UserProfile } from "./types";
 import type { Invoice, Job } from "@/types";
 import { canHoldPrivilegedStaffRole, isStaffOwnerEmail } from "./staff-allowlist";
+import type { DivisionId } from "@/lib/divisions";
+import { serviceTypeToDivision } from "@/lib/divisions";
 
 export function isAdmin(profile: UserProfile | null | undefined): boolean {
   return profile?.role === "admin" && canHoldPrivilegedStaffRole(profile.email);
@@ -28,6 +30,34 @@ export function isCustomer(profile: UserProfile | null | undefined): boolean {
   return profile?.role === "customer";
 }
 
+/** Owner sees all divisions. Managers see managed_division_ids only. */
+export function getProfileDivisionScope(profile: UserProfile | null | undefined): {
+  scope: "all" | "limited";
+  divisions: DivisionId[];
+} {
+  if (!profile) return { scope: "limited", divisions: [] };
+  if (isAdmin(profile)) return { scope: "all", divisions: ["junk_removal", "hauling"] };
+  const access = profile.division_access ?? "all";
+  if (access === "all") {
+    return { scope: "all", divisions: ["junk_removal", "hauling"] };
+  }
+  const managed = (profile.managed_division_ids ?? []).filter(
+    (d): d is DivisionId => d === "junk_removal" || d === "hauling"
+  );
+  return { scope: "limited", divisions: managed };
+}
+
+export function canAccessDivision(
+  profile: UserProfile | null | undefined,
+  divisionId: DivisionId
+): boolean {
+  if (!profile) return false;
+  if (isAdmin(profile)) return true;
+  const { scope, divisions } = getProfileDivisionScope(profile);
+  if (scope === "all") return true;
+  return divisions.includes(divisionId);
+}
+
 export function canAccessRoute(profile: UserProfile | null, pathname: string): boolean {
   if (!profile) return false;
   if (isAdmin(profile)) return true;
@@ -42,11 +72,14 @@ export function canAccessRoute(profile: UserProfile | null, pathname: string): b
 
 export function canAccessJob(
   profile: UserProfile | null,
-  job: Pick<Job, "customerId">,
+  job: Pick<Job, "customerId" | "serviceType" | "divisionId">,
   assignedEmployeeIds?: string[]
 ): boolean {
   if (!profile) return false;
-  if (isAdmin(profile) || isPlanner(profile)) return true;
+  const divisionId = job.divisionId ?? serviceTypeToDivision(job.serviceType);
+  if (isAdmin(profile) || isPlanner(profile)) {
+    return canAccessDivision(profile, divisionId);
+  }
   if (profile.role === "customer" && profile.customer_id) {
     return job.customerId === profile.customer_id;
   }
@@ -59,10 +92,13 @@ export function canAccessJob(
 export function canAccessInvoice(
   profile: UserProfile | null,
   invoice: Pick<Invoice, "customerId">,
-  options?: { assignedEmployeeIds?: string[] }
+  options?: { assignedEmployeeIds?: string[]; divisionId?: DivisionId }
 ): boolean {
   if (!profile) return false;
-  if (isAdmin(profile) || isPlanner(profile)) return true;
+  if (isAdmin(profile) || isPlanner(profile)) {
+    if (options?.divisionId) return canAccessDivision(profile, options.divisionId);
+    return true;
+  }
   if (profile.role === "customer" && profile.customer_id) {
     return invoice.customerId === profile.customer_id;
   }

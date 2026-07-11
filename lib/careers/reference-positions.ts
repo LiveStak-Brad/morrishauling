@@ -239,7 +239,7 @@ export const REFERENCE_POSITIONS: ReferencePositionSeed[] = [
     description:
       "Grow residential and commercial revenue through outbound outreach, referrals, and relationship building.",
     responsibilities:
-      "• Prospect new customers and partners\n• Follow up on leads from marketing\n• Represent Morris Hauling professionally in the community\n• Track pipeline in CRM",
+      "• Prospect new customers and partners\n• Follow up on leads from marketing\n• Represent Morris Junk Removal professionally in the community\n• Track pipeline in CRM",
     requirements:
       "• Sales or business development experience\n• Valid driver's license\n• Self-motivated and goal-oriented",
     payNote: "Base plus commission based on experience",
@@ -275,7 +275,7 @@ export const REFERENCE_POSITIONS: ReferencePositionSeed[] = [
     employmentType: "w2_part_time",
     schedule: "Flexible; 15–25 hours per week",
     description:
-      "Help tell the Morris Hauling story online through social media, reviews, and local marketing support.",
+      "Help tell the Morris Junk Removal story online through social media, reviews, and local marketing support.",
     responsibilities:
       "• Post to social channels and respond to comments\n• Plan post-launch campaigns to gather customer feedback\n• Assist with photos and simple content creation\n• Track basic marketing metrics",
     requirements:
@@ -395,7 +395,7 @@ export const GENERAL_INTEREST_POSITION: ReferencePositionSeed = {
   description:
     "Not sure which role fits? Submit a general application and we'll keep your information on file for current and future openings.",
   responsibilities: "We'll match your skills and interests to the right role as positions open.",
-  requirements: "Reliable, motivated, and interested in growing with Morris Hauling.",
+  requirements: "Reliable, motivated, and interested in growing with Morris Junk Removal.",
   location: LOCATION,
   hiringMode: "accepting_interest",
   sortOrder: 0,

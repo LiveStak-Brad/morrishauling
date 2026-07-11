@@ -64,6 +64,8 @@ Set in **Vercel → Project → Settings → Environment Variables** for **Produ
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | service_role secret | **Server only** — never expose to client |
 | `STAFF_OWNER_EMAILS` | Yes | `you@example.com,...` | Privileged admin/HR allowlist |
 | `NODE_ENV` | Auto | `production` | Set by Vercel |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Yes (for booking) | browser Places key | **HTTP referrer** restricted to production + preview domains |
+| `GOOGLE_MAPS_API_KEY` | Yes (for booking) | server Maps key | **Server only** — Places Details, Geocoding, Directions. Never expose to the browser |
 | `DEMO_DATA` | No | **unset** | Never `true` in production |
 | `ALLOW_PUBLIC_BOOKING` | No | **unset** | Do not set until go-live |
 | `NEXT_PUBLIC_ALLOW_PUBLIC_BOOKING` | No | **unset** | Do not set until go-live |
@@ -71,6 +73,23 @@ Set in **Vercel → Project → Settings → Environment Variables** for **Produ
 | `STRIPE_*`, `SQUARE_*`, `PAYPAL_*` | No | **unset** | Payments not live |
 
 \*Apply migrations from your machine or CI using `SUPABASE_DB_PASSWORD`, not on Vercel runtime.
+
+### Google Maps keys (required for verified booking)
+
+1. Create (or reuse) a Google Cloud project with **Places API**, **Geocoding API**, and **Directions API** (or Routes API) enabled.
+2. Create **two** API keys:
+   - **Browser key** → `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`
+     - Application restriction: **HTTP referrers**
+     - Allow: `https://morris-services.com/*`, `https://www.morris-services.com/*`, `https://*.vercel.app/*` (preview), and local `http://localhost:3000/*` if needed
+     - API restriction: Maps JavaScript API + Places API
+   - **Server key** → `GOOGLE_MAPS_API_KEY`
+     - Application restriction: **None** on Vercel (dynamic egress) or IP allowlist if you have static IPs
+     - API restriction: Places API, Geocoding API, Directions API
+     - **Never** prefix with `NEXT_PUBLIC_` — server only
+3. Set both in Vercel Production + Preview, then redeploy.
+4. Apply Supabase migrations `039_verified_addresses.sql` and `040_hauling_stops_verification.sql`.
+
+Without these keys, public booking shows “address verification unavailable” and blocks continue (no free-text bypass).
 
 ### Go-live later (not now)
 
@@ -155,8 +174,10 @@ Before or immediately after first deploy:
 
 ## 5. Connect morris-services.com (GoDaddy DNS)
 
-**Recommended canonical URL:** `https://morris-services.com` (apex)  
-**Redirect:** `www.morris-services.com` → apex (configure in Vercel after both domains added)
+> **Live config (2026-07-10 audit):** **www is primary**. Apex `morris-services.com` **308-redirects to** `https://www.morris-services.com/`. Align Supabase Auth Site URL to www. See [`FULL_PRODUCTION_AUDIT.md`](./FULL_PRODUCTION_AUDIT.md) Part 2.
+
+**Previously recommended:** apex-primary (not what is live today).  
+**Current live:** `www.morris-services.com` primary; apex → www.
 
 ### Step 1 — Add domains in Vercel
 

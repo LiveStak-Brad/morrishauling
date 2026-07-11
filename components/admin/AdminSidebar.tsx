@@ -53,14 +53,15 @@ const HR_NAV = [
 
 export const ADMIN_NAV = [
   { href: "/admin", label: "Mission Control", icon: LayoutDashboard },
-  { href: "/admin/hr", label: "HR Platform", icon: Building2, badgeKey: "hrTotal" as const },
-  { href: "/admin/jobs", label: "Jobs", icon: Briefcase },
   { href: "/admin/customers", label: "Customers", icon: Users },
-  { href: "/admin/employees", label: "Employees", icon: UserCog },
-  { href: "/admin/review", label: "Review queue", icon: ClipboardCheck },
   { href: "/admin/estimates", label: "Estimates", icon: FileText },
+  { href: "/admin/jobs", label: "Jobs", icon: Briefcase },
   { href: "/admin/invoices", label: "Invoices", icon: Receipt },
   { href: "/admin/payments", label: "Payments", icon: CreditCard },
+  { href: "/admin/divisions", label: "Divisions", icon: Building2 },
+  { href: "/admin/hr", label: "HR Platform", icon: Building2, badgeKey: "hrTotal" as const },
+  { href: "/admin/employees", label: "Employees", icon: UserCog },
+  { href: "/admin/review", label: "Field review", icon: ClipboardCheck },
   { href: "/admin/financing", label: "Financing", icon: DollarSign },
   { href: "/admin/schedule", label: "Schedule", icon: Calendar },
   { href: "/admin/pricing", label: "Pricing", icon: DollarSign },
@@ -111,7 +112,7 @@ export function AdminSidebar() {
     <aside className="hidden w-60 shrink-0 border-r border-border/60 bg-card md:block">
       <div className="sticky top-0 max-h-screen overflow-y-auto p-4">
         <div className="mb-6 rounded-2xl border border-border/60 bg-white px-4 py-3">
-          <CompanyLogo href="/admin" height={48} width={180} className="!h-12 !w-12" />
+          <CompanyLogo href="/admin" height={40} />
           <p className="mt-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Owner Console
           </p>

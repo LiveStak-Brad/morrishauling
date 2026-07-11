@@ -44,6 +44,13 @@ export interface HaulingLocation {
   forkliftAvailable?: boolean;
   assistanceAvailable?: boolean;
   location?: LatLng;
+  line2?: string;
+  placeId?: string;
+  formattedAddress?: string;
+  country?: string;
+  verificationStatus?: "verified" | "manual_override" | "unverified";
+  provider?: "google_places" | "manual";
+  verifiedAt?: string;
 }
 
 export interface PricingBreakdownLine {
@@ -74,6 +81,8 @@ export interface HaulingDetails {
   jobId: string;
   pickup: HaulingLocation;
   delivery: HaulingLocation;
+  /** Intermediate verified stops between pickup and delivery */
+  stops?: HaulingLocation[];
   cargoCategory: HaulingCargoCategory;
   cargoDescription: string;
   estimatedWeightLbs?: number;

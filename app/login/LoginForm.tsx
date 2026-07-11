@@ -15,11 +15,11 @@ import type { Role } from "@/types";
 const PORTAL_COPY: Record<string, { title: string; subtitle: string }> = {
   customer: {
     title: "Customer login",
-    subtitle: "Customer portal for jobs, invoices, and account access when booking is live.",
+    subtitle: "Access your Morris Home — jobs, estimates, and invoices.",
   },
   staff: {
-    title: "Staff Login",
-    subtitle: "Employees, dispatchers, HR, managers, and owners can sign in here.",
+    title: "Staff login",
+    subtitle: "Crew, dispatch, HR, managers, and owners sign in here.",
   },
 };
 

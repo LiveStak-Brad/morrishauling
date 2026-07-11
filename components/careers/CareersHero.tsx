@@ -9,37 +9,41 @@ import { scrollToApplySection } from "@/lib/careers/resolve-postings";
 export function CareersHero() {
   return (
     <section className="relative overflow-hidden border-b border-white/10 bg-[#0A0A0A] text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(155,27,48,0.35),transparent_55%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(155,27,48,0.2),transparent_50%)]" />
-      <div className="relative mx-auto max-w-6xl px-4 py-14 sm:py-20">
-        <div className="flex flex-col items-center text-center gap-6">
-          <CompanyLogo height={72} width={72} onDark priority href="/junk-removal" />
-          <div className="max-w-3xl space-y-4">
-            <p className="text-sm font-medium uppercase tracking-widest text-red-300/90">
-              Join Our Team
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(155,27,48,0.4),transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(155,27,48,0.18),transparent_50%)]" />
+      <div className="relative mx-auto max-w-6xl px-4 py-16 sm:py-24">
+        <div className="flex flex-col items-center gap-7 text-center">
+          <CompanyLogo height={110} onDark priority href="/junk-removal" className="max-h-24" />
+          <div className="max-w-3xl space-y-5">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-red-300/90">
+              Join the crew
             </p>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-              Build a Career With Morris Hauling
+            <h1 className="font-heading text-4xl font-medium tracking-tight sm:text-5xl md:text-6xl">
+              Build a career with Morris Junk Removal
             </h1>
-            <p className="text-lg text-white/80 sm:text-xl leading-relaxed">
-              We&apos;re building a reliable, professional hauling and junk removal team —
-              preparing to serve {PRELAUNCH_SERVICE_AREA}.
+            <p className="text-lg leading-relaxed text-white/80 sm:text-xl">
+              Reliable people. Clear standards. Room to grow — preparing to serve{" "}
+              {PRELAUNCH_SERVICE_AREA}.
             </p>
-            <p className="text-sm text-white/65 leading-relaxed max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-sm leading-relaxed text-white/60">
               {PRELAUNCH_CAREERS_NOTE}
             </p>
           </div>
-          <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <ButtonLink href="#positions" size="lg" className="bg-brand-primary text-white hover:bg-brand-primary/90">
-              View Roles
+          <div className="flex flex-wrap justify-center gap-3 pt-1">
+            <ButtonLink
+              href="#positions"
+              size="lg"
+              className="h-12 rounded-full bg-brand-primary px-8 text-white hover:bg-brand-primary/90"
+            >
+              View roles
             </ButtonLink>
             <Button
               type="button"
               size="lg"
-              className="bg-white text-[#0A0A0A] hover:bg-white/90 font-semibold shadow-md"
+              className="h-12 rounded-full bg-white px-8 font-semibold text-[#0A0A0A] shadow-md hover:bg-white/90"
               onClick={() => scrollToApplySection()}
             >
-              Apply Now
+              Apply now
             </Button>
           </div>
         </div>

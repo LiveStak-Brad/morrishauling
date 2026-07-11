@@ -2,8 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCompany } from "@/lib/company-context";
 import { cn } from "@/lib/utils";
+
+/** Always Morris Junk Removal logo.png — never the Morris Services parent asset. */
+export const JUNK_REMOVAL_LOGO_SRC = "/logo.png?v=4";
+
+/** Intrinsic size after transparent trim (public/logo.png). */
+const LOGO_WIDTH = 1146;
+const LOGO_HEIGHT = 758;
 
 interface CompanyLogoProps {
   className?: string;
@@ -15,60 +21,37 @@ interface CompanyLogoProps {
   withBackdrop?: boolean;
 }
 
-/** Square PNG badges with white corners — clip to circle to drop the box */
-function useCircularLogoMask(logoSrc: string) {
-  return logoSrc.endsWith(".png");
-}
-
 export function CompanyLogo({
   className,
-  height = 48,
-  width = 200,
+  height = 64,
+  width,
   priority = false,
   href,
   onDark = false,
   withBackdrop = false,
 }: CompanyLogoProps) {
-  const { company } = useCompany();
-  const circular = useCircularLogoMask(company.logo);
-  const size = height;
+  const displayWidth = width ?? Math.round(height * (LOGO_WIDTH / LOGO_HEIGHT));
 
-  const image = circular ? (
-    <div
-      className={cn(
-        "relative shrink-0 overflow-hidden rounded-full",
-        onDark && "shadow-[0_4px_18px_rgba(0,0,0,0.5)] ring-2 ring-white/30",
-        className
-      )}
-      style={{ width: size, height: size }}
-    >
-      <Image
-        src={company.logo}
-        alt={company.companyName}
-        fill
-        priority={priority}
-        className="object-cover object-center scale-[1.06]"
-        sizes={`${size}px`}
-      />
-    </div>
-  ) : (
+  const image = (
     <Image
-      src={company.logo}
-      alt={company.companyName}
-      width={width}
-      height={height}
+      src={JUNK_REMOVAL_LOGO_SRC}
+      alt="Morris Junk Removal"
+      width={LOGO_WIDTH}
+      height={LOGO_HEIGHT}
       priority={priority}
+      unoptimized
       className={cn(
-        "h-auto w-auto object-contain",
-        !withBackdrop && "mix-blend-multiply",
+        "block h-auto w-auto object-contain",
+        onDark && "brightness-110",
         className
       )}
-      style={{ maxHeight: height }}
+      style={{ maxHeight: height, maxWidth: displayWidth }}
+      sizes={`${Math.max(displayWidth, height)}px`}
     />
   );
 
   const content =
-    withBackdrop && !onDark && !circular ? (
+    withBackdrop && !onDark ? (
       <div
         className={cn(
           "inline-flex items-center justify-center rounded-2xl",

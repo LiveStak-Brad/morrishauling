@@ -18,11 +18,18 @@ const CUSTOMER_LINE_ORDER: string[] = [
 ];
 
 const DISPLAY_LABELS: Record<string, string> = {
-  service_call: "Pickup Service",
+  service_call: "Removal Service",
   junk_removal: "Item Removal",
-  disposal: "Disposal estimate",
+  disposal: "Disposal & Recycling",
   heavy: "Heavy item handling",
-  special_disposal: "Special disposal handling",
+  special_disposal: "Special recycling handling",
+  stairs: "Stairs / elevated access",
+  basement: "Basement access",
+  attic: "Attic access",
+  tight: "Tight access",
+  long_carry: "Long carry distance",
+  priority: "Priority scheduling",
+  flexible_scheduling: "Flexible scheduling savings",
 };
 
 export function getCustomerDisplayLabel(line: PricingBreakdownLine): string {

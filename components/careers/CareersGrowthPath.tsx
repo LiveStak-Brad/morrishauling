@@ -39,7 +39,7 @@ export function CareersGrowthPath() {
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Room to Grow</h2>
           <p className="mt-4 text-lg text-white/70 max-w-2xl mx-auto">
-            Start in the field or office — Morris Hauling rewards people who show up, learn fast, and lead.
+            Start in the field or office — Morris Junk Removal rewards people who show up, learn fast, and lead.
           </p>
         </div>
 

@@ -108,7 +108,7 @@ export function FinancingRequestWizard({
         <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-600" />
         <h2 className="mt-4 text-xl font-bold">Request submitted</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Morris Hauling will review your payment plan request. You&apos;ll be notified once
+          Morris Junk Removal will review your payment plan request. You&apos;ll be notified once
           approved.
         </p>
         <ButtonLink href="/customer/payments" className="mt-6">

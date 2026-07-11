@@ -26,7 +26,7 @@ export function HeroBanner({ children, className }: HeroBannerProps) {
   const hasMobileBanner =
     Boolean(company.heroBannerMobile) && mobileBanner !== desktopBanner;
 
-  const bannerAlt = `${company.companyName} — launching soon`;
+  const bannerAlt = `${company.companyName} — professional junk removal`;
 
   return (
     <div
@@ -105,7 +105,7 @@ export function ServiceAreaStrip({ className }: { className?: string }) {
     >
       <div className="min-w-0">
         <p className="text-xs font-bold uppercase tracking-widest text-brand-primary">
-          Planned service area
+          Service area
         </p>
         <p className="mt-0.5 text-sm font-semibold leading-snug sm:text-base">
           {company.serviceArea.label ?? "Warren, Lincoln & St. Charles Counties, MO"}

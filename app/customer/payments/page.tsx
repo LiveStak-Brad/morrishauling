@@ -13,7 +13,6 @@ import { PremiumCard } from "@/components/morris/PremiumCard";
 import { derivePaymentStatus, buildPaymentActivity } from "@/lib/payment-utils";
 import { TrustBadgeRow } from "@/components/payments/payment-ui";
 import { ButtonLink } from "@/components/ui/button-link";
-import { Button } from "@/components/ui/button";
 import { Landmark, Receipt, ShieldCheck } from "lucide-react";
 
 export default function CustomerPaymentsPage() {
@@ -83,10 +82,10 @@ export default function CustomerPaymentsPage() {
                 <Landmark className="mr-2 h-4 w-4" />
                 Financing
               </ButtonLink>
-              <Button variant="outline" className="flex-1" disabled title="Coming soon">
+              <ButtonLink href="/customer/payments" variant="outline" className="flex-1">
                 <Receipt className="mr-2 h-4 w-4" />
-                Receipts
-              </Button>
+                Invoices
+              </ButtonLink>
             </div>
 
             <TrustBadgeRow />
@@ -133,7 +132,7 @@ export default function CustomerPaymentsPage() {
             <PremiumCard className="flex items-center gap-3 p-4 text-sm text-muted-foreground">
               <ShieldCheck className="h-8 w-8 shrink-0 text-emerald-600" />
               <p>
-                Payments are processed securely. Morris Hauling never stores your full card number on
+                Payments are processed securely. Morris Junk Removal never stores your full card number on
                 this device.
               </p>
             </PremiumCard>

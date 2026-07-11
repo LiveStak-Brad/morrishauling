@@ -11,7 +11,23 @@ interface MiniBarChartProps {
 }
 
 export function MiniBarChart({ data, title, className }: MiniBarChartProps) {
-  const max = Math.max(...data.map((d) => d.value), 1);
+  const total = data.reduce((s, d) => s + d.value, 0);
+  const max = Math.max(...data.map((d) => d.value), 0);
+
+  if (!data.length || total === 0 || max === 0) {
+    return (
+      <PremiumCard className={cn("p-5", className)}>
+        {title && (
+          <p className="mb-4 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            {title}
+          </p>
+        )}
+        <div className="flex h-32 items-center justify-center">
+          <p className="text-sm text-muted-foreground">No activity yet</p>
+        </div>
+      </PremiumCard>
+    );
+  }
 
   return (
     <PremiumCard className={cn("p-5", className)}>

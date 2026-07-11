@@ -39,8 +39,13 @@ import {
   Package,
   Home,
   Minus,
+  AlertTriangle,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { VerifiedAddressField } from "@/components/geo/VerifiedAddressField";
+import type { VerifiedAddress } from "@/types/address";
+import { isAddressVerified } from "@/types/address";
 
 const defaultAccess: AccessDetails = {
   stairs: false,
@@ -83,10 +88,7 @@ type BookingDraft = {
   mode: JunkEstimateMode;
   step: number;
   junkType: string;
-  street: string;
-  city: string;
-  stateVal: string;
-  zip: string;
+  verifiedAddress: VerifiedAddress | null;
   loadSize: LoadSizeTier;
   access: AccessDetails;
   priorityLevel: JunkPriorityLevel;
@@ -105,10 +107,21 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
   const [step, setStep] = useState(0);
 
   const [junkType, setJunkType] = useState("general");
-  const [street, setStreet] = useState("");
-  const [city, setCity] = useState("");
-  const [stateVal, setStateVal] = useState("MO");
-  const [zip, setZip] = useState("");
+  const [verifiedAddress, setVerifiedAddress] = useState<VerifiedAddress | null>(null);
+  const [serviceAreaMessage, setServiceAreaMessage] = useState<string | null>(null);
+  const [junkRoute, setJunkRoute] = useState<{
+    dispatchMiles: number;
+    customerToDisposalMiles: number;
+    returnMiles: number;
+    totalRouteMiles: number;
+    estimatedDriverHours: number;
+    originBaseId: string;
+    originBaseName: string;
+    selectedDisposalSiteId?: string;
+    selectedDisposalSiteName?: string;
+  } | null>(null);
+  const [routeLoading, setRouteLoading] = useState(false);
+  const [routeError, setRouteError] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<Record<string, number>>({});
   const [items, setItems] = useState<JunkItem[]>([{ id: "1", name: "", quantity: 1 }]);
   const [loadSize, setLoadSize] = useState<LoadSizeTier>("quarter_25");
@@ -124,7 +137,7 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
     discountReason?: string;
   } | null>(null);
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash_on_arrival");
   const [paymentTiming, setPaymentTiming] = useState<PaymentTiming>("deposit");
   const [submitting, setSubmitting] = useState(false);
 
@@ -145,10 +158,9 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
       setMode(draft.mode);
       setStep(draft.step);
       setJunkType(draft.junkType);
-      setStreet(draft.street);
-      setCity(draft.city);
-      setStateVal(draft.stateVal);
-      setZip(draft.zip);
+      if (draft.verifiedAddress && isAddressVerified(draft.verifiedAddress)) {
+        setVerifiedAddress(draft.verifiedAddress);
+      }
       setLoadSize(draft.loadSize);
       setAccess(draft.access);
       setPriorityLevel(draft.priorityLevel);
@@ -163,13 +175,62 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
   const STEPS = stepsForMode(mode);
   const progress = ((step + 1) / STEPS.length) * 100;
 
-  const location = useMemo(
-    () => ({
-      lat: company.serviceArea.center.lat + (Math.random() - 0.5) * 0.05,
-      lng: company.serviceArea.center.lng + (Math.random() - 0.5) * 0.05,
-    }),
-    [company.serviceArea, street]
-  );
+  // Recalculate Base→Customer→Dump→Base whenever verified address changes
+  useEffect(() => {
+    if (!isAddressVerified(verifiedAddress)) {
+      setJunkRoute(null);
+      setRouteError(null);
+      setServiceAreaMessage(null);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      setRouteLoading(true);
+      setRouteError(null);
+      fetch("/api/junk/route", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({
+          placeId: verifiedAddress!.placeId,
+          address: verifiedAddress,
+          line2: verifiedAddress!.line2,
+        }),
+      })
+        .then(async (res) => {
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error ?? "Route calculation failed");
+          if (data.serviceArea?.outcome === "extended" || data.serviceArea?.outcome === "manual_review") {
+            setServiceAreaMessage(data.serviceArea.message);
+          } else {
+            setServiceAreaMessage(null);
+          }
+          setJunkRoute({
+            dispatchMiles: data.route.dispatchMiles,
+            customerToDisposalMiles: data.route.customerToDisposalMiles,
+            returnMiles: data.route.returnMiles,
+            totalRouteMiles: data.route.totalRouteMiles,
+            estimatedDriverHours: data.route.estimatedDriverHours,
+            originBaseId: "base-warrenton",
+            originBaseName: data.route.staff?.baseName ?? "Operating base",
+            selectedDisposalSiteId: data.route.staff?.dumpId,
+            selectedDisposalSiteName: data.route.staff?.dumpName,
+          });
+        })
+        .catch((err: unknown) => {
+          if (controller.signal.aborted) return;
+          setJunkRoute(null);
+          setRouteError(err instanceof Error ? err.message : "Could not calculate route");
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setRouteLoading(false);
+        });
+    }, 300);
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [verifiedAddress?.placeId, verifiedAddress?.line2, verifiedAddress?.lat, verifiedAddress?.lng]);
 
   const selectedCommonItems: SelectedCommonItem[] = useMemo(
     () =>
@@ -189,8 +250,10 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
       junkCategory: junkType,
       accessDetails: access,
       items: items.filter((i) => i.name.trim()),
-      addressLocation: street ? location : undefined,
-      zip,
+      addressLocation: verifiedAddress
+        ? { lat: verifiedAddress.lat, lng: verifiedAddress.lng }
+        : undefined,
+      zip: verifiedAddress?.zip,
       priorityLevel,
       hasPhotos,
       customerNotes: access.notes,
@@ -202,13 +265,29 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
             discountReason: selectedSlot.discountReason,
           }
         : undefined,
+      routeMetrics: junkRoute ?? undefined,
     }),
-    [mode, selectedCommonItems, loadSize, junkType, access, items, street, location, zip, priorityLevel, submittedPhotos, selectedSlot]
+    [
+      mode,
+      selectedCommonItems,
+      loadSize,
+      junkType,
+      access,
+      items,
+      verifiedAddress,
+      priorityLevel,
+      hasPhotos,
+      selectedSlot,
+      junkRoute,
+    ]
   );
 
   const estimate = useMemo(
-    () => (mode && (street || step === 0) ? junkRemovalEngine.calculate(estimateInput, estimateConfig) : null),
-    [estimateInput, mode, street, step, estimateConfig]
+    () =>
+      mode && junkRoute
+        ? junkRemovalEngine.calculate(estimateInput, estimateConfig)
+        : null,
+    [estimateInput, mode, junkRoute, estimateConfig]
   );
 
   const selectedCategory = getBookingCategory(junkType);
@@ -231,7 +310,9 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
     const label = STEPS[step];
     if (label === "Mode") return !!mode;
     if (label === "Category") return !!junkType;
-    if (label === "Location") return street && city && stateVal && zip;
+    if (label === "Location") {
+      return isAddressVerified(verifiedAddress) && !routeLoading && !routeError && Boolean(junkRoute);
+    }
     if (label === "Items") return selectedCommonItems.length > 0;
     if (label === "Schedule") return !!selectedArrivalSlotId;
     if (label === "Review") return disclaimerAccepted;
@@ -240,16 +321,13 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
 
   const handleSubmit = async () => {
     if (demoMode) return;
-    if (!disclaimerAccepted || !mode || !estimate) return;
+    if (!disclaimerAccepted || !mode || !estimate || !verifiedAddress || !junkRoute) return;
     if (!authCustomerId) {
       const draft: BookingDraft = {
         mode,
         step,
         junkType,
-        street,
-        city,
-        stateVal,
-        zip,
+        verifiedAddress,
         loadSize,
         access,
         priorityLevel,
@@ -327,7 +405,20 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
         items: items.filter((i) => i.name.trim()),
         loadSizeTier: loadSize,
         accessDetails: access,
-        address: { street, city, state: stateVal, zip, location },
+        address: {
+          street: verifiedAddress.line1,
+          line2: verifiedAddress.line2,
+          city: verifiedAddress.city,
+          state: verifiedAddress.state,
+          zip: verifiedAddress.zip,
+          location: { lat: verifiedAddress.lat, lng: verifiedAddress.lng },
+          placeId: verifiedAddress.placeId,
+          formattedAddress: verifiedAddress.formattedAddress,
+          country: verifiedAddress.country,
+          verificationStatus: verifiedAddress.verificationStatus,
+          provider: verifiedAddress.provider,
+          verifiedAt: verifiedAddress.verifiedAt,
+        },
         photos: [],
         estimate: estimateBuilt,
         estimateType: "junk_removal",
@@ -467,7 +558,7 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
       return (
         <div className="space-y-4">
           <div>
-            <h2 className="text-2xl font-bold">What are we hauling?</h2>
+            <h2 className="text-2xl font-bold">What are we removing?</h2>
             <p className="mt-1 text-sm text-muted-foreground">Choose a category — you&apos;ll pick trailer size next</p>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -481,20 +572,31 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
 
     if (label === "Location") {
       return (
-        <PremiumCard className="p-6">
+        <PremiumCard className="space-y-4 p-6">
           <h2 className="text-xl font-bold">Where should we pick up?</h2>
           <p className="mt-1 text-sm text-muted-foreground">{company.serviceArea.label}</p>
-          <div className="mt-5 space-y-4">
-            <div>
-              <Label>Street address</Label>
-              <Input className="mt-1.5 h-12 rounded-xl" value={street} onChange={(e) => setStreet(e.target.value)} />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><Label>City</Label><Input className="mt-1.5 h-12 rounded-xl" value={city} onChange={(e) => setCity(e.target.value)} /></div>
-              <div><Label>State</Label><Input className="mt-1.5 h-12 rounded-xl" value={stateVal} onChange={(e) => setStateVal(e.target.value)} /></div>
-            </div>
-            <div><Label>ZIP</Label><Input className="mt-1.5 h-12 rounded-xl" value={zip} onChange={(e) => setZip(e.target.value)} /></div>
-          </div>
+          <VerifiedAddressField
+            label="Service address"
+            value={verifiedAddress}
+            onChange={setVerifiedAddress}
+            serviceAreaMessage={serviceAreaMessage}
+          />
+          {routeLoading && (
+            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" /> Calculating travel from our operating base…
+            </p>
+          )}
+          {routeError && (
+            <p className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              {routeError}
+            </p>
+          )}
+          {junkRoute && !routeLoading && (
+            <p className="text-xs text-muted-foreground">
+              Travel estimate ready. Your quote includes transportation based on the verified address.
+            </p>
+          )}
         </PremiumCard>
       );
     }
@@ -659,6 +761,7 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
             priorityLevel={priorityLevel}
             audience="customer"
             submittedPhotos={submittedPhotos}
+            serviceAreaMessage={serviceAreaMessage}
           />
           <DisclaimerAccept accepted={disclaimerAccepted} onChange={setDisclaimerAccepted} />
           <PremiumCard className="p-5">

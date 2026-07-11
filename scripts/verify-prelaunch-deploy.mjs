@@ -33,7 +33,8 @@ checks.push(
 checks.push(
   assert(
     "Jobs create API gated",
-    read("app/api/jobs/create/route.ts").includes("isBookingSubmissionAllowed")
+    read("app/api/jobs/create/route.ts").includes("isDivisionSubmissionAllowedAsync") &&
+      read("app/api/jobs/create/route.ts").includes("divisionBookingClosedMessage")
   )
 );
 
@@ -62,7 +63,8 @@ checks.push(
 checks.push(
   assert(
     "Book page prelaunch copy",
-    read("app/book/page.tsx").includes("coming soon")
+    read("app/book/page.tsx").includes("Request an estimate") &&
+      read("app/book/page.tsx").includes("guaranteed appointments")
   )
 );
 
@@ -82,9 +84,10 @@ checks.push(
 
 checks.push(
   assert(
-    "/hauling redirects to hauling home",
+    "/hauling is Morris Hauling coming-soon division",
     fs.existsSync(path.join(root, "app/hauling/page.tsx")) &&
-      read("app/hauling/page.tsx").includes("/junk-removal")
+      read("app/hauling/page.tsx").includes("Morris Hauling") &&
+      read("app/hauling/page.tsx").includes("coming")
   )
 );
 

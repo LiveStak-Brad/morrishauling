@@ -39,10 +39,13 @@ export interface EnhancedDumpSite {
 export interface OperatingBase {
   id: string;
   name: string;
+  address?: string;
   city: string;
   state: string;
+  zip?: string;
   location: LatLng;
   isPrimary: boolean;
+  placeId?: string;
 }
 
 export interface DisposalSelection {
@@ -55,17 +58,17 @@ export interface DisposalSelection {
 }
 
 export const DISPOSAL_CATEGORY_LABELS: Record<DisposalCategory, string> = {
-  general_junk: "General junk",
-  mattress: "Mattress",
+  general_junk: "General Household Items",
+  mattress: "Mattress & Bedding",
   appliance: "Appliance",
-  freon_appliance: "Freon appliance",
-  scrap_metal: "Scrap metal",
+  freon_appliance: "Refrigerated Appliance",
+  scrap_metal: "Metal / Appliance",
   electronics: "Electronics",
   tire: "Tire",
-  construction_debris: "Construction debris",
-  yard_waste: "Yard waste",
-  bulky_special: "Bulky / special",
-  heavy_special: "Heavy / special",
+  construction_debris: "Construction Debris",
+  yard_waste: "Yard Waste",
+  bulky_special: "Bulky Special Item",
+  heavy_special: "Heavy Special Item",
 };
 
 export const BOOKING_CATEGORY_DISPOSAL: Record<string, DisposalCategory> = {

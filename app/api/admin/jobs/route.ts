@@ -2,6 +2,8 @@ import { morrisConfig } from "@/lib/morris-config";
 import { getJobsWithMeta, createAdminJobManual } from "@/lib/db/operations";
 import { requireApiProfile } from "@/lib/api/require-profile";
 import { apiOk, apiError, parseJson } from "@/lib/api/route-utils";
+import { canAccessDivision, getProfileDivisionScope } from "@/lib/auth/permissions";
+import { serviceTypeToDivision } from "@/lib/divisions";
 
 export async function GET(request: Request) {
   const profile = await requireApiProfile();
@@ -15,7 +17,15 @@ export async function GET(request: Request) {
       status: searchParams.get("status") ?? undefined,
       scheduledDate: searchParams.get("scheduledDate") ?? undefined,
     });
-    return apiOk({ jobs, meta });
+    const scope = getProfileDivisionScope(profile);
+    const filtered = jobs.filter((j) => {
+      const d = j.divisionId ?? serviceTypeToDivision(j.serviceType);
+      return canAccessDivision(profile, d);
+    });
+    return apiOk({
+      jobs: filtered,
+      meta: { ...meta, divisionScope: scope },
+    });
   } catch (e) {
     return apiError(e instanceof Error ? e.message : "Failed to load jobs", 500);
   }

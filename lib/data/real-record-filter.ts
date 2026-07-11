@@ -270,6 +270,18 @@ export function filterPayments(payments: Payment[]): Payment[] {
   return payments.filter((p) => !isExcludedPayment(p));
 }
 
+export function filterEstimates<T extends { id: string; estimateNumber?: string; customerNotes?: string | null; internalNotes?: string | null }>(
+  estimates: T[]
+): T[] {
+  if (!isFilteringActive()) return estimates;
+  return estimates.filter((e) => {
+    if (getExclusionReason({ id: e.id, name: e.estimateNumber, title: e.customerNotes ?? undefined, description: e.internalNotes ?? undefined })) {
+      return false;
+    }
+    return true;
+  });
+}
+
 export function filterFinancing(items: FinancingRequest[]): FinancingRequest[] {
   if (!isFilteringActive()) return items;
   return items.filter((f) => !isExcludedFinancing(f));

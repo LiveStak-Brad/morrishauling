@@ -25,8 +25,8 @@ import { cn } from "@/lib/utils";
 
 export interface HaulingEstimateReviewProps {
   input: HaulingEstimateInput & {
-    pickup: { city: string; state: string; zip: string };
-    delivery: { city: string; state: string; zip: string };
+    pickup: { street?: string; city: string; state: string; zip: string };
+    delivery: { street?: string; city: string; state: string; zip: string };
   };
   estimate: HaulingEstimateResult;
   serviceLevel: HaulingServiceLevel;
@@ -37,6 +37,13 @@ export interface HaulingEstimateReviewProps {
   rentalDisclaimerAccepted?: boolean;
   onRentalDisclaimerChange?: (accepted: boolean) => void;
   showDisclaimer?: boolean;
+  routeMeta?: {
+    pickupDisplayName?: string;
+    deliveryDisplayName?: string;
+    yardName?: string;
+  } | null;
+  /** Extended / out-of-area customer messaging */
+  serviceAreaMessage?: string | null;
 }
 
 function yesNo(value?: boolean | null) {
@@ -55,11 +62,21 @@ export function HaulingEstimateReview({
   rentalDisclaimerAccepted,
   onRentalDisclaimerChange,
   showDisclaimer = false,
+  routeMeta,
+  serviceAreaMessage,
 }: HaulingEstimateReviewProps) {
   const customerLines = estimate.customerLines ?? estimate.lines;
 
   return (
     <div className="space-y-4">
+      {serviceAreaMessage && (
+        <PremiumCard className="border-amber-200 bg-amber-50/60 p-4">
+          <div className="flex gap-2 text-sm text-amber-950">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>{serviceAreaMessage}</p>
+          </div>
+        </PremiumCard>
+      )}
       <PremiumCard className="p-5">
         <div className="mb-3 flex items-center gap-2">
           <Route className="h-5 w-5 text-brand-primary" />
@@ -69,14 +86,22 @@ export function HaulingEstimateReview({
           <div>
             <dt className="text-xs font-semibold uppercase text-muted-foreground">Pickup</dt>
             <dd className="font-medium">
-              {input.pickup.city}, {input.pickup.state}
+              {input.pickup.street ? `${input.pickup.street}, ` : ""}
+              {input.pickup.city}, {input.pickup.state} {input.pickup.zip}
             </dd>
+            {routeMeta?.pickupDisplayName && (
+              <dd className="mt-0.5 text-xs text-muted-foreground">{routeMeta.pickupDisplayName}</dd>
+            )}
           </div>
           <div>
             <dt className="text-xs font-semibold uppercase text-muted-foreground">Delivery</dt>
             <dd className="font-medium">
-              {input.delivery.city}, {input.delivery.state}
+              {input.delivery.street ? `${input.delivery.street}, ` : ""}
+              {input.delivery.city}, {input.delivery.state} {input.delivery.zip}
             </dd>
+            {routeMeta?.deliveryDisplayName && (
+              <dd className="mt-0.5 text-xs text-muted-foreground">{routeMeta.deliveryDisplayName}</dd>
+            )}
           </div>
           <div>
             <dt className="text-xs font-semibold uppercase text-muted-foreground">Loaded miles</dt>
@@ -86,18 +111,31 @@ export function HaulingEstimateReview({
             <dt className="text-xs font-semibold uppercase text-muted-foreground">
               Positioning / deadhead
             </dt>
-            <dd>{estimate.estimatedDeadheadMiles} mi (estimated)</dd>
+            <dd>
+              {estimate.estimatedDeadheadMiles} mi
+              {routeMeta?.yardName ? ` (via ${routeMeta.yardName})` : ""}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-xs font-semibold uppercase text-muted-foreground">Driver time</dt>
+            <dd>{estimate.estimatedDriverHours} hrs</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-semibold uppercase text-muted-foreground">Fuel (internal)</dt>
+            <dd>${estimate.estimatedFuelCost}</dd>
           </div>
           <div className="sm:col-span-2">
             <dt className="text-xs font-semibold uppercase text-muted-foreground">
-              Total estimated travel
+              Total road travel
             </dt>
             <dd className="font-semibold text-brand-primary">{estimate.totalTravelMiles} mi</dd>
           </div>
         </dl>
         <p className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
           <MapPin className="h-3.5 w-3.5" />
-          Mileage estimated based on trip details — final amount confirmed before dispatch
+          Road miles from live routing
+          {estimate.routeProvider ? ` (${estimate.routeProvider})` : ""} — not estimated from city
+          names
         </p>
       </PremiumCard>
 

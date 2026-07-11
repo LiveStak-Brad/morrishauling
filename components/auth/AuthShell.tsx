@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { morrisConfig } from "@/lib/morris-config";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
+import { CompanyLogo } from "@/components/brand/CompanyLogo";
 import { PremiumCard } from "@/components/morris/PremiumCard";
 
 export function AuthShell({
@@ -23,23 +23,10 @@ export function AuthShell({
         className="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-primary/20 via-background to-[#C8102E]/10"
         aria-hidden
       />
-      {morrisConfig.heroBanner && (
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: `url(${morrisConfig.heroBanner})` }}
-          aria-hidden
-        />
-      )}
 
       <header className="relative z-10 flex items-center justify-between px-4 py-5 md:px-8">
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src={morrisConfig.logo}
-            alt={morrisConfig.companyName}
-            width={48}
-            height={48}
-            className="rounded-full"
-          />
+        <Link href="/junk-removal" className="flex items-center gap-3">
+          <CompanyLogo height={44} href={undefined} />
           <div className="hidden sm:block">
             <p className="text-sm font-bold leading-tight">{morrisConfig.companyName}</p>
             <p className="text-xs text-muted-foreground">

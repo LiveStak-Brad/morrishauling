@@ -2,6 +2,7 @@ import { format, addDays } from "date-fns";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { rowToTimeclockPunch, rowToTimesheetAdjustment, rowToTimeOffRequest, rowToEmployeeShift } from "@/lib/db/hr-mappers";
+import { businessDateString, businessDayUtcBounds } from "@/lib/datetime/business-timezone";
 import type { PunchPayload, PunchType } from "@/types/hr/time";
 import type { ShiftConflict } from "@/types/hr/schedule";
 
@@ -17,7 +18,7 @@ async function sbWrite() {
 
 export async function recordPunch(companyId: string, payload: PunchPayload) {
   const sb = await sbWrite();
-  const shiftDate = format(new Date(), "yyyy-MM-dd");
+  const shiftDate = businessDateString(new Date());
 
   let { data: activeShift } = await sb
     .from("employee_timeclock")
@@ -77,9 +78,8 @@ export async function getPunchesForEmployee(companyId: string, employeeId: strin
     .order("punched_at", { ascending: false })
     .limit(50);
   if (shiftDate) {
-    const start = `${shiftDate}T00:00:00`;
-    const end = `${shiftDate}T23:59:59`;
-    query = query.gte("punched_at", start).lte("punched_at", end);
+    const { startIso, endIso } = businessDayUtcBounds(shiftDate);
+    query = query.gte("punched_at", startIso).lte("punched_at", endIso);
   }
   const { data, error } = await query;
   if (error) throw error;

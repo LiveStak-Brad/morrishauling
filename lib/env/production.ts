@@ -35,15 +35,14 @@ export function validateProductionEnv(): ProductionEnvStatus {
     if (demoDataEnabled) {
       warnings.push("DEMO_DATA=true — demo/mock fallbacks are enabled in production");
     }
-    if (process.env.ALLOW_PUBLIC_BOOKING === "true" || process.env.NEXT_PUBLIC_ALLOW_PUBLIC_BOOKING === "true") {
-      if (process.env.APP_STATUS !== "live") {
-        warnings.push(
-          "ALLOW_PUBLIC_BOOKING is true but APP_STATUS is not live — booking remains blocked (prelaunch)"
-        );
-      }
+    if (process.env.ALLOW_PUBLIC_BOOKING === "false" || process.env.NEXT_PUBLIC_ALLOW_PUBLIC_BOOKING === "false") {
+      warnings.push("Public booking is explicitly disabled (ALLOW_PUBLIC_BOOKING=false)");
     }
-    if (process.env.APP_STATUS === "live") {
-      warnings.push("APP_STATUS=live — confirm booking and payments are intentionally enabled");
+    if (process.env.APP_STATUS === "prelaunch" || process.env.NEXT_PUBLIC_APP_STATUS === "prelaunch") {
+      warnings.push("APP_STATUS=prelaunch — public booking is frozen");
+    }
+    if (process.env.APP_STATUS === "live" || !process.env.APP_STATUS) {
+      // live is the default — no warning
     }
   } else if (!useSupabase) {
     warnings.push("NEXT_PUBLIC_USE_SUPABASE is not true — using mock data layer");

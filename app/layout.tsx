@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { AppProviders } from "@/components/AppProviders";
 import "./globals.css";
 
@@ -13,14 +13,47 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title: "Morris Services | Professional Local Service Companies",
+  metadataBase: new URL("https://www.morris-services.com"),
+  title: {
+    default: "Morris Services | Your home, restored.",
+    template: "%s | Morris Services",
+  },
   description:
-    "Morris Services is building trusted local service companies in Warren, Lincoln & St. Charles Counties, MO. Morris Hauling & Junk Removal is launching soon.",
+    "Morris Services — Junk Removal and Hauling for Warren, Lincoln & St. Charles Counties, MO. Book online today.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: [{ url: "/MorrisServicesLogo.png", type: "image/png" }],
+    apple: [{ url: "/MorrisServicesLogo.png", type: "image/png" }],
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://www.morris-services.com",
+    siteName: "Morris Services",
+    title: "Morris Services | Your home, restored.",
+    description:
+      "The standard for home services. Starting with Morris Junk Removal in Warren, Lincoln & St. Charles Counties, MO.",
+    images: [
+      {
+        url: "/MorrisServicesLogo.png",
+        width: 1334,
+        height: 820,
+        alt: "Morris Services",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Morris Services | Your home, restored.",
+    description:
+      "The standard for home services. Starting with Morris Junk Removal in Warren, Lincoln & St. Charles Counties, MO.",
+    images: ["/MorrisServicesLogo.png"],
   },
   appleWebApp: {
     capable: true,
@@ -44,9 +77,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col overflow-x-hidden bg-background">
+      <body className="flex min-h-full flex-col overflow-x-hidden bg-background">
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

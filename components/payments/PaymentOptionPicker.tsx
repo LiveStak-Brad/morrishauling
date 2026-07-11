@@ -10,13 +10,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCompany } from "@/lib/company-context";
+import { isOnlineCardPaymentEnabled } from "@/lib/payments/online-payments-enabled";
 
 const METHOD_LABELS: Partial<Record<PaymentMethod, string>> = {
-  card: "Card payment",
+  card: "Card (online)",
   cash_on_arrival: "Cash on arrival",
   cash: "Cash",
   check: "Check",
-  invoice: "Invoice",
+  manual_card: "Card (in person / phone)",
+  bank_transfer: "Bank transfer",
+  other: "Other",
+  invoice: "Invoice / pay later",
   financing: "Financing / Pay over time",
   paypal: "PayPal",
   apple_pay: "Apple Pay",
@@ -48,6 +52,10 @@ export function PaymentOptionPicker({
 }: PaymentOptionPickerProps) {
   const { company } = useCompany();
   const { paymentOptions } = company;
+  const methods = paymentOptions.methods.filter((m) => {
+    if ((m as string) === "card" && !isOnlineCardPaymentEnabled()) return false;
+    return true;
+  });
 
   return (
     <div className="space-y-4">
@@ -58,13 +66,18 @@ export function PaymentOptionPicker({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {paymentOptions.methods.map((m) => (
+            {methods.map((m) => (
               <SelectItem key={m} value={m}>
                 {methodLabel(m)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
+        {!isOnlineCardPaymentEnabled() && (
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            Online card checkout activates when Stripe is connected. Choose how you plan to pay in the field or with our office.
+          </p>
+        )}
       </div>
       <div>
         <Label>When to pay</Label>

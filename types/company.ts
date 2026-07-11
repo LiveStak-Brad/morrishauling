@@ -53,7 +53,17 @@ export interface ServiceOffering {
 export interface PaymentOptionsConfig {
   depositPercent: number;
   depositMinAmount: number;
-  methods: ("card" | "cash_on_arrival" | "invoice" | "financing")[];
+  methods: (
+    | "card"
+    | "cash_on_arrival"
+    | "cash"
+    | "check"
+    | "manual_card"
+    | "bank_transfer"
+    | "other"
+    | "invoice"
+    | "financing"
+  )[];
   allowPayAfterCompletion: boolean;
 }
 
@@ -105,10 +115,16 @@ export interface DumpSite {
 export interface OperatingBase {
   id: string;
   name: string;
+  /** Street address of the yard / dispatch base */
+  address?: string;
   city: string;
   state: string;
+  zip?: string;
   location: LatLng;
   isPrimary: boolean;
+  placeId?: string;
+  /** Canonical Google formatted address when available */
+  formattedAddress?: string;
 }
 
 export interface CompanyEmployee {

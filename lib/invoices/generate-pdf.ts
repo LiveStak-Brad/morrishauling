@@ -141,9 +141,13 @@ export async function buildInvoicePdf(params: {
 
   draw("Payment instructions", 50, 10, true);
   y -= 14;
-  draw(`Pay online at ${morrisConfig.website} or call ${morrisConfig.phone}`, 50, 9);
+  draw("Online card payment is not enabled yet. Accepted methods:", 50, 9);
   y -= 12;
-  draw("Checks payable to Morris Hauling & Junk Removal", 50, 9);
+  draw("• Cash  • Check  • Card in person / by phone  • Bank transfer  • Other (call office)", 50, 8);
+  y -= 12;
+  draw(`Checks payable to Morris Junk Removal / Morris Hauling · Call ${morrisConfig.phone}`, 50, 9);
+  y -= 12;
+  draw(`Account: ${morrisConfig.website}`, 50, 9);
   y -= 20;
 
   const terms = invoice.terms ?? COMPANY_TERMS;

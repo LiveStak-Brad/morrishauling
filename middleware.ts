@@ -60,7 +60,24 @@ export async function middleware(request: NextRequest) {
   }
 
   const role = normalizeStaffRole(profile.role as Role, profile.email as string);
-  if (!roleAllowedForPath(role, pathname, profile.email as string)) {
+
+  // Dev toolbar impersonation: honor preview role cookie so /customer and /employee open.
+  const isDev = process.env.NODE_ENV === "development";
+  const impersonating = isDev && request.cookies.get("morris_dev_impersonate")?.value === "true";
+  const previewRoleRaw = request.cookies.get("morris_dev_role")?.value as Role | undefined;
+  const previewRole =
+    impersonating &&
+    previewRoleRaw &&
+    ["customer", "employee", "planner", "admin", "hr", "office_admin"].includes(previewRoleRaw)
+      ? previewRoleRaw
+      : null;
+
+  const roleForPath = previewRole ?? role;
+  // Real admin/owner may always open portals; otherwise use preview or real role.
+  const allowed =
+    roleAllowedForPath(role, pathname, profile.email as string) ||
+    roleAllowedForPath(roleForPath, pathname, profile.email as string);
+  if (!allowed) {
     const unauthorized = request.nextUrl.clone();
     unauthorized.pathname = "/unauthorized";
     return NextResponse.redirect(unauthorized);

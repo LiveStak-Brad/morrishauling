@@ -15,7 +15,10 @@
     "db:apply": "node scripts/apply-migration-pooler.mjs",
     "verify:launch-blockers": "node scripts/verify-launch-blockers.mjs",
     "verify:public-site": "node scripts/verify-public-site.mjs",
-    "verify:prelaunch-deploy": "node scripts/verify-prelaunch-deploy.mjs"
+    "verify:prelaunch-deploy": "node scripts/verify-prelaunch-deploy.mjs",
+    "verify:address-routing": "tsx scripts/verify-address-routing.ts",
+    "verify:hauling-routes": "tsx scripts/verify-hauling-routes.ts",
+    "geocode:base": "tsx scripts/geocode-operating-base.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

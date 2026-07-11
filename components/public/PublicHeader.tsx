@@ -6,7 +6,6 @@ import { Menu, Phone, Sparkles } from "lucide-react";
 import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import { isPublicPrelaunch } from "@/lib/public-site";
-import { CompanyLogo } from "@/components/brand/CompanyLogo";
 import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
 import { ButtonLink } from "@/components/ui/button-link";
 import { buttonVariants } from "@/components/ui/button";
@@ -21,8 +20,11 @@ import {
 
 const umbrellaLinks = [
   { href: "/", label: "Home" },
-  { href: "/#companies", label: "Our Companies" },
+  { href: "/junk-removal", label: "Junk Removal" },
+  { href: "/hauling", label: "Hauling" },
+  { href: "/#standard", label: "Standard" },
   { href: "/about", label: "About" },
+  { href: "/careers", label: "Careers" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -103,8 +105,7 @@ export function PublicHeader({
   const floatDesktop = floating === "desktop";
   const floatAll = floating === true;
   const onDark = floatAll || transparent || floatDesktop;
-  const homeHref = variant === "company" ? "/junk-removal" : "/";
-  const bookingCta = isPublicPrelaunch() ? "Booking info" : "Book service";
+  const bookingCta = isPublicPrelaunch() ? "Book service" : "Book service";
 
   return (
     <header
@@ -127,33 +128,15 @@ export function PublicHeader({
       <div
         className={cn(
           "mx-auto flex max-w-6xl items-center justify-between gap-2 px-4",
-          variant === "umbrella" ? "h-[4.5rem] md:h-20" : "h-16 md:h-[4.25rem]"
+          "h-[4.5rem] md:h-20"
         )}
       >
-        {variant === "umbrella" ? (
-          <MorrisServicesLogo height={64} priority className="max-h-12 sm:max-h-14 md:max-h-16" />
-        ) : (
-          <div className="flex min-w-0 shrink flex-col">
-            <CompanyLogo
-              height={floatAll || floatDesktop ? 56 : 56}
-              width={floatAll || floatDesktop ? 220 : 220}
-              priority
-              href={homeHref}
-              onDark={onDark}
-              className={
-                floatAll || floatDesktop ? "!h-12 !w-12 md:!h-14 md:!w-14" : undefined
-              }
-            />
-            <span
-              className={cn(
-                "truncate text-[10px] font-medium leading-tight",
-                onDark ? "text-white/80" : "text-muted-foreground"
-              )}
-            >
-              A {morrisServicesConfig.publicBrandName} Company
-            </span>
-          </div>
-        )}
+        <MorrisServicesLogo
+          height={64}
+          priority
+          href="/"
+          className="max-h-12 sm:max-h-14 md:max-h-16"
+        />
 
         <nav
           className={cn(
@@ -222,11 +205,12 @@ export function PublicHeader({
               )}
             >
               <SheetHeader>
-                <SheetTitle className={cn("text-left", onDark && "text-white")}>
+                <SheetTitle className="sr-only">
                   {variant === "umbrella"
                     ? morrisServicesConfig.publicBrandName
                     : company.companyName}
                 </SheetTitle>
+                <MorrisServicesLogo height={56} href="/" className="max-h-14" />
               </SheetHeader>
               <nav className="mt-8 flex flex-col gap-1">
                 {mainLinks.map((link) => {

@@ -136,14 +136,17 @@ export function JobCardJunkExtras({
         </div>
       )}
       <div className="mt-2 flex flex-wrap gap-1">
-        {jrd?.selectedDisposalSiteName && (
+        {showInternalProfit && jrd?.selectedDisposalSiteName && (
           <StatusChip label={jrd.selectedDisposalSiteName.split("—")[0].trim()} variant="info" className="text-[10px]" />
         )}
-        {jrd?.estimatedTotalRouteMiles != null && (
+        {showInternalProfit && jrd?.estimatedTotalRouteMiles != null && (
           <StatusChip label={`${jrd.estimatedTotalRouteMiles} mi route`} variant="neutral" className="text-[10px]" />
         )}
-        {jrd?.dumpFeeEstimate != null && (
+        {showInternalProfit && jrd?.dumpFeeEstimate != null && (
           <StatusChip label={`Dump ~$${jrd.dumpFeeEstimate}`} variant="neutral" className="text-[10px]" />
+        )}
+        {!showInternalProfit && (
+          <StatusChip label="Responsible disposal" variant="info" className="text-[10px]" />
         )}
         {jrd?.reviewRequired && (
           <StatusChip label="Needs review" variant="warning" className="text-[10px]" />
@@ -153,8 +156,10 @@ export function JobCardJunkExtras({
         )}
         {job.accessDetails.heavyItems && <StatusChip label="Heavy" variant="warning" className="text-[10px]" />}
         {job.accessDetails.stairs && <StatusChip label="Stairs" variant="neutral" className="text-[10px]" />}
-        {job.accessDetails.specialDisposal && <StatusChip label="Special disposal" variant="urgent" className="text-[10px]" />}
-        {["scheduled", "in_progress", "needs_dump"].includes(job.status) && (
+        {job.accessDetails.specialDisposal && (
+          <StatusChip label="Special handling" variant="urgent" className="text-[10px]" />
+        )}
+        {showInternalProfit && ["scheduled", "in_progress", "needs_dump"].includes(job.status) && (
           <StatusChip label="Dump likely" variant="info" className="text-[10px]" />
         )}
       </div>

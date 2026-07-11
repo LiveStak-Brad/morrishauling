@@ -65,11 +65,11 @@ export function EmployeeDashboard() {
 
   return (
     <div className="pb-4">
-      <div className="morris-gradient-bg px-4 pb-6 pt-6 text-white">
+      <div className="morris-gradient-bg px-4 pb-7 pt-7 text-white">
         <p className="text-sm text-white/70">{data.greeting}</p>
-        <h1 className="text-2xl font-bold mt-1">{firstName}</h1>
+        <h1 className="mt-1 font-heading text-3xl font-medium tracking-tight">{firstName}</h1>
 
-        <div className="mt-4 space-y-2 text-sm">
+        <div className="mt-5 space-y-2.5 text-sm">
           <Row icon={Clock} label="Clock" value={data.clock.stateLabel} />
           <Row icon={Calendar} label="Today" value={data.shiftLabel ?? "—"} />
           {data.crew.length > 0 && (
@@ -83,13 +83,13 @@ export function EmployeeDashboard() {
         {primaryAction.href ? (
           <ButtonLink
             href={primaryAction.href}
-            className="mt-5 h-14 w-full rounded-2xl bg-white text-brand-primary font-bold text-base shadow-lg hover:bg-white/95 flex items-center justify-center"
+            className="mt-6 flex h-14 w-full items-center justify-center rounded-full bg-white text-base font-bold text-brand-primary shadow-lg hover:bg-white/95"
           >
             {primaryAction.label}
           </ButtonLink>
         ) : (
           <Button
-            className="mt-5 h-14 w-full rounded-2xl bg-white text-brand-primary font-bold text-base shadow-lg"
+            className="mt-6 h-14 w-full rounded-full bg-white text-base font-bold text-brand-primary shadow-lg"
             onClick={primaryAction.onClick}
             disabled={primaryAction.disabled}
           >

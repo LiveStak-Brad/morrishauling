@@ -73,16 +73,16 @@ export function EstimatedArrivalCalendar({
       <div className="mb-1 flex flex-wrap items-center gap-2">
         <CalendarClock className="h-5 w-5 shrink-0 text-brand-primary" />
         <h3 className="font-bold">
-          {previewMode ? "Preview: sample scheduling windows" : "Estimated arrival window"}
+          {previewMode ? "Sample scheduling windows" : "Choose your appointment window"}
         </h3>
         {previewMode && (
-          <StatusChip label="Not confirmed" variant="warning" className="text-[10px]" />
+          <StatusChip label="Sample only" variant="warning" className="text-[10px]" />
         )}
       </div>
       <p className="mb-4 text-sm text-muted-foreground">
         {previewMode
           ? "Sample screens only — selecting a window here does not reserve a crew or appointment."
-          : "Choose a day and window that works for you. Flexible options may reduce your estimate when we can route efficiently."}
+          : "Morning, afternoon, or flexible. We book against real crew, truck, and trailer capacity."}
       </p>
 
       {loading && (
@@ -173,8 +173,8 @@ export function EstimatedArrivalCalendar({
       </div>
       <p className="mt-4 text-xs text-muted-foreground">
         {previewMode
-          ? "This calendar is for demonstration only. Real scheduling opens at launch."
-          : "Final arrival time confirmed after booking. Windows are estimates, not guaranteed appointment times."}
+          ? "This calendar is for demonstration only."
+          : "Your window is reserved when booking confirms. If review is required, we send a revised estimate — approve it and we schedule automatically."}
       </p>
     </PremiumCard>
   );

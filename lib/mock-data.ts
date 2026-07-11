@@ -165,10 +165,10 @@ const morrisJobs: Job[] = [
       disposalSelectionReason: "Nearest general junk disposal accepting furniture",
       disposalUncertain: false,
       customerPricingBreakdown: [
-        { id: "service_call", label: "Pickup Service", amount: 79 },
+        { id: "service_call", label: "Removal Service", amount: 79 },
         { id: "junk_removal", label: "Couch Removal", amount: 95 },
-        { id: "transportation", label: "Travel & Transportation", amount: 49, helperText: "Includes dispatch, fuel, and transportation." },
-        { id: "disposal", label: "Disposal estimate", amount: 45 },
+        { id: "transportation", label: "Travel & Transportation", amount: 49, helperText: "Includes travel, loading, and transportation." },
+        { id: "disposal", label: "Disposal & Recycling", amount: 45 },
       ],
       internalCostBreakdown: [],
       minimumsApplied: [],

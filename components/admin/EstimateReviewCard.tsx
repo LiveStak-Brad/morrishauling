@@ -27,6 +27,7 @@ import { DISPOSAL_CATEGORY_LABELS } from "@/types/disposal";
 import { toast } from "@/lib/toast";
 import type { Customer } from "@/types/user";
 import Image from "next/image";
+import { AddressOverridePanel } from "@/components/admin/AddressOverridePanel";
 
 interface EstimateReviewCardProps {
   job: Job;
@@ -112,8 +113,19 @@ export function EstimateReviewCard({ job, onUpdated }: EstimateReviewCardProps) 
             <p className="text-xs font-semibold uppercase text-muted-foreground">Review request</p>
             <h3 className="text-lg font-bold">{job.address.street}</h3>
             <p className="text-sm text-muted-foreground">
-              {job.address.city}, {job.address.state}
+              {job.address.line2 ? `${job.address.line2} · ` : ""}
+              {job.address.city}, {job.address.state} {job.address.zip}
             </p>
+            {job.address.verificationStatus === "manual_override" && (
+              <p className="mt-1 text-xs text-amber-800">Manual address override on file</p>
+            )}
+            <div className="mt-2">
+              <AddressOverridePanel
+                jobId={job.id}
+                currentLabel={`${job.address.street}, ${job.address.city}`}
+                onUpdated={onUpdated}
+              />
+            </div>
           </div>
           <div className="flex flex-wrap gap-2">
             <StatusChip

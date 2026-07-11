@@ -80,4 +80,4 @@ export interface FinancingRequestInput {
 }
 
 export const FINANCING_DISCLAIMER =
-  "In-house financing is offered at the discretion of Morris Hauling & Junk Removal. Approval is not guaranteed. Missed payments may result in collection activity, late fees, or loss of future financing eligibility.";
+  "In-house financing is offered at the discretion of Morris Junk Removal. Approval is not guaranteed. Missed payments may result in collection activity, late fees, or loss of future financing eligibility.";

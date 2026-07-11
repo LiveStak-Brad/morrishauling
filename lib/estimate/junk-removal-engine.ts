@@ -59,6 +59,22 @@ export interface JunkRemovalEstimateInput {
     discountAmount: number;
     discountReason?: string;
   };
+  /**
+   * When provided (from /api/junk/route), use real road miles instead of haversine.
+   * Public booking must supply this — never invent mileage.
+   */
+  routeMetrics?: {
+    dispatchMiles: number;
+    customerToDisposalMiles: number;
+    returnMiles: number;
+    totalRouteMiles: number;
+    originBaseId: string;
+    originBaseName: string;
+    selectedDisposalSiteId?: string;
+    selectedDisposalSiteName?: string;
+    estimatedDriverHours?: number;
+    estimatedDriveMinutes?: number;
+  };
 }
 
 export interface JunkRemovalEstimateResult {
@@ -238,6 +254,9 @@ export class JunkRemovalEstimateEngine {
     let estimatedCrewSize = 2;
     let heavyItems = input.accessDetails.heavyItems;
     let specialDisposal = input.accessDetails.specialDisposal;
+    let catalogHeavy = false;
+    let catalogSpecial = false;
+    let itemDisposalFees = 0;
     let confidence: "high" | "medium" | "low" = "high";
     let junkRemovalAmount = 0;
     let itemCount = 0;
@@ -258,8 +277,11 @@ export class JunkRemovalEstimateEngine {
         trailerPercent += cfg.loadPercentage * qty;
         estimatedCrewSize = Math.max(estimatedCrewSize, cfg.crewSize);
         itemDisposalCategories.push(cfg.disposalCategory);
-        if (cfg.heavy) heavyItems = true;
-        if (cfg.specialDisposal) specialDisposal = true;
+        itemDisposalFees += (cfg.disposalFee ?? 0) * qty;
+        // Catalog flags inform review/crew — flat heavy/special fees only from access details
+        // so item base prices are not double-charged for common residential pickups.
+        if (cfg.heavy) catalogHeavy = true;
+        if (cfg.specialDisposal) catalogSpecial = true;
       }
       trailerPercent = Math.min(150, trailerPercent);
       if (input.selectedItems.some((s) => s.itemId === "other")) {
@@ -282,6 +304,10 @@ export class JunkRemovalEstimateEngine {
       if (trailerPercent >= 75) confidence = "medium";
     }
 
+    // Catalog heavy/special inform review; flat fees only when customer flags access difficulty.
+    const reviewHeavy = heavyItems || catalogHeavy;
+    const reviewSpecial = specialDisposal || catalogSpecial;
+
     estimatedLaborMinutes = Math.max(p.minimumLaborMinutes, estimatedLaborMinutes);
 
     const disposalCategory = resolveDisposalCategory({
@@ -291,18 +317,19 @@ export class JunkRemovalEstimateEngine {
       itemDisposalCategories,
     });
 
-    const distanceUnavailable = !input.addressLocation && !input.zip;
+    const distanceUnavailable = !input.addressLocation && !input.zip && !input.routeMetrics;
     if (distanceUnavailable) confidence = "low";
 
     const fallbackBase =
       config.operatingBases.find((b) => b.isPrimary) ?? config.operatingBases[0];
-    const customerLoc =
-      input.addressLocation ?? approximateCustomerLocation(input.zip, fallbackBase);
+    const resolvedCustomerLoc =
+      input.addressLocation ??
+      (input.zip ? approximateCustomerLocation(input.zip, fallbackBase) : fallbackBase.location);
 
     const disposalPick = selectDisposalSite(
       config.dumpSites as EnhancedDumpSite[],
       disposalCategory,
-      customerLoc,
+      resolvedCustomerLoc,
       distanceProvider
     );
 
@@ -312,18 +339,88 @@ export class JunkRemovalEstimateEngine {
       category: disposalCategory,
     });
 
-    const routeCost = calculateJunkRouteCost(
+    let routeCost = calculateJunkRouteCost(
       config,
       {
-        customerLocation: input.addressLocation,
+        customerLocation: input.addressLocation ?? resolvedCustomerLoc,
         zip: input.zip,
         disposal: disposalPick,
-        originBaseId: input.originBaseId,
+        originBaseId: input.routeMetrics?.originBaseId ?? input.originBaseId ?? fallbackBase.id,
       },
       distanceProvider
     );
 
-    let dumpFeeEstimate = Math.max(p.minimumDisposalFee, disposalPick.estimatedFee);
+    // Single-item pickups: avoid stacking dispatch minimum on top of mileage + fuel
+    // (service call already covers crew dispatch).
+    if (input.mode === "single_item" && !input.routeMetrics) {
+      const mileageCharge = Math.round(routeCost.totalRouteMiles * p.customerTravelRatePerMile);
+      const fuelCharge = Math.max(
+        p.minimumFuelFee,
+        Math.round(routeCost.totalRouteMiles * p.fuelAdjustmentRate)
+      );
+      routeCost = {
+        ...routeCost,
+        customerTransportationCharge: Math.max(p.minimumTravelFee, mileageCharge + fuelCharge),
+      };
+    }
+
+    // Override with real road routing when provided by /api/junk/route
+    if (input.routeMetrics) {
+      const rm = input.routeMetrics;
+      const p = config.junkRemovalPricing;
+      const mileageCharge = Math.round(rm.totalRouteMiles * p.customerTravelRatePerMile);
+      const fuelCharge = Math.max(
+        p.minimumFuelFee,
+        Math.round(rm.totalRouteMiles * p.fuelAdjustmentRate)
+      );
+      const customerTransportationCharge = Math.max(
+        p.minimumTravelFee,
+        input.mode === "single_item"
+          ? mileageCharge + fuelCharge
+          : p.minimumDispatchFee + mileageCharge + fuelCharge
+      );
+      const estimatedDriveMinutes =
+        rm.estimatedDriveMinutes ??
+        Math.round((rm.totalRouteMiles / p.averageDriveMph) * 60);
+      const gallonsUsed = rm.totalRouteMiles / p.internalFuelMpg;
+      routeCost = {
+        ...routeCost,
+        dispatchMiles: rm.dispatchMiles,
+        customerToDisposalMiles: rm.customerToDisposalMiles,
+        returnMiles: rm.returnMiles,
+        totalRouteMiles: rm.totalRouteMiles,
+        estimatedDriveMinutes,
+        customerTransportationCharge,
+        internalFuelCost: Math.round(gallonsUsed * p.internalDieselPricePerGallon),
+        internalTruckOperatingCost: Math.round(
+          rm.totalRouteMiles * p.internalTruckOperatingCostPerMile
+        ),
+        internalTrailerOperatingCost: Math.round(
+          rm.totalRouteMiles * p.internalTrailerOperatingCostPerMile
+        ),
+        internalDriveLaborCost: Math.round(
+          (estimatedDriveMinutes / 60) * p.laborHourlyRate * p.internalDriveLaborMultiplier
+        ),
+        baseSelectionReason: "Primary operating base (verified address routing)",
+        originBase:
+          config.operatingBases.find((b) => b.id === rm.originBaseId) ?? routeCost.originBase,
+      };
+      if (rm.selectedDisposalSiteId) {
+        const site = (config.dumpSites as EnhancedDumpSite[]).find(
+          (s) => s.id === rm.selectedDisposalSiteId
+        );
+        if (site) {
+          disposalPick.site = site;
+          disposalPick.selectionReason = "Matched from verified road route";
+          disposalPick.uncertain = false;
+        }
+      }
+    }
+
+    let dumpFeeEstimate = Math.max(
+      p.minimumDisposalFee,
+      disposalPick.estimatedFee + (input.mode === "single_item" ? itemDisposalFees : 0)
+    );
 
     const onsiteHours = estimatedLaborMinutes / 60;
     const leadLabor = Math.round(onsiteHours * p.laborHourlyRate);
@@ -331,7 +428,10 @@ export class JunkRemovalEstimateEngine {
       estimatedCrewSize > 1
         ? Math.round((onsiteHours * (estimatedCrewSize - 1) * p.helperHourlyRate) / 2)
         : 0;
-    junkRemovalAmount += leadLabor + helperLabor;
+    // Single-item base prices already include onsite labor; cleanouts add labor on volume tiers.
+    if (input.mode !== "single_item") {
+      junkRemovalAmount += leadLabor + helperLabor;
+    }
 
     const accessFees: PricingBreakdownLine[] = [];
     const flights = input.accessDetails.stairFlights ?? (input.accessDetails.stairs ? 1 : 0);
@@ -353,7 +453,11 @@ export class JunkRemovalEstimateEngine {
       warnings.push("heavy_load");
     }
     if (specialDisposal) {
-      accessFees.push({ id: "special_disposal", label: "Special disposal handling", amount: p.specialDisposalFee });
+      accessFees.push({
+        id: "special_disposal",
+        label: "Special recycling handling",
+        amount: p.specialDisposalFee,
+      });
       warnings.push("special_disposal");
     }
 
@@ -364,7 +468,11 @@ export class JunkRemovalEstimateEngine {
     if (priority === "same_day") priorityFee = p.sameDayFee;
     else if (priority === "emergency") priorityFee = p.emergencyFee;
 
-    const serviceCall = p.baseServiceFee;
+    const serviceCall =
+      input.mode === "single_item"
+        ? // Item line already carries removal labor; keep a lighter dispatch fee for single pickups.
+          Math.max(p.minimumDispatchFee, Math.round(p.baseServiceFee * 0.6))
+        : p.baseServiceFee;
     const transportation = routeCost.customerTransportationCharge;
     const fuelAdjustment = Math.max(
       p.minimumFuelFee,
@@ -422,8 +530,8 @@ export class JunkRemovalEstimateEngine {
     const { reviewRequired, reviewReasons } = evaluateReviewRequired(input, config, {
       total,
       trailerPercent,
-      heavyItems,
-      specialDisposal,
+      heavyItems: reviewHeavy,
+      specialDisposal: reviewSpecial,
       confidence,
       profitMargin: internalProfit.profitMargin,
       route,
@@ -449,14 +557,14 @@ export class JunkRemovalEstimateEngine {
     const transportationBreakdown = buildTransportationBreakdownSteps(routeCost.originBase.city);
 
     const customerLines: PricingBreakdownLine[] = [
-      { id: "service_call", label: "Pickup Service", amount: serviceCall },
+      { id: "service_call", label: "Removal Service", amount: serviceCall },
       {
         id: "transportation",
         label: "Travel & Transportation",
         amount: transportation,
       },
       { id: "junk_removal", label: junkRemovalLabel, amount: junkRemovalAmount },
-      { id: "disposal", label: "Disposal estimate", amount: dumpFeeEstimate },
+      { id: "disposal", label: "Disposal & Recycling", amount: dumpFeeEstimate },
       ...accessFees,
     ];
     if (priorityFee > 0) {

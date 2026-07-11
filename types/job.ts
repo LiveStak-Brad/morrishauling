@@ -25,6 +25,9 @@ export type JobStatus =
   | "completed"
   | "cancelled";
 
+/** Extended operational statuses stored in jobs.status (text) — map via lib/jobs/workflow. */
+export type ExtendedJobStatus = JobStatus | import("@/types/division").OperationalJobStatus;
+
 export type LoadSizeTier =
   | "min_10"
   | "quarter_25"
@@ -66,6 +69,8 @@ export interface JobPhoto {
   id: string;
   url: string;
   caption?: string;
+  /** Operational photo stage for completion gates */
+  photoStage?: string;
 }
 
 export interface JobAddress {
@@ -74,6 +79,14 @@ export interface JobAddress {
   state: string;
   zip: string;
   location?: LatLng;
+  /** Apartment / suite / unit / gate */
+  line2?: string;
+  placeId?: string;
+  formattedAddress?: string;
+  country?: string;
+  verificationStatus?: "verified" | "manual_override" | "unverified";
+  provider?: "google_places" | "manual";
+  verifiedAt?: string;
 }
 
 export interface EstimateModifier {
@@ -105,6 +118,8 @@ export interface Job {
   id: string;
   companyId: string;
   customerId: string;
+  /** Morris Services division — junk_removal | hauling */
+  divisionId?: "junk_removal" | "hauling";
   serviceType: ServiceType;
   status: JobStatus;
   junkType: string;
@@ -129,6 +144,10 @@ export interface Job {
   assignedTruckId?: string;
   assignedTrailerId?: string;
   assignedEmployeeIds?: string[];
+  /** Primary driver (must also be in assignedEmployeeIds when set). */
+  driverEmployeeId?: string;
+  /** Estimated on-site + travel duration in minutes. */
+  estimatedDurationMinutes?: number;
   customerNotes?: string;
   finalLoadSizeTier?: LoadSizeTier;
   extraFees?: number;
@@ -138,6 +157,9 @@ export interface Job {
   finalPriceAdjustment?: number;
   finalPriceAdjustmentReason?: string;
   customerApprovalCaptured?: boolean;
+  completionOverrideReason?: string;
+  completionOverrideBy?: string;
+  completionOverrideAt?: string;
   createdAt: string;
   updatedAt: string;
 }

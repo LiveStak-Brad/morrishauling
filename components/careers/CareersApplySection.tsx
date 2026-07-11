@@ -52,7 +52,7 @@ export function CareersApplySection({ postings, selectedPostingId }: CareersAppl
       <div className="mx-auto max-w-3xl px-4">
         <div className="text-center mb-8">
           <h2 className="text-3xl sm:text-4xl font-bold text-[#0A0A0A]">
-            Apply to Join Morris Hauling
+            Apply to Join Morris Junk Removal
           </h2>
           <p className="mt-3 text-muted-foreground text-lg max-w-xl mx-auto">
             Apply for a current role or submit your information for future opportunities.

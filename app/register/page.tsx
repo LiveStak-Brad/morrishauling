@@ -40,7 +40,7 @@ export default function RegisterPage() {
       const { error } = await signInWithPassword(email, password);
       if (error) throw error;
 
-      toast.success("Account created — welcome to Morris Hauling!");
+      toast.success("Account created — welcome to Morris Junk Removal!");
       router.push("/customer");
       router.refresh();
     } catch (err) {
@@ -53,7 +53,7 @@ export default function RegisterPage() {
   return (
     <AuthShell
       title="Create your account"
-      subtitle="Book junk removal, get estimates, and pay online — trusted local service since day one."
+      subtitle="Create your Morris account to book service, track jobs, approve estimates, and manage invoices."
       footer={
         <>
           <span className="text-muted-foreground">Already have an account? </span>
@@ -121,7 +121,7 @@ export default function RegisterPage() {
           Create account
         </Button>
         <p className="text-center text-xs text-muted-foreground">
-          Employee and admin accounts are created by Morris Hauling management.
+          Employee and admin accounts are created by Morris Junk Removal management.
         </p>
       </form>
     </AuthShell>

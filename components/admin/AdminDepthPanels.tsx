@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { format } from "date-fns";
 import { useCompany } from "@/lib/company-context";
 import { isDemoDataEnabled } from "@/lib/is-demo-data";
@@ -556,6 +557,12 @@ export function AdminCustomersPanel() {
               )}
             </div>
             <div className="flex gap-2">
+              <Link
+                href={`/admin/customers/${c.id}`}
+                className="inline-flex h-7 items-center rounded-lg border px-2.5 text-[0.8rem] font-medium hover:bg-muted"
+              >
+                Open workspace
+              </Link>
               {c.callbackStatus === "due" && (
                 <Button size="sm" variant="outline" onClick={() => void completeCallback(c.id)}>
                   Mark callback done

@@ -82,10 +82,13 @@ const regions = [
 
 async function main() {
   const attempts = [
-    { host: hosts[0], port: 5432, user: "postgres" },
+    { host: hosts[0], port: 6543, user: `postgres.${projectRef}` },
+    { host: hosts[0], port: 5432, user: `postgres.${projectRef}` },
+    { host: `db.${projectRef}.supabase.co`, port: 5432, user: "postgres" },
     ...regions.flatMap((r) => [
       { host: `aws-0-${r}.pooler.supabase.com`, port: 6543, user: `postgres.${projectRef}` },
       { host: `aws-0-${r}.pooler.supabase.com`, port: 5432, user: `postgres.${projectRef}` },
+      { host: `aws-1-${r}.pooler.supabase.com`, port: 6543, user: `postgres.${projectRef}` },
     ]),
   ];
 

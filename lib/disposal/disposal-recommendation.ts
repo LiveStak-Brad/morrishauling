@@ -150,12 +150,28 @@ function scoreSite(
   const vendorBonus = site.isPreferredVendor ? 10 : 0;
   const avoidPenalty = site.isAvoidVendor ? 30 : 0;
   const ratingBonus = site.vendorRating ? Math.min(8, site.vendorRating * 1.6) : 0;
+  const pricingPenalty = site.pricingUnknown ? 8 : 0;
+  const needsCallPenalty = site.verificationStatus === "needs_call" ? 5 : 0;
+  const commercialBonus = site.commercialAccepted === true || site.accessType === "both" || site.accessType === "commercial" ? 4 : 0;
+  const appointmentPenalty = site.appointmentRequired ? 4 : 0;
 
   return Math.max(
     0,
     Math.min(
       100,
-      Math.round(profitScore + distanceScore + openBonus + materialBonus + vendorBonus + ratingBonus - avoidPenalty)
+      Math.round(
+        profitScore +
+          distanceScore +
+          openBonus +
+          materialBonus +
+          vendorBonus +
+          ratingBonus +
+          commercialBonus -
+          avoidPenalty -
+          pricingPenalty -
+          needsCallPenalty -
+          appointmentPenalty
+      )
     )
   );
 }
@@ -420,6 +436,13 @@ export function rankDisposalSites(input: RankDisposalSitesInput): DisposalRecomm
 }
 
 export function rowToDisposalFacility(row: Record<string, unknown>): DisposalFacility {
+  const baseFee = row.base_fee != null ? Number(row.base_fee) : 0;
+  const perTonFee = row.per_ton_fee != null ? Number(row.per_ton_fee) : undefined;
+  const pricingUnknown =
+    row.pricing_unknown != null
+      ? Boolean(row.pricing_unknown)
+      : baseFee === 0 && perTonFee == null;
+
   return {
     id: String(row.id),
     companyId: row.company_id ? String(row.company_id) : undefined,
@@ -445,8 +468,8 @@ export function rowToDisposalFacility(row: Record<string, unknown>): DisposalFac
     truckRestrictions: (row.truck_restrictions as string) ?? undefined,
     weightLimitTons: row.weight_limit_tons != null ? Number(row.weight_limit_tons) : undefined,
     feeType: (row.fee_type as DisposalFacility["feeType"]) ?? "flat",
-    baseFee: row.base_fee != null ? Number(row.base_fee) : 0,
-    perTonFee: row.per_ton_fee != null ? Number(row.per_ton_fee) : undefined,
+    baseFee,
+    perTonFee,
     perItemFee: row.per_item_fee != null ? Number(row.per_item_fee) : undefined,
     minimumFee: row.minimum_fee != null ? Number(row.minimum_fee) : 0,
     specialFees: (row.special_fees as DisposalFacility["specialFees"]) ?? [],
@@ -461,5 +484,24 @@ export function rowToDisposalFacility(row: Record<string, unknown>): DisposalFac
     vendorRating: row.vendor_rating != null ? Number(row.vendor_rating) : undefined,
     avgWaitMinutes: row.avg_wait_minutes != null ? Number(row.avg_wait_minutes) : undefined,
     avgUnloadMinutes: row.avg_unload_minutes != null ? Number(row.avg_unload_minutes) : undefined,
+    facilityType: (row.facility_type as DisposalFacility["facilityType"]) ?? undefined,
+    commercialAccepted:
+      row.commercial_accepted != null
+        ? Boolean(row.commercial_accepted)
+        : (row.access_type as string) !== "public",
+    appointmentRequired: Boolean(row.appointment_required),
+    residencyRestriction: (row.residency_restriction as DisposalFacility["residencyRestriction"]) ?? "unknown",
+    specialRequirements: (row.special_requirements as string) ?? undefined,
+    operationalNotes: (row.operational_notes as string) ?? undefined,
+    scaleAvailable: row.scale_available != null ? Boolean(row.scale_available) : undefined,
+    paymentMethods: (row.payment_methods as string[]) ?? undefined,
+    publicPricingNotes: (row.public_pricing_notes as string) ?? undefined,
+    commercialPricingNotes: (row.commercial_pricing_notes as string) ?? undefined,
+    verificationStatus: (row.verification_status as DisposalFacility["verificationStatus"]) ?? undefined,
+    verificationSources: (row.verification_sources as DisposalFacility["verificationSources"]) ?? undefined,
+    verifiedAt: (row.verified_at as string) ?? undefined,
+    pricingVerifiedAt: (row.pricing_verified_at as string) ?? undefined,
+    pricingUnknown,
+    geocodeSource: (row.geocode_source as string) ?? undefined,
   };
 }

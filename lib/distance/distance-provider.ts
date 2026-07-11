@@ -27,7 +27,10 @@ function applyRoadFactor(straightMiles: number): number {
   return Math.round(straightMiles * AVG_ROAD_FACTOR * 10) / 10;
 }
 
-/** Placeholder distances using haversine + road factor. Replace with Google Maps later. */
+/**
+ * Offline fallback for junk-removal disposal heuristics only.
+ * Hauling booking uses lib/geo (Nominatim/OSRM or Google) — never this placeholder.
+ */
 export class HaversineDistanceProvider implements DistanceProvider {
   readonly name = "haversine";
 
@@ -41,8 +44,8 @@ export class HaversineDistanceProvider implements DistanceProvider {
 }
 
 /**
- * Future Google Maps Distance Matrix provider.
- * Falls back to haversine until API credentials and routing are wired.
+ * Prefer GOOGLE_MAPS_API_KEY via lib/geo/route-driving for production hauling.
+ * This class remains for junk disposal until that path is migrated.
  */
 export class GoogleMapsDistanceProvider implements DistanceProvider {
   readonly name = "google_maps";
@@ -53,7 +56,6 @@ export class GoogleMapsDistanceProvider implements DistanceProvider {
   }
 
   roadMiles(a: LatLng, b: LatLng): number {
-    // TODO: integrate Google Distance Matrix / Routes API
     return this.fallback.roadMiles(a, b);
   }
 }

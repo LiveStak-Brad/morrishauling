@@ -38,7 +38,7 @@ export function BrandingSection({ initial }: { initial: unknown }) {
         onReset={() => setBranding(normalizeBranding(undefined))}
       >
         <div className="flex items-center gap-4 rounded-lg border p-4">
-          <CompanyLogo height={64} width={64} className="!h-16 !w-16 shrink-0" />
+          <CompanyLogo height={64} className="shrink-0" />
           <div className="flex-1 space-y-3">
             <div>
               <Label>Logo URL or path</Label>

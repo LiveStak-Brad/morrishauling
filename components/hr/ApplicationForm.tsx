@@ -146,7 +146,7 @@ export function ApplicationForm({ posting }: ApplicationFormProps) {
       <PremiumCard className="p-8 text-center border-green-200 bg-green-50/50">
         <h2 className="text-2xl font-bold text-green-800">Application Submitted!</h2>
         <p className="mt-3 text-muted-foreground leading-relaxed">
-          Thank you for applying to Morris Hauling. Our HR team will review your application and
+          Thank you for applying to Morris Junk Removal. Our HR team will review your application and
           contact you if there&apos;s a match for {posting.title} or a related future opening.
         </p>
       </PremiumCard>
@@ -231,7 +231,7 @@ export function ApplicationForm({ posting }: ApplicationFormProps) {
               value={form.whyMorris ?? ""}
               onChange={(e) => update({ whyMorris: e.target.value })}
               rows={3}
-              placeholder="Tell us what interests you about Morris Hauling…"
+              placeholder="Tell us what interests you about Morris Junk Removal…"
             />
           </div>
         </PremiumCard>

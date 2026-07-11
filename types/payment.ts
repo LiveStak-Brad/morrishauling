@@ -5,6 +5,9 @@ export type PaymentMethod =
   | "cash_on_arrival"
   | "cash"
   | "check"
+  | "manual_card"
+  | "bank_transfer"
+  | "other"
   | "invoice"
   | "financing"
   | "paypal"
@@ -50,6 +53,12 @@ export interface Payment {
   timing: PaymentTiming;
   status: PaymentStatus;
   receiptNumber?: string;
+  notes?: string;
+  proofUrl?: string;
+  reversedAt?: string;
+  reversalReason?: string;
+  receiptIssuedAt?: string;
+  externalReference?: string;
   createdAt: string;
 }
 
@@ -68,12 +77,43 @@ export interface Invoice {
   total: number;
   amountPaid: number;
   balanceDue: number;
-  status: "draft" | "sent" | "paid" | "partial" | "overdue" | "void";
+  status:
+    | "draft"
+    | "ready_to_send"
+    | "sent"
+    | "viewed"
+    | "partially_paid"
+    | "paid"
+    | "overdue"
+    | "void"
+    | "refunded"
+    | "disputed"
+    | "written_off"
+    | "partial";
   paymentStatus: AccountPaymentStatus;
   dueDate?: string;
   terms?: string;
   finalPriceNotes?: string;
   pdfStoragePath?: string;
+  estimateId?: string;
+  originalEstimateTotal?: number;
+  approvedAdjustmentsTotal?: number;
+  customerNotes?: string;
+  internalNotes?: string;
+  deliveryStatus?: "not_sent" | "pending" | "delivered" | "failed" | "skipped";
+  deliveryError?: string;
+  sentAt?: string;
+  viewedAt?: string;
+  issueDate?: string;
+  createdAt: string;
+}
+
+export interface PaymentAllocation {
+  id: string;
+  companyId: string;
+  paymentId: string;
+  invoiceId: string;
+  amount: number;
   createdAt: string;
 }
 

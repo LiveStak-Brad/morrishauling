@@ -9,6 +9,7 @@ import { getAssignedCourses } from "./training";
 import { getEmployeeAssets } from "./equipment";
 import { getPunchesForEmployee, getEmployeeShifts } from "./time-schedule";
 import { getHrEmployees } from "./employees";
+import { businessDateString, isOnBusinessDate } from "@/lib/datetime/business-timezone";
 import type { Job } from "@/types/job";
 import type { PunchType } from "@/types/hr/time";
 import type {
@@ -54,7 +55,7 @@ function deriveClockState(punches: { punchType: string; punchedAt: string }[], t
   breakStatus: ClockSummary["breakStatus"];
 } {
   const todayPunches = punches
-    .filter((p) => p.punchedAt.startsWith(today))
+    .filter((p) => isOnBusinessDate(p.punchedAt, today))
     .sort((a, b) => a.punchedAt.localeCompare(b.punchedAt));
 
   if (todayPunches.length === 0) {
@@ -123,7 +124,7 @@ export function calculateHoursFromPunches(
   today: string
 ): number {
   const sorted = punches
-    .filter((p) => p.punchedAt.startsWith(today))
+    .filter((p) => isOnBusinessDate(p.punchedAt, today))
     .sort((a, b) => a.punchedAt.localeCompare(b.punchedAt));
 
   let hours = 0;
@@ -225,8 +226,7 @@ export async function getEmployeeDashboard(
   const employee = await getHrEmployeeById(companyId, employeeId);
   if (!employee) return null;
 
-  const today = format(new Date(), "yyyy-MM-dd");
-  const weekStart = format(subDays(new Date(), 6), "yyyy-MM-dd");
+  const today = businessDateString(new Date());
   const sb = await sbWrite();
   const [allJobs, shifts, punches, weekPunches, allEmployees, onboarding, trainingAssigned, pendingDocs, assets, announcements] = await Promise.all([
     getJobs(companyId, { scheduledDate: today }),
@@ -293,7 +293,7 @@ export async function getEmployeeDashboard(
 
   let hoursThisWeek = 0;
   for (let i = 0; i < 7; i++) {
-    const d = format(subDays(new Date(), i), "yyyy-MM-dd");
+    const d = businessDateString(subDays(new Date(), i));
     hoursThisWeek += calculateHoursFromPunches(weekPunches, d);
   }
   hoursThisWeek = Math.round(hoursThisWeek * 100) / 100;
@@ -301,7 +301,7 @@ export async function getEmployeeDashboard(
   let weather: EmployeeDashboardData["weather"];
   try {
     const wRes = await fetch(
-      "https://api.open-meteo.com/v1/forecast?latitude=38.8114&longitude=-91.1415&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=America%2FChicago"
+      "https://api.open-meteo.com/v1/forecast?latitude=38.8179&longitude=-91.1429&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=America%2FChicago"
     );
     const w = await wRes.json();
     const code = w.current?.weather_code ?? 0;

@@ -1,11 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 
-export function CompanyBreadcrumbBar() {
-  const hauling = morrisServicesConfig.operatingCompanies[0];
+export function CompanyBreadcrumbBar({
+  currentLabel,
+}: {
+  currentLabel?: string;
+}) {
+  const pathname = usePathname();
+  const junk = morrisServicesConfig.operatingCompanies[0];
+  const hauling = morrisServicesConfig.haulingDivision;
+
+  const label =
+    currentLabel ??
+    (pathname?.startsWith("/hauling") ? hauling.name : junk.name);
 
   return (
     <div className="border-b border-border bg-muted/40">
@@ -15,7 +26,7 @@ export function CompanyBreadcrumbBar() {
             {morrisServicesConfig.publicBrandName}
           </Link>
           <ChevronRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
-          <span className="truncate font-medium text-foreground">{hauling.name}</span>
+          <span className="truncate font-medium text-foreground">{label}</span>
         </nav>
         <Link
           href="/"

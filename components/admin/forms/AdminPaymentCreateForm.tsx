@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CustomerSelector } from "@/components/admin/CustomerSelector";
 import { JobSelector } from "@/components/admin/JobSelector";
 import { InvoiceSelector } from "@/components/admin/InvoiceSelector";
@@ -15,6 +15,7 @@ import type { Payment } from "@/types";
 
 export function AdminPaymentCreateForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [customerId, setCustomerId] = useState("");
   const [jobId, setJobId] = useState("");
   const [invoiceId, setInvoiceId] = useState("");
@@ -24,9 +25,22 @@ export function AdminPaymentCreateForm() {
   const [collectedBy, setCollectedBy] = useState("");
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    const c = searchParams.get("customerId");
+    const i = searchParams.get("invoiceId");
+    const j = searchParams.get("jobId");
+    if (c) setCustomerId(c);
+    if (i) setInvoiceId(i);
+    if (j) setJobId(j);
+  }, [searchParams]);
+
   const submit = async () => {
-    if (!customerId || !jobId || !amount) {
-      toast.error("Customer, job, and amount required");
+    if (!customerId || !amount) {
+      toast.error("Customer and amount required");
+      return;
+    }
+    if (!invoiceId && !jobId) {
+      toast.error("Select an invoice (preferred) or a job");
       return;
     }
     setSaving(true);
@@ -36,7 +50,7 @@ export function AdminPaymentCreateForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           customerId,
-          jobId,
+          jobId: jobId || undefined,
           invoiceId: invoiceId || undefined,
           amount: Number(amount),
           method,
@@ -47,7 +61,7 @@ export function AdminPaymentCreateForm() {
       const d = await res.json();
       if (!d.ok) throw new Error(d.error);
       toast.success("Payment recorded");
-      router.push("/admin/payments");
+      router.push(customerId ? `/admin/customers/${customerId}` : "/admin/payments");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed");
     } finally {
@@ -58,8 +72,8 @@ export function AdminPaymentCreateForm() {
   return (
     <PremiumCard className="p-4 space-y-4 max-w-2xl">
       <div><Label>Customer</Label><CustomerSelector value={customerId} onChange={(id) => setCustomerId(id)} /></div>
-      <div><Label>Job</Label><JobSelector value={jobId} onChange={(id) => setJobId(id)} customerId={customerId || undefined} /></div>
-      <div><Label>Invoice (optional)</Label><InvoiceSelector value={invoiceId} onChange={(id) => setInvoiceId(id)} customerId={customerId || undefined} jobId={jobId || undefined} /></div>
+      <div><Label>Invoice</Label><InvoiceSelector value={invoiceId} onChange={(id) => setInvoiceId(id)} customerId={customerId || undefined} jobId={jobId || undefined} /></div>
+      <div><Label>Job (if no invoice)</Label><JobSelector value={jobId} onChange={(id) => setJobId(id)} customerId={customerId || undefined} /></div>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div><Label>Amount ($)</Label><Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} /></div>
@@ -68,10 +82,13 @@ export function AdminPaymentCreateForm() {
           <select className="w-full border rounded-md px-3 py-2 text-sm" value={method} onChange={(e) => setMethod(e.target.value as Payment["method"])}>
             <option value="cash">Cash</option>
             <option value="check">Check</option>
+            <option value="manual_card">Card (in person / phone)</option>
+            <option value="bank_transfer">Bank transfer</option>
+            <option value="other">Other</option>
             <option value="financing">Financing</option>
           </select>
           <p className="mt-1 text-xs text-muted-foreground">
-            Card (coming soon) · ACH (coming soon)
+            For multiple open invoices, use Pay All Outstanding on the customer workspace.
           </p>
         </div>
       </div>

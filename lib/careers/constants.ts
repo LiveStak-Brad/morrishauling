@@ -56,7 +56,7 @@ export const CAREERS_BENEFITS = [
   },
   {
     title: "Growing company",
-    description: "Join early and help shape operations as Morris Hauling prepares to launch.",
+    description: "Join early and help shape operations as Morris Junk Removal prepares to launch.",
   },
 ];
 
@@ -69,7 +69,7 @@ export const GROWTH_PATHS = [
 
 export const APPLY_PROCESS_STEPS = [
   { step: "1", title: "Submit Application", description: "Complete the form and upload your resume. Future-role applications are welcome." },
-  { step: "2", title: "HR Review", description: "Our team reviews your experience, availability, and fit for Morris Hauling." },
+  { step: "2", title: "HR Review", description: "Our team reviews your experience, availability, and fit for Morris Junk Removal." },
   { step: "3", title: "Phone Screen", description: "A short call to discuss the role, schedule, and next steps." },
   { step: "4", title: "Interview & Offer", description: "Meet the team, complete any required checks, and receive an offer if it's a match." },
 ];

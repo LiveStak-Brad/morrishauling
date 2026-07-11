@@ -29,14 +29,36 @@ export function EmployeeClockPanel({ employeeId }: { employeeId?: string }) {
       .then((d) => {
         if (!d.ok || !d.punches) return;
         setPunches(d.punches);
-        const today = format(new Date(), "yyyy-MM-dd");
-        const todayPunches = (d.punches as TimeclockPunch[]).filter(
-          (p) => p.punchedAt.startsWith(today)
-        );
+        const today = (() => {
+          try {
+            return new Intl.DateTimeFormat("en-CA", {
+              timeZone: "America/Chicago",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            }).format(new Date());
+          } catch {
+            return format(new Date(), "yyyy-MM-dd");
+          }
+        })();
+        const todayPunches = (d.punches as TimeclockPunch[]).filter((p) => {
+          try {
+            const punchDay = new Intl.DateTimeFormat("en-CA", {
+              timeZone: "America/Chicago",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            }).format(new Date(p.punchedAt));
+            return punchDay === today;
+          } catch {
+            return p.punchedAt.startsWith(today);
+          }
+        });
         if (todayPunches.length === 0) {
           setClockState("out");
           return;
         }
+        // API returns newest first
         const last = todayPunches[0];
         if (last.punchType === "clock_out") setClockState("out");
         else if (last.punchType === "break_start" || last.punchType === "lunch_out") setClockState("break");
@@ -64,6 +86,10 @@ export function EmployeeClockPanel({ employeeId }: { employeeId?: string }) {
       const d = await res.json();
       if (d.ok) {
         setStatus(`${punchType.replace(/_/g, " ")} recorded`);
+        if (punchType === "clock_in") setClockState("in");
+        else if (punchType === "clock_out") setClockState("out");
+        else if (punchType === "break_start" || punchType === "lunch_out") setClockState("break");
+        else setClockState("in");
         loadPunches();
       } else setStatus(d.error ?? "Failed");
     } catch {

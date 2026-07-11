@@ -90,10 +90,10 @@ export function CurrentAssignmentCard({ job }: { job?: Job }) {
           <ButtonLink href={`/employee/jobs/${job.id}`} variant="outline" className="h-12">
             View job
           </ButtonLink>
-          <Button variant="outline" className="h-11" disabled title="SMS coming soon">
+          <Button variant="outline" className="h-11" disabled title="SMS notifications not configured">
             <Phone className="mr-2 h-4 w-4" /> Call customer
           </Button>
-          <Button variant="outline" className="h-11" disabled title="SMS coming soon">
+          <Button variant="outline" className="h-11" disabled title="SMS notifications not configured">
             Text customer
           </Button>
           <ButtonLink href={`/employee/jobs/${job.id}#payment`} variant="secondary" className="h-11 col-span-2">

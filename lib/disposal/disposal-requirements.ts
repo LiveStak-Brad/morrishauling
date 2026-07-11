@@ -1,3 +1,5 @@
+import { canCompleteWithProof } from "@/lib/jobs/workflow";
+import { serviceTypeToDivision } from "@/lib/divisions";
 import type { Job } from "@/types/job";
 
 /** Admin-only reasons to skip disposal entirely for a job. */
@@ -54,10 +56,28 @@ export function isDisposalSatisfied(job: Job): boolean {
   return Boolean(jrd.disposalCompletedAt || jrd.disposalSkipReason);
 }
 
-export function canMarkJobCompleted(job: Job): { ok: true } | { ok: false; message: string } {
+export function canMarkJobCompleted(
+  job: Job,
+  opts?: { managerOverride?: boolean; overrideReason?: string }
+): { ok: true } | { ok: false; message: string } {
   if (job.status === "completed" || job.status === "cancelled") {
     return { ok: true };
   }
+
+  if (opts?.managerOverride && opts.overrideReason?.trim()) {
+    return { ok: true };
+  }
+
+  if (job.completionOverrideReason) {
+    return { ok: true };
+  }
+
+  const divisionId = job.divisionId ?? serviceTypeToDivision(job.serviceType);
+  const photoCheck = canCompleteWithProof(job, divisionId);
+  if (!photoCheck.ok) {
+    return { ok: false, message: photoCheck.message };
+  }
+
   if (!jobRequiresDisposal(job)) return { ok: true };
   if (isDisposalSatisfied(job)) return { ok: true };
   return {

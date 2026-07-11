@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { AdminPageShell } from "@/components/admin/AdminPageShell";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CustomerSelector } from "@/components/admin/CustomerSelector";
 import { JobSelector } from "@/components/admin/JobSelector";
 import { PremiumCard } from "@/components/morris/PremiumCard";
@@ -14,6 +13,7 @@ import type { InvoiceAdjustment } from "@/types/payment";
 
 export function AdminInvoiceCreateForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [customerId, setCustomerId] = useState("");
   const [jobId, setJobId] = useState("");
   const [lineItems, setLineItems] = useState<InvoiceAdjustment[]>([
@@ -27,9 +27,20 @@ export function AdminInvoiceCreateForm() {
   const [depositAmount, setDepositAmount] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const submit = async (opts: { draft?: boolean; send?: boolean; markPaid?: boolean }) => {
+  useEffect(() => {
+    const c = searchParams.get("customerId");
+    const j = searchParams.get("jobId");
+    if (c) setCustomerId(c);
+    if (j) setJobId(j);
+  }, [searchParams]);
+
+  const submit = async (opts: { draft?: boolean; markPaid?: boolean }) => {
     if (!customerId) {
       toast.error("Select a customer");
+      return;
+    }
+    if (!jobId) {
+      toast.error("Select a completed job. Invoices cannot be created without one.");
       return;
     }
     setSaving(true);
@@ -39,7 +50,7 @@ export function AdminInvoiceCreateForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           customerId,
-          jobId: jobId || undefined,
+          jobId,
           lineItems: lineItems.filter((l) => l.label.trim()),
           tax: tax ? Number(tax) : undefined,
           fees: fees ? Number(fees) : undefined,
@@ -47,8 +58,7 @@ export function AdminInvoiceCreateForm() {
           dueDate: dueDate || undefined,
           terms,
           depositAmount: depositAmount ? Number(depositAmount) : undefined,
-          status: opts.draft ? "draft" : "sent",
-          sendPlaceholder: opts.send,
+          status: opts.draft ? "draft" : "ready_to_send",
           markPaid: opts.markPaid,
         }),
       });
@@ -66,7 +76,19 @@ export function AdminInvoiceCreateForm() {
   return (
     <PremiumCard className="p-4 space-y-4 max-w-2xl">
       <div><Label>Customer</Label><CustomerSelector value={customerId} onChange={(id) => setCustomerId(id)} /></div>
-      <div><Label>Job (optional)</Label><JobSelector value={jobId} onChange={(id) => setJobId(id)} customerId={customerId || undefined} /></div>
+      <div>
+        <Label>Completed job (required)</Label>
+        <JobSelector
+          value={jobId}
+          onChange={(id) => setJobId(id)}
+          customerId={customerId || undefined}
+          completedOnly
+          placeholder="Search completed jobs…"
+        />
+        <p className="mt-1 text-xs text-muted-foreground">
+          Invoices require a completed job with proof. Incomplete jobs cannot be invoiced.
+        </p>
+      </div>
 
       <div className="space-y-2">
         <Label>Line items</Label>

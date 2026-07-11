@@ -4,11 +4,13 @@ export async function uploadJobPhoto(
   jobId: string,
   file: File,
   photoType: JobPhotoType = "customer_upload",
-  notes?: string
+  notes?: string,
+  photoStage?: string
 ): Promise<void> {
   const form = new FormData();
   form.append("file", file);
   form.append("photoType", photoType);
+  form.append("photoStage", photoStage ?? photoType);
   if (notes) form.append("notes", notes);
 
   const res = await fetch(`/api/jobs/${jobId}/photos`, { method: "POST", body: form });

@@ -2,8 +2,9 @@
 
 import type { JunkRemovalEstimateResult } from "@/lib/estimate/junk-removal-engine";
 import {
+  CUSTOMER_DISPOSAL_HEADING,
+  CUSTOMER_DISPOSAL_PROCESS,
   formatCrewLabel,
-  formatCustomerDisposalSiteName,
   formatOnsiteTimeRange,
 } from "@/lib/estimate/junk-customer-labels";
 import type { JunkEstimateMode, JunkPriorityLevel, SelectedCommonItem } from "@/types/junk-removal";
@@ -53,6 +54,7 @@ export interface JunkEstimateReviewProps {
   /** Customer views hide operational routing; staff sees full route details. */
   audience?: "customer" | "staff";
   submittedPhotos?: SubmittedPhoto[];
+  serviceAreaMessage?: string | null;
 }
 
 export function JunkStaffRouteCard({ estimate }: { estimate: JunkRemovalEstimateResult }) {
@@ -119,6 +121,7 @@ export function JunkEstimateReview({
   showReviewBanner = true,
   audience = "customer",
   submittedPhotos,
+  serviceAreaMessage,
 }: JunkEstimateReviewProps) {
   const category = categoryId ? getBookingCategory(categoryId) : undefined;
   const customerLines = estimate.customerLines ?? estimate.lines;
@@ -128,7 +131,6 @@ export function JunkEstimateReview({
   const orderedRest = orderCustomerPricingLines(rest);
   const showPriceFactors = estimate.priceFactors.length > 0;
   const displayTotal = estimate.total;
-  const originCity = estimate.route.originBaseCity ?? "Warrenton";
 
   return (
     <div className="space-y-4">
@@ -137,6 +139,15 @@ export function JunkEstimateReview({
           reviewRequired={estimate.reviewRequired}
           reviewReasons={estimate.reviewReasons}
         />
+      )}
+
+      {serviceAreaMessage && (
+        <PremiumCard className="border-amber-200 bg-amber-50/60 p-4">
+          <div className="flex gap-2 text-sm text-amber-950">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>{serviceAreaMessage}</p>
+          </div>
+        </PremiumCard>
       )}
 
       {submittedPhotos && submittedPhotos.length > 0 && (
@@ -236,25 +247,28 @@ export function JunkEstimateReview({
       <PremiumCard className="p-5">
         <div className="mb-3 flex items-center gap-2">
           <Recycle className="h-5 w-5 text-brand-primary" />
-          <h3 className="font-bold">Disposal</h3>
+          <h3 className="font-bold">{CUSTOMER_DISPOSAL_HEADING}</h3>
         </div>
-        <dl className="space-y-2 text-sm">
+        <dl className="space-y-3 text-sm">
           <div>
-            <dt className="text-muted-foreground">Disposal facility</dt>
+            <dt className="text-muted-foreground">Material category</dt>
             <dd className="mt-0.5 font-medium">
-              {formatCustomerDisposalSiteName(estimate.route.selectedDisposalSiteName)}
+              {DISPOSAL_CATEGORY_LABELS[estimate.route.disposalCategory]}
             </dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Material category</dt>
-            <dd className="mt-0.5">{DISPOSAL_CATEGORY_LABELS[estimate.route.disposalCategory]}</dd>
+            <dt className="text-muted-foreground">Our process</dt>
+            <dd className="mt-0.5 text-muted-foreground leading-relaxed">
+              {CUSTOMER_DISPOSAL_PROCESS}
+            </dd>
           </div>
         </dl>
-        <p className="mt-3 text-sm text-muted-foreground">
-          We transport your items to the appropriate recycling or disposal facility.
-        </p>
         {estimate.route.disposalUncertain && (
-          <StatusChip label="Facility may be adjusted after review" variant="warning" className="mt-3" />
+          <StatusChip
+            label="Disposal details confirmed after review"
+            variant="warning"
+            className="mt-3"
+          />
         )}
       </PremiumCard>
 
@@ -293,13 +307,13 @@ export function JunkEstimateReview({
                 estimate.transportationBreakdown.length > 0
                   ? estimate.transportationBreakdown
                   : [
-                      "Dispatch from our operating facility",
                       "Travel to your property",
-                      "Transportation to the proper disposal/recycling location",
-                      "Return travel for our truck and crew",
+                      "On-site loading and removal",
+                      "Transportation of collected items",
+                      "Responsible disposal or recycling",
+                      "Return travel",
                     ]
               }
-              originCity={originCity}
             />
           )}
           {orderedRest
@@ -316,13 +330,15 @@ export function JunkEstimateReview({
             ))}
         </div>
         <div className="mt-4 flex justify-between border-t pt-3 text-lg font-bold">
-          <span>{estimate.reviewRequired ? "Preliminary estimate" : "Estimated total"}</span>
+          <span>
+            {estimate.reviewRequired ? "Preliminary Project Estimate" : "Estimated Project Total"}
+          </span>
           <span className="text-brand-primary">${displayTotal}</span>
         </div>
         <p className="mt-2 text-xs text-muted-foreground">
           {estimate.reviewRequired
             ? "Our team reviews every estimate before scheduling to make sure you receive accurate pricing. If adjustments are needed, we'll contact you before any work is scheduled."
-            : "Estimated based on your details. Final price confirmed on-site."}
+            : "Estimated based on the information you provided. Final pricing may change if on-site conditions differ from what was submitted."}
         </p>
         {estimate.reviewRequired && <PreliminaryEstimateConfidenceNote />}
       </PremiumCard>
@@ -370,7 +386,7 @@ export function JunkReviewStatusBanner({
       <div className="flex items-center gap-2">
         <StatusChip label="Estimate ready" variant="success" />
         <p className="text-sm text-green-900 dark:text-green-100">
-          Your estimate is ready. Final price confirmed on-site.
+          Your estimate is ready. Final pricing is confirmed on-site if conditions differ.
         </p>
       </div>
     </PremiumCard>

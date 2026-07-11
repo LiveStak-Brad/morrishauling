@@ -50,7 +50,7 @@ export const MORRIS_TRAINING_COURSES: SeedCourse[] = [
         overview: "Who we are and what we stand for.",
         objectives: ["State company mission", "Know chain of command", "Understand field expectations"],
         contentHtml: p([
-          "Morris Hauling & Junk Removal serves homeowners and businesses across the region with honest pricing, careful property protection, and respectful crews.",
+          "Morris Junk Removal serves homeowners and businesses across the region with honest pricing, careful property protection, and respectful crews.",
           "Every employee represents the brand on every job. Punctuality, clean uniforms, and professional language are non-negotiable.",
           "Report to your crew leader or dispatcher for daily assignments. Safety concerns escalate immediately — never wait.",
         ]),

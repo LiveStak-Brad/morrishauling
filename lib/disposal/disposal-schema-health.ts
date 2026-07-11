@@ -23,7 +23,14 @@ const JRD_COLUMNS = [
   "disposal_review_status",
 ] as const;
 
-const DUMP_SITE_COLUMNS = ["is_avoid_vendor", "is_preferred_vendor", "hours_json"] as const;
+const DUMP_SITE_COLUMNS = [
+  "is_avoid_vendor",
+  "is_preferred_vendor",
+  "hours_json",
+  "facility_type",
+  "verification_status",
+  "pricing_unknown",
+] as const;
 
 export async function checkDisposalSchemaHealth(): Promise<DisposalSchemaHealth> {
   const checks: DisposalSchemaCheck[] = [];
@@ -75,9 +82,19 @@ export async function checkDisposalSchemaHealth(): Promise<DisposalSchemaHealth>
     .select("id", { count: "exact", head: true });
   checks.push({
     id: "dump_sites_data",
-    label: "Reference dump sites (033+)",
+    label: "Disposal network facilities (040+)",
     ok: !sitesErr && (siteCount ?? 0) > 0,
     detail: sitesErr?.message ?? `${siteCount ?? 0} facilities`,
+  });
+
+  const { count: countyCount, error: countyErr } = await sb
+    .from("disposal_coverage_counties")
+    .select("id", { count: "exact", head: true });
+  checks.push({
+    id: "disposal_coverage_counties",
+    label: "disposal_coverage_counties registry",
+    ok: !countyErr && (countyCount ?? 0) > 0,
+    detail: countyErr?.message ?? `${countyCount ?? 0} counties (run migration 040)`,
   });
 
   // Column probes via select

@@ -8,10 +8,23 @@ import type {
 } from "@/types/hauling";
 import { serviceLevelToUrgency } from "@/types/hauling";
 import type { LatLng } from "@/types";
+import type { HaulingRouteMetrics } from "@/lib/geo/types";
 
 export interface HaulingEstimateInput {
-  pickup: { city: string; state: string; zip: string; location?: LatLng };
-  delivery: { city: string; state: string; zip: string; location?: LatLng };
+  pickup: {
+    street?: string;
+    city: string;
+    state: string;
+    zip: string;
+    location?: LatLng;
+  };
+  delivery: {
+    street?: string;
+    city: string;
+    state: string;
+    zip: string;
+    location?: LatLng;
+  };
   cargoCategory: HaulingCargoCategory;
   cargoDescription: string;
   estimatedWeightLbs?: number;
@@ -24,6 +37,11 @@ export interface HaulingEstimateInput {
   needsLoadingHelp: boolean;
   needsUnloadingHelp: boolean;
   serviceLevel: HaulingServiceLevel;
+  /**
+   * Required for pricing. Must come from planHaulingRoute / /api/hauling/route.
+   * The engine never invents mileage.
+   */
+  route?: HaulingRouteMetrics;
 }
 
 export interface HaulingEstimateResult {
@@ -41,13 +59,16 @@ export interface HaulingEstimateResult {
   estimatedDriverHours: number;
   serviceLevel: HaulingServiceLevel;
   internalProfit: HaulingInternalProfit;
+  routeProvider?: string;
   /** @deprecated use customerLines */
   lines: PricingBreakdownLine[];
 }
 
-function estimateLoadedMiles(pickupZip: string, deliveryZip: string): number {
-  const diff = Math.abs((pickupZip.charCodeAt(0) ?? 0) - (deliveryZip.charCodeAt(0) ?? 0));
-  return Math.round(18 + diff * 2.5 + ((pickupZip.length + deliveryZip.length) % 12));
+export class HaulingRouteRequiredError extends Error {
+  constructor(message = "A calculated road route is required before pricing. Enter pickup and delivery addresses and wait for routing.") {
+    super(message);
+    this.name = "HaulingRouteRequiredError";
+  }
 }
 
 export function recommendTrailerType(input: HaulingEstimateInput): HaulingTrailerType {
@@ -127,6 +148,10 @@ function computeInternalProfit(
 
 export class HaulingTransportEstimateEngine {
   calculate(input: HaulingEstimateInput, config: MorrisConfig): HaulingEstimateResult {
+    if (!input.route?.routeOk) {
+      throw new HaulingRouteRequiredError();
+    }
+
     const pricing = config.haulingPricing;
     const recommendedTrailerType = recommendTrailerType(input);
     const rentalRequired = isRentalTrailerRequired(recommendedTrailerType, config);
@@ -134,14 +159,10 @@ export class HaulingTransportEstimateEngine {
     const trailerConfig = config.haulingTrailerTypes.find((t) => t.id === recommendedTrailerType);
     const trailerDisplayName = getTrailerDisplayName(recommendedTrailerType, config, rentalRequired);
 
-    const estimatedLoadedMiles = estimateLoadedMiles(input.pickup.zip, input.delivery.zip);
-    const estimatedDeadheadMiles = Math.round(estimatedLoadedMiles * pricing.deadheadRatio);
-    const totalTravelMiles = estimatedLoadedMiles + estimatedDeadheadMiles;
-
-    const estimatedDriverHours = Math.max(
-      2,
-      Math.round((totalTravelMiles / 35 + 1) * 10) / 10
-    );
+    const estimatedLoadedMiles = input.route.loadedMiles;
+    const estimatedDeadheadMiles = input.route.deadheadMiles;
+    const totalTravelMiles = input.route.totalTravelMiles;
+    const estimatedDriverHours = input.route.estimatedDriverHours;
 
     const loadedMileageCharge = Math.round(
       estimatedLoadedMiles * pricing.perLoadedMileRate +
@@ -157,7 +178,7 @@ export class HaulingTransportEstimateEngine {
       },
       {
         id: "fuel",
-        label: "Fuel adjustment",
+        label: `Fuel adjustment (${totalTravelMiles} mi)`,
         amount: Math.round(totalTravelMiles * pricing.fuelAdjustmentRate),
       },
       {
@@ -249,8 +270,18 @@ export class HaulingTransportEstimateEngine {
     const internalLines: PricingBreakdownLine[] = [
       { id: "rev", label: "Revenue", amount: internalProfit.revenue, internal: true },
       { id: "fuel_cost", label: "Estimated fuel", amount: internalProfit.fuelCost, internal: true },
-      { id: "payroll_cost", label: "Estimated payroll / labor", amount: internalProfit.payrollCost, internal: true },
-      { id: "trailer_cost", label: "Estimated trailer cost", amount: internalProfit.trailerCost, internal: true },
+      {
+        id: "payroll_cost",
+        label: "Estimated payroll / labor",
+        amount: internalProfit.payrollCost,
+        internal: true,
+      },
+      {
+        id: "trailer_cost",
+        label: "Estimated trailer cost",
+        amount: internalProfit.trailerCost,
+        internal: true,
+      },
     ];
     if (rentalRequired) {
       internalLines.push({
@@ -261,9 +292,24 @@ export class HaulingTransportEstimateEngine {
       });
     }
     internalLines.push(
-      { id: "overhead", label: "Insurance / overhead allocation", amount: internalProfit.overheadCost, internal: true },
-      { id: "total_cost", label: "Estimated total operating cost", amount: internalProfit.totalOperatingCost, internal: true },
-      { id: "profit", label: "Estimated gross profit", amount: internalProfit.grossProfit, internal: true }
+      {
+        id: "overhead",
+        label: "Insurance / overhead allocation",
+        amount: internalProfit.overheadCost,
+        internal: true,
+      },
+      {
+        id: "total_cost",
+        label: "Estimated total operating cost",
+        amount: internalProfit.totalOperatingCost,
+        internal: true,
+      },
+      {
+        id: "profit",
+        label: "Estimated gross profit",
+        amount: internalProfit.grossProfit,
+        internal: true,
+      }
     );
 
     const estimatedFuelCost = Math.round(totalTravelMiles * pricing.internalFuelCostPerMile);
@@ -284,6 +330,7 @@ export class HaulingTransportEstimateEngine {
       estimatedDriverHours,
       serviceLevel: input.serviceLevel,
       internalProfit,
+      routeProvider: input.route.provider,
     };
   }
 }

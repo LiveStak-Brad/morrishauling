@@ -15,6 +15,21 @@ import { createClientOrNull } from "@/lib/supabase/client";
 
 const DEV_ROLE_KEY = "dev-role";
 const DEV_IMPERSONATE_KEY = "dev-impersonate";
+const DEV_ROLE_COOKIE = "morris_dev_role";
+const DEV_IMPERSONATE_COOKIE = "morris_dev_impersonate";
+
+function isDevRuntime() {
+  return process.env.NODE_ENV === "development";
+}
+
+function writeDevCookie(name: string, value: string | null) {
+  if (typeof document === "undefined") return;
+  if (value == null || value === "") {
+    document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax`;
+    return;
+  }
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=86400; SameSite=Lax`;
+}
 
 interface AuthContextValue {
   profile: UserProfile | null;
@@ -56,10 +71,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
+    if (isDevRuntime()) {
       const storedRole = localStorage.getItem(DEV_ROLE_KEY) as Role | null;
       if (storedRole && ROLE_HOME_ROUTES[storedRole]) setDevRoleState(storedRole);
-      setDevImpersonatingState(localStorage.getItem(DEV_IMPERSONATE_KEY) === "true");
+      const impersonating = localStorage.getItem(DEV_IMPERSONATE_KEY) === "true";
+      setDevImpersonatingState(impersonating);
+      if (impersonating && storedRole && ROLE_HOME_ROUTES[storedRole]) {
+        writeDevCookie(DEV_ROLE_COOKIE, storedRole);
+        writeDevCookie(DEV_IMPERSONATE_COOKIE, "true");
+      }
     }
     void loadProfile();
 
@@ -76,12 +96,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const setDevRole = useCallback((r: Role) => {
     setDevRoleState(r);
-    localStorage.setItem(DEV_ROLE_KEY, r);
+    if (isDevRuntime()) {
+      localStorage.setItem(DEV_ROLE_KEY, r);
+      writeDevCookie(DEV_ROLE_COOKIE, r);
+    }
   }, []);
 
   const setDevImpersonating = useCallback((on: boolean) => {
     setDevImpersonatingState(on);
-    localStorage.setItem(DEV_IMPERSONATE_KEY, on ? "true" : "false");
+    if (isDevRuntime()) {
+      localStorage.setItem(DEV_IMPERSONATE_KEY, on ? "true" : "false");
+      writeDevCookie(DEV_IMPERSONATE_COOKIE, on ? "true" : null);
+      if (!on) {
+        writeDevCookie(DEV_ROLE_COOKIE, null);
+      } else {
+        const stored = (localStorage.getItem(DEV_ROLE_KEY) as Role | null) ?? "customer";
+        writeDevCookie(DEV_ROLE_COOKIE, stored);
+      }
+    }
   }, []);
 
   const signOut = useCallback(async () => {
@@ -92,7 +124,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     window.location.href = "/login";
   }, []);
 
-  const effectiveRole: Role = profile?.role ?? "customer";
+  // Dev toolbar: when Impersonate is on, use the selected preview role for nav/home.
+  const effectiveRole: Role =
+    isDevRuntime() && devImpersonating && ROLE_HOME_ROUTES[devRole]
+      ? devRole
+      : (profile?.role ?? "customer");
 
   const value = useMemo(
     () => ({

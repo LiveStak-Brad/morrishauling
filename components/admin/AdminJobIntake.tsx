@@ -39,6 +39,13 @@ export function AdminJobIntake({ onCreated }: Props) {
   const [saving, setSaving] = useState(false);
 
   const submit = async () => {
+    if (
+      !confirm(
+        "Owner exception: create a job without an agreed estimate?\n\nNormal path is Customer → Estimate → dual approval → Job."
+      )
+    ) {
+      return;
+    }
     setSaving(true);
     try {
       let resolvedCustomerId = customerId;

@@ -1,13 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { EstimateReviewCard } from "@/components/admin/EstimateReviewCard";
 import { StatusChip } from "@/components/morris/StatusChip";
 import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { PremiumCard } from "@/components/morris/PremiumCard";
 import { ClipboardCheck } from "lucide-react";
 import type { Job } from "@/types/job";
 
+/**
+ * Legacy photo-based junk pricing review.
+ * Formal customer estimates live under /admin/estimates (Needs Approval).
+ */
 export default function AdminReviewPage() {
   const [queue, setQueue] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,9 +43,22 @@ export default function AdminReviewPage() {
 
   return (
     <AdminPageShell
-      title="Estimate review"
-      description="Jobs flagged for human review before scheduling"
+      title="Field photo review"
+      description="Legacy intake only — formal estimates use Customer → Estimate → dual approval"
     >
+      <PremiumCard className="mb-4 space-y-2 border-amber-200 bg-amber-50 p-4">
+        <p className="text-sm font-medium text-amber-950">
+          Prefer the Estimates queue for day-one work.
+        </p>
+        <p className="text-sm text-amber-900">
+          Create and approve estimates under{" "}
+          <Link href="/admin/estimates?tab=to_approve" className="underline">
+            Estimates → Needs Approval
+          </Link>
+          . This page is only for older photo-flagged junk jobs that never got a formal estimate.
+        </p>
+      </PremiumCard>
+
       <div className="mb-4 flex items-center gap-2">
         <StatusChip label={`${queue.length} pending`} variant={queue.length ? "warning" : "success"} />
       </div>
@@ -49,8 +68,16 @@ export default function AdminReviewPage() {
       ) : queue.length === 0 ? (
         <AdminEmptyState
           icon={ClipboardCheck}
-          title="No jobs waiting for review."
-          description="Jobs flagged for human review before scheduling will appear here."
+          title="No legacy field reviews waiting"
+          description="Use Estimates → Needs Approval for the customer-centered workflow."
+          action={
+            <Link
+              href="/admin/estimates"
+              className="inline-flex h-8 items-center rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground"
+            >
+              Open estimates
+            </Link>
+          }
         />
       ) : (
         <div className="space-y-6">

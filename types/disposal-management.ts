@@ -1,6 +1,12 @@
 import type { LatLng } from "@/types";
 import type { DumpSiteHours } from "@/types/operations-depth";
 import type { MaterialCategory } from "@/lib/disposal/material-categories";
+import type {
+  FacilityType,
+  ResidencyRestriction,
+  VerificationSource,
+  VerificationStatus,
+} from "@/lib/data/disposal-network/types";
 
 export type FacilityAccessType = "public" | "commercial" | "both";
 
@@ -48,6 +54,23 @@ export interface DisposalFacility {
   vendorRating?: number;
   avgWaitMinutes?: number;
   avgUnloadMinutes?: number;
+  /** Expanded network fields (migration 040+) */
+  facilityType?: FacilityType;
+  commercialAccepted?: boolean;
+  appointmentRequired?: boolean;
+  residencyRestriction?: ResidencyRestriction;
+  specialRequirements?: string;
+  operationalNotes?: string;
+  scaleAvailable?: boolean;
+  paymentMethods?: string[];
+  publicPricingNotes?: string;
+  commercialPricingNotes?: string;
+  verificationStatus?: VerificationStatus;
+  verificationSources?: VerificationSource[];
+  verifiedAt?: string;
+  pricingVerifiedAt?: string;
+  pricingUnknown?: boolean;
+  geocodeSource?: string;
 }
 
 export type DisposalSortMode =
@@ -168,4 +191,27 @@ export interface JobDisposalActuals {
   receiptUrl?: string;
   notes?: string;
   overrideReason?: string;
+}
+
+/** One stop in a multi-facility disposal plan. */
+export interface DisposalPlanStop {
+  sequence: number;
+  site: DisposalFacility;
+  materials: MaterialCategory[];
+  score: DisposalSiteScore;
+  legMilesFromPrevious: number;
+  legMinutesFromPrevious: number;
+}
+
+export interface MultiFacilityDisposalPlan {
+  strategy: "single_facility" | "multi_facility_split";
+  stops: DisposalPlanStop[];
+  totalCompanyCost: number;
+  totalDriveMiles: number;
+  totalDriveMinutes: number;
+  estimatedProfitAfterDisposal?: number;
+  pricingUncertain: boolean;
+  unassignedMaterials: MaterialCategory[];
+  selectionReason: string;
+  alternativesConsidered: number;
 }

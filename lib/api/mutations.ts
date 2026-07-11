@@ -264,6 +264,7 @@ export async function mutateCreateHaulingJob(
   input: {
     pickup: import("@/types/hauling").HaulingDetails["pickup"];
     delivery: import("@/types/hauling").HaulingDetails["delivery"];
+    stops?: import("@/types/hauling").HaulingDetails["stops"];
     cargoCategory: import("@/types/hauling").HaulingCargoCategory;
     cargoDescription: string;
     estimatedWeightLbs?: number;

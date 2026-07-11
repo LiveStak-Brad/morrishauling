@@ -12,6 +12,9 @@ export interface UserProfile {
   employee_id?: string | null;
   address?: string | null;
   customer_id?: string | null;
+  /** all = owner/cross-division; limited = managed_division_ids only */
+  division_access?: "all" | "limited";
+  managed_division_ids?: string[];
   created_at: string;
   updated_at: string;
 }

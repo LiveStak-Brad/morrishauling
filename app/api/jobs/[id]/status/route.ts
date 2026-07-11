@@ -48,9 +48,26 @@ export async function PATCH(
     let updated: Job | undefined;
     if (body.status) {
       if (body.status === "completed") {
-        const completionCheck = canMarkJobCompleted(job);
+        const overrideReason =
+          typeof body.updates?.completionOverrideReason === "string"
+            ? body.updates.completionOverrideReason
+            : undefined;
+        const managerOverride =
+          (profile.role === "admin" || profile.role === "planner") && Boolean(overrideReason?.trim());
+        const completionCheck = canMarkJobCompleted(job, {
+          managerOverride,
+          overrideReason,
+        });
         if (!completionCheck.ok) {
           return apiError(completionCheck.message, 409);
+        }
+        if (managerOverride && overrideReason) {
+          body.updates = {
+            ...body.updates,
+            completionOverrideReason: overrideReason,
+            completionOverrideBy: profile.id,
+            completionOverrideAt: new Date().toISOString(),
+          };
         }
       }
       updated = await updateJobStatus(body.companyId, id, body.status, {
@@ -58,8 +75,14 @@ export async function PATCH(
         updates: body.updates,
       });
     } else if (body.updates) {
+      const overrideReason =
+        typeof (body as { assignmentOverrideReason?: string }).assignmentOverrideReason === "string"
+          ? (body as { assignmentOverrideReason?: string }).assignmentOverrideReason
+          : undefined;
       updated = await updateJob(body.companyId, id, body.updates, {
         actorProfileId: profile.id,
+        actorRole: profile.role,
+        assignmentOverrideReason: overrideReason,
       });
     } else {
       return apiError("status or updates required", 400);

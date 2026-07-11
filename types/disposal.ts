@@ -38,6 +38,7 @@ export {
 } from "@/lib/disposal/material-categories";
 
 export { rankDisposalSites, rowToDisposalFacility } from "@/lib/disposal/disposal-recommendation";
+export { planDisposalRoute, facilityCoversAll } from "@/lib/disposal/multi-facility-plan";
 export { isFacilityOpenNow, formatTodayHours } from "@/lib/disposal/facility-hours";
 
 export type {
@@ -46,4 +47,14 @@ export type {
   DisposalRecommendationResult,
   DisposalSortMode,
   JobDisposalActuals,
+  MultiFacilityDisposalPlan,
+  DisposalPlanStop,
 } from "@/types/disposal-management";
+
+export {
+  VERIFIED_DISPOSAL_FACILITIES,
+  DISPOSAL_COVERAGE_COUNTIES,
+  getVerifiedFacilities,
+  coverageSummary,
+} from "@/lib/data/disposal-network";
+export { verifiedToDisposalFacility, allVerifiedAsDisposalFacilities } from "@/lib/data/disposal-network/map-to-facility";

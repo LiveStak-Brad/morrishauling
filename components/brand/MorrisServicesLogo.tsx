@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { morrisServicesConfig } from "@/lib/morris-services-config";
 import { cn } from "@/lib/utils";
 
-/** Intrinsic dimensions (public/MorrisServicesLogo.png). */
+/** Always Morris Services parent logo — never the Junk Removal asset. */
+export const MORRIS_SERVICES_LOGO_SRC = "/MorrisServicesLogo.png?v=5";
+
 const LOGO_WIDTH = 1334;
 const LOGO_HEIGHT = 820;
 
@@ -24,8 +25,8 @@ export function MorrisServicesLogo({
 }: MorrisServicesLogoProps) {
   const image = (
     <Image
-      src={morrisServicesConfig.logo}
-      alt={morrisServicesConfig.publicBrandName}
+      src={MORRIS_SERVICES_LOGO_SRC}
+      alt="Morris Services"
       width={LOGO_WIDTH}
       height={LOGO_HEIGHT}
       priority={priority}

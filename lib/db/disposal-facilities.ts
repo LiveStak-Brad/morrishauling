@@ -47,14 +47,23 @@ function demoFacilities(): DisposalFacility[] {
 }
 
 export async function getDisposalFacilities(companyId: string): Promise<DisposalFacility[]> {
-  if (!(await isDbReady())) return demoFacilities();
+  if (!(await isDbReady())) {
+    const { allVerifiedAsDisposalFacilities } = await import("@/lib/data/disposal-network/map-to-facility");
+    const verified = allVerifiedAsDisposalFacilities();
+    return verified.length ? verified : demoFacilities();
+  }
   const { data, error } = await (await sbRead())
     .from("dump_sites")
     .select("*")
     .eq("company_id", companyId)
     .order("name");
   if (error) throw error;
-  if (!data?.length) return isDemoDataEnabled() ? demoFacilities() : [];
+  if (!data?.length) {
+    const { allVerifiedAsDisposalFacilities } = await import("@/lib/data/disposal-network/map-to-facility");
+    const verified = allVerifiedAsDisposalFacilities();
+    if (verified.length) return verified;
+    return isDemoDataEnabled() ? demoFacilities() : [];
+  }
   return data.map((r) => rowToDisposalFacility(r));
 }
 
@@ -102,6 +111,18 @@ export async function createDisposalFacility(
     holiday_closures: input.holidayClosures ?? [],
     notes: input.notes ?? null,
     internal_notes: input.internalNotes ?? null,
+    facility_type: input.facilityType ?? null,
+    commercial_accepted: input.commercialAccepted ?? input.accessType !== "public",
+    appointment_required: input.appointmentRequired ?? false,
+    residency_restriction: input.residencyRestriction ?? "unknown",
+    special_requirements: input.specialRequirements ?? null,
+    operational_notes: input.operationalNotes ?? null,
+    scale_available: input.scaleAvailable ?? null,
+    payment_methods: input.paymentMethods ?? [],
+    public_pricing_notes: input.publicPricingNotes ?? null,
+    commercial_pricing_notes: input.commercialPricingNotes ?? null,
+    pricing_unknown: input.pricingUnknown ?? (input.baseFee == null && input.perTonFee == null),
+    verification_status: input.verificationStatus ?? "needs_call",
     status: input.status ?? "active",
     is_closed: input.isClosed ?? false,
     created_at: now,
@@ -152,6 +173,18 @@ export async function updateDisposalFacility(
   if (updates.internalNotes != null) row.internal_notes = updates.internalNotes;
   if (updates.avgWaitMinutes != null) row.avg_wait_minutes = updates.avgWaitMinutes;
   if (updates.avgUnloadMinutes != null) row.avg_unload_minutes = updates.avgUnloadMinutes;
+  if (updates.facilityType != null) row.facility_type = updates.facilityType;
+  if (updates.commercialAccepted != null) row.commercial_accepted = updates.commercialAccepted;
+  if (updates.appointmentRequired != null) row.appointment_required = updates.appointmentRequired;
+  if (updates.residencyRestriction != null) row.residency_restriction = updates.residencyRestriction;
+  if (updates.specialRequirements != null) row.special_requirements = updates.specialRequirements;
+  if (updates.operationalNotes != null) row.operational_notes = updates.operationalNotes;
+  if (updates.scaleAvailable != null) row.scale_available = updates.scaleAvailable;
+  if (updates.paymentMethods != null) row.payment_methods = updates.paymentMethods;
+  if (updates.publicPricingNotes != null) row.public_pricing_notes = updates.publicPricingNotes;
+  if (updates.commercialPricingNotes != null) row.commercial_pricing_notes = updates.commercialPricingNotes;
+  if (updates.pricingUnknown != null) row.pricing_unknown = updates.pricingUnknown;
+  if (updates.verificationStatus != null) row.verification_status = updates.verificationStatus;
   if (updates.location != null) {
     row.latitude = updates.location.lat;
     row.longitude = updates.location.lng;

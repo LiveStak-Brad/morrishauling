@@ -13,10 +13,10 @@ export const ESTIMATE_DISCLAIMER =
   "This is an estimate based on the information provided. Final price may change after on-site review due to weight, volume, stairs, walking distance, access issues, special disposal fees, labor time, dump fees, or additional items.";
 
 export const FINANCING_DISCLAIMER =
-  "In-house financing is offered at the discretion of Morris Hauling & Junk Removal. Approval is not guaranteed. Missed payments may result in collection activity, late fees, or loss of future financing eligibility.";
+  "In-house financing is offered at the discretion of Morris Junk Removal. Approval is not guaranteed. Missed payments may result in collection activity, late fees, or loss of future financing eligibility.";
 
 export const COMPANY_TERMS =
-  "Payment is due upon completion unless a deposit is required to schedule. Estimates are non-binding until confirmed on site. Morris Hauling & Junk Removal is not responsible for damage to property caused by pre-existing conditions, hidden hazards, or items not disclosed prior to service. Cancellations within 24 hours of the scheduled window may incur a trip fee.";
+  "Payment is due upon completion unless a deposit is required to schedule. Estimates are non-binding until confirmed on site. Morris Junk Removal is not responsible for damage to property caused by pre-existing conditions, hidden hazards, or items not disclosed prior to service. Cancellations within 24 hours of the scheduled window may incur a trip fee.";
 
 const LOAD_TIERS = [
   { tier: "min_10", label: "Small Pickup", trailerPercent: 10, basePrice: 99 },
@@ -38,29 +38,30 @@ const PRICING_MODIFIERS = [
   { id: "special_disposal", label: "Special disposal", amount: 150, type: "flat" as const },
 ];
 
-/** Morris Hauling & Junk Removal — single source of truth for app configuration */
+/** Morris Junk Removal — flagship operating company configuration */
 export const morrisConfig = {
   companyId: MORRIS_COMPANY_ID,
-  companyName: "Morris Hauling & Junk Removal",
-  logo: "/logo.png",
-  heroBanner: "/banner.png",
-  /** Optional portrait hero for phones; leave empty to scale the desktop banner with object-contain */
+  companyName: "Morris Junk Removal",
+  logo: "/logo.png?v=4",
+  heroBanner: "",
+  /** Optional portrait hero for phones; leave empty when using logo-first marketing */
   heroBannerMobile: "",
   phone: "(636) 751-4645",
   email: "info@morrisjunk.com",
-  companyAddress: "Warrenton, Lincoln & St. Charles Counties, MO",
+  companyAddress: "607 South State Highway 47, Warrenton, MO 63383",
   website: "https://morrisjunk.com",
   serviceArea: {
-    center: { lat: 38.788, lng: -90.497 },
+    center: { lat: 38.8178812, lng: -91.1428926 },
     radiusMiles: 45,
     label: "Warren, Lincoln & St. Charles Counties, MO",
-    zipCodes: ["63301", "63303", "63304", "63368", "63376", "63383", "63379", "63390"],
+    /** Service ZIPs (not the operating-base ZIP). Base ZIP is always 63383. */
+    zipCodes: ["63301", "63303", "63304", "63368", "63376", "63383", "63379", "63390", "63049", "63090"],
   },
   brandColors: {
     primary: "#9B1B30",
     secondary: "#0A0A0A",
     accent: "#374151",
-    background: "#FAFAFA",
+    background: "#F7F5F2",
     foreground: "#0A0A0A",
   },
   pricingRules: {
@@ -71,13 +72,19 @@ export const morrisConfig = {
     itemSurcharge: 15,
   },
   services: [
-    { id: "residential", name: "Residential Junk Removal", description: "Garage cleanouts, attic hauls, and home decluttering." },
-    { id: "commercial", name: "Commercial Cleanouts", description: "Office furniture, retail debris, and property turnovers." },
+    { id: "residential", name: "Residential Junk Removal", description: "Home decluttering, attic hauls, and everyday unwanted items." },
+    { id: "commercial", name: "Commercial Junk Removal", description: "Office, retail, and property turnover clear-outs." },
     { id: "estate", name: "Estate Cleanouts", description: "Compassionate full-property cleanouts with careful sorting." },
-    { id: "construction", name: "Construction Debris", description: "Drywall, lumber, and renovation debris removal." },
+    { id: "garage", name: "Garage Cleanouts", description: "Reclaim the garage — furniture, tools, debris, and more." },
+    { id: "storage", name: "Storage Units", description: "Unit clear-outs and abandoned contents removal." },
+    { id: "foreclosure", name: "Foreclosures", description: "Property cleanouts for banks, agents, and investors." },
+    { id: "furniture", name: "Furniture Removal", description: "Sofas, mattresses, dressers, and bulky household items." },
     { id: "appliance", name: "Appliance Removal", description: "Refrigerators, washers, dryers, and large appliances." },
-    { id: "yard", name: "Yard Waste", description: "Branches, brush, and outdoor debris hauling." },
+    { id: "hottub", name: "Hot Tub Removal", description: "Disassembly and haul-away for spas and hot tubs." },
+    { id: "construction", name: "Construction Debris", description: "Drywall, lumber, and renovation debris removal." },
+    { id: "fullproperty", name: "Full Property Cleanouts", description: "Whole-home and lot clearances done with care." },
   ],
+  /** Public booking offers Junk Removal only; Hauling is a separate coming-soon division. */
   serviceLines: [
     {
       id: "junk_removal" as const,
@@ -89,25 +96,25 @@ export const morrisConfig = {
         "Appliance removal",
         "Furniture removal",
         "Construction debris",
-        "Yard waste",
         "Hot tub removal",
-        "Shed removal",
-        "Rental property cleanout",
+        "Storage unit clear-out",
+        "Full property cleanout",
       ],
     },
+  ],
+  /** Internal / future Morris Hauling division — not shown in Junk Removal booking */
+  haulingServiceLines: [
     {
       id: "hauling_transport" as const,
       name: "Hauling & Transport",
-      tagline: "Move equipment, vehicles, materials, machinery, pallets, and oversized items from one place to another.",
+      tagline: "Move equipment, vehicles, materials, machinery, pallets, and oversized items.",
       examples: [
         "Equipment hauling",
-        "Vehicle hauling",
-        "Tractor hauling",
-        "UTV/ATV hauling",
-        "Pallets & lumber",
-        "Building materials",
+        "Material delivery",
+        "Trailer transport",
         "Machinery transport",
-        "Marketplace pickup/delivery",
+        "Building materials",
+        "Contractor deliveries",
       ],
     },
   ],
@@ -232,7 +239,15 @@ export const morrisConfig = {
   paymentOptions: {
     depositPercent: 25,
     depositMinAmount: 50,
-    methods: ["card", "cash_on_arrival", "invoice", "financing"] as const,
+    methods: [
+      "cash",
+      "check",
+      "manual_card",
+      "bank_transfer",
+      "cash_on_arrival",
+      "invoice",
+      "financing",
+    ] as const,
     allowPayAfterCompletion: true,
   },
   financingOptions: {
@@ -261,17 +276,24 @@ export const morrisConfig = {
   operatingBases: [
     {
       id: "base-warrenton",
-      name: "Warrenton Operating Base",
+      name: "Morris Services Operating Base",
+      address: "607 South State Highway 47",
       city: "Warrenton",
       state: "MO",
-      location: { lat: 38.811, lng: -91.147 },
+      zip: "63383",
+      /** Canonical Google Places result for 607 State Hwy 47, Warrenton, MO 63383 */
+      location: { lat: 38.8178812, lng: -91.1428926 },
+      placeId: "ChIJL62xWj-p3ocRf4EtEOvpxpY",
+      formattedAddress: "607 State Hwy 47, Warrenton, MO 63383, USA",
       isPrimary: true,
     },
     {
       id: "yard-danville",
       name: "Danville Junk Yard / Storage",
+      address: "Danville Storage Yard",
       city: "Danville",
       state: "MO",
+      zip: "63361",
       location: { lat: 38.91, lng: -91.512 },
       isPrimary: false,
     },
@@ -424,7 +446,7 @@ export const morrisConfig = {
       feePerLoad: 65,
     },
   ],
-  yardLocation: { lat: 38.811, lng: -91.147 },
+  yardLocation: { lat: 38.8178812, lng: -91.1428926 },
   businessHours: "Mon–Sat 7:00 AM – 6:00 PM · Sunday by appointment",
   companyTerms: COMPANY_TERMS,
   financingDisclaimer: FINANCING_DISCLAIMER,
@@ -440,6 +462,12 @@ export const morrisConfig = {
   socialLinks: { facebook: string; instagram: string; google: string };
   serviceLines: Array<{
     id: "junk_removal" | "hauling_transport";
+    name: string;
+    tagline: string;
+    examples: string[];
+  }>;
+  haulingServiceLines: Array<{
+    id: "hauling_transport";
     name: string;
     tagline: string;
     examples: string[];
@@ -520,10 +548,14 @@ export const morrisConfig = {
   operatingBases: Array<{
     id: string;
     name: string;
+    address?: string;
     city: string;
     state: string;
+    zip?: string;
     location: { lat: number; lng: number };
     isPrimary: boolean;
+    placeId?: string;
+    formattedAddress?: string;
   }>;
 };
 

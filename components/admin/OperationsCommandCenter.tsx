@@ -8,7 +8,6 @@ import { isDemoDataEnabled } from "@/lib/is-demo-data";
 import type { Job } from "@/types/job";
 import type { OperationsCommandCenterData } from "@/types/operations-command-center";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
-import { EstimateReviewCard } from "@/components/admin/EstimateReviewCard";
 import {
   CapacityBar,
   CommandCenterKpiGrid,
@@ -50,10 +49,6 @@ import {
   Receipt,
   UserPlus,
   Route,
-  Cloud,
-  Fuel,
-  Map,
-  Bell,
 } from "lucide-react";
 
 function fmtMoney(n: number | null | undefined, fallback = "$0"): string {
@@ -64,7 +59,7 @@ function fmtMoney(n: number | null | undefined, fallback = "$0"): string {
 const KPI_CONFIG = [
   { key: "revenueToday" as const, label: "Revenue today", icon: DollarSign, tone: "money" as const, emptyMessage: "No payments collected yet", hero: true },
   { key: "jobsScheduledToday" as const, label: "Jobs scheduled", icon: Briefcase, tone: "count" as const, emptyMessage: "No jobs scheduled yet" },
-  { key: "jobsAwaitingReview" as const, label: "Awaiting review", icon: ClipboardCheck, tone: "count" as const, emptyMessage: "No estimates waiting" },
+  { key: "jobsAwaitingReview" as const, label: "Legacy field reviews", icon: ClipboardCheck, tone: "count" as const, emptyMessage: "No legacy reviews" },
   { key: "outstandingReceivables" as const, label: "Outstanding", icon: FileText, tone: "money" as const, emptyMessage: "All invoices paid" },
   { key: "todaysCapacityPct" as const, label: "Today's capacity", icon: CalendarClock, tone: "pct" as const, emptyMessage: "No schedule created yet" },
   { key: "revenueThisWeek" as const, label: "Revenue this week", icon: TrendingUp, tone: "money" as const, emptyMessage: "No payments this week" },
@@ -73,23 +68,20 @@ const KPI_CONFIG = [
 ];
 
 const PRIMARY_ACTIONS = [
-  { href: "/book", label: "New Booking", icon: Plus },
-  { href: "/admin/review", label: "Review Estimates", icon: ClipboardCheck },
-  { href: "/planner", label: "Dispatch", icon: Radio },
-  { href: "/admin/payments", label: "Collect Payment", icon: CreditCard },
-  { href: "/admin/invoices/new", label: "Create Invoice", icon: Receipt },
+  { href: "/admin/customers", label: "Customers", icon: Users },
+  { href: "/admin/estimates", label: "Estimates", icon: ClipboardCheck },
+  { href: "/admin/jobs", label: "Jobs", icon: Briefcase },
+  { href: "/admin/invoices", label: "Invoices", icon: Receipt },
+  { href: "/admin/payments", label: "Payments", icon: CreditCard },
 ];
 
 const SECONDARY_ACTIONS = [
-  { href: "/admin/jobs", label: "View Jobs", icon: Briefcase },
-  { href: "/admin/jobs", label: "Create Job", icon: Plus },
-  { href: "/admin/hr/employees", label: "View Employees", icon: Users },
-  { href: "/admin/customers", label: "View Customers", icon: Users },
-  { href: "/admin/invoices", label: "View Invoices", icon: Receipt },
-  { href: "/planner", label: "View Dispatch", icon: Route },
-  { href: "/admin/hr/applicants", label: "Careers / Applicants", icon: UserPlus },
-  { href: "/admin/schedule", label: "Schedule Route", icon: Route },
-  { href: "/admin/hr/employees/new", label: "Create Employee", icon: UserPlus },
+  { href: "/book", label: "New Booking", icon: Plus },
+  { href: "/planner", label: "Dispatch", icon: Radio },
+  { href: "/admin/estimates/new", label: "New Estimate", icon: FileText },
+  { href: "/admin/hr/employees", label: "Employees", icon: Users },
+  { href: "/admin/schedule", label: "Schedule", icon: Route },
+  { href: "/admin/hr/applicants", label: "Applicants", icon: UserPlus },
 ];
 
 const ACTIVITY_ICONS: Record<string, string> = {
@@ -103,14 +95,6 @@ const ACTIVITY_ICONS: Record<string, string> = {
   dispatch: "bg-brand-primary",
   other: "bg-gray-400",
 };
-
-const COMING_SOON = [
-  { label: "Weather", icon: Cloud },
-  { label: "Fuel prices", icon: Fuel },
-  { label: "Google Maps route optimization", icon: Map },
-  { label: "Crew GPS", icon: Radio },
-  { label: "Business notifications", icon: Bell },
-];
 
 async function loadCommandCenter(companyId: string): Promise<OperationsCommandCenterData | null> {
   try {
@@ -145,12 +129,41 @@ async function loadCommandCenter(companyId: string): Promise<OperationsCommandCe
   });
 }
 
+type WorkflowQueues = {
+  estimates: {
+    toApprove: number;
+    needsInternalApproval: number;
+    waitingOnCustomer: number;
+    finalAgreed: number;
+    convertedToJob: number;
+    completed: number;
+  };
+  jobs: {
+    needsScheduling: number;
+    scheduled: number;
+    inProgress: number;
+    awaitingProof: number;
+    readyToInvoice: number;
+    invoiced: number;
+  };
+  invoices: {
+    draft: number;
+    readyToSend: number;
+    sentUnpaid: number;
+    partiallyPaid: number;
+    paid: number;
+    overdue: number;
+    void: number;
+  };
+};
+
 export function OperationsCommandCenter() {
   const { company, companyId } = useCompany();
   const [data, setData] = useState<OperationsCommandCenterData | null>(null);
+  const [queues, setQueues] = useState<WorkflowQueues | null>(null);
   const [loading, setLoading] = useState(true);
   const [activityFilter, setActivityFilter] = useState<string>("all");
-  const [reviewKey, setReviewKey] = useState(0);
+  const [reviewKey] = useState(0);
   const [dispatchJob, setDispatchJob] = useState<Job | null>(null);
   const [crmProfile, setCrmProfile] = useState<CustomerCrmProfile | null>(null);
 
@@ -160,7 +173,18 @@ export function OperationsCommandCenter() {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      setData(await loadCommandCenter(companyId));
+      const [center, qRes] = await Promise.all([
+        loadCommandCenter(companyId),
+        fetch("/api/admin/workflow-queues").then((r) => r.json()).catch(() => null),
+      ]);
+      setData(center);
+      if (qRes?.ok) {
+        setQueues({
+          estimates: qRes.estimates,
+          jobs: qRes.jobs,
+          invoices: qRes.invoices,
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -225,6 +249,60 @@ export function OperationsCommandCenter() {
       }
     >
       <CommandCenterKpiGrid kpis={kpis} configs={KPI_CONFIG} />
+
+      {queues && (
+        <div className="mb-6 grid gap-4 lg:grid-cols-3">
+          <PremiumCard className="p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="font-bold">Estimates</h3>
+              <Link href="/admin/estimates" className="text-sm text-brand-primary hover:underline">
+                Open
+              </Link>
+            </div>
+            <ul className="space-y-1.5 text-sm">
+              <li className="flex justify-between"><span>Needs Approval</span><span className="font-semibold">{queues.estimates.toApprove}</span></li>
+              <li className="flex justify-between text-muted-foreground"><span>Internal</span><span>{queues.estimates.needsInternalApproval}</span></li>
+              <li className="flex justify-between text-muted-foreground"><span>Waiting on Customer</span><span>{queues.estimates.waitingOnCustomer}</span></li>
+              <li className="flex justify-between"><span>Agreed</span><span className="font-semibold">{queues.estimates.finalAgreed}</span></li>
+              <li className="flex justify-between text-muted-foreground"><span>Completed</span><span>{queues.estimates.completed}</span></li>
+            </ul>
+          </PremiumCard>
+          <PremiumCard className="p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="font-bold">Jobs</h3>
+              <Link href="/admin/jobs" className="text-sm text-brand-primary hover:underline">
+                Open
+              </Link>
+            </div>
+            <ul className="space-y-1.5 text-sm">
+              <li className="flex justify-between"><span>Needs Scheduling</span><span className="font-semibold">{queues.jobs.needsScheduling}</span></li>
+              <li className="flex justify-between"><span>Missing Assignment</span><span className="font-semibold">{(queues.jobs as { missingAssignments?: number }).missingAssignments ?? 0}</span></li>
+              <li className="flex justify-between"><span>Scheduled</span><span className="font-semibold">{queues.jobs.scheduled}</span></li>
+              <li className="flex justify-between"><span>In Progress</span><span className="font-semibold">{queues.jobs.inProgress}</span></li>
+              <li className="flex justify-between"><span>Awaiting Proof</span><span className="font-semibold">{queues.jobs.awaitingProof}</span></li>
+              <li className="flex justify-between"><span>Ready to Invoice</span><span className="font-semibold">{queues.jobs.readyToInvoice}</span></li>
+              <li className="flex justify-between text-muted-foreground"><span>Invoiced</span><span>{queues.jobs.invoiced}</span></li>
+            </ul>
+          </PremiumCard>
+          <PremiumCard className="p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="font-bold">Invoices</h3>
+              <Link href="/admin/invoices" className="text-sm text-brand-primary hover:underline">
+                Open
+              </Link>
+            </div>
+            <ul className="space-y-1.5 text-sm">
+              <li className="flex justify-between"><span>Draft</span><span className="font-semibold">{queues.invoices.draft}</span></li>
+              <li className="flex justify-between"><span>Ready to send</span><span className="font-semibold">{queues.invoices.readyToSend}</span></li>
+              <li className="flex justify-between"><span>Sent / unpaid</span><span className="font-semibold">{queues.invoices.sentUnpaid}</span></li>
+              <li className="flex justify-between"><span>Partially paid</span><span className="font-semibold">{queues.invoices.partiallyPaid}</span></li>
+              <li className="flex justify-between"><span>Paid</span><span className="font-semibold">{queues.invoices.paid}</span></li>
+              <li className="flex justify-between"><span>Overdue</span><span className="font-semibold">{queues.invoices.overdue}</span></li>
+              <li className="flex justify-between text-muted-foreground"><span>Void</span><span>{queues.invoices.void}</span></li>
+            </ul>
+          </PremiumCard>
+        </div>
+      )}
 
       <LiveOpsTicker initial={liveUpdates} />
 
@@ -338,19 +416,38 @@ export function OperationsCommandCenter() {
 
       <PremiumCard className="mb-6 p-5">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="font-bold">Review queue</h3>
-          <Link href="/admin/review" className="text-sm font-medium text-brand-primary hover:underline">
-            View all
+          <h3 className="font-bold">Estimates needing action</h3>
+          <Link href="/admin/estimates" className="text-sm font-medium text-brand-primary hover:underline">
+            Open estimates
           </Link>
         </div>
-        {reviewQueue.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No jobs waiting for review.</p>
+        {queues ? (
+          <ul className="space-y-2 text-sm">
+            <li className="flex justify-between">
+              <span>Needs Approval</span>
+              <Link href="/admin/estimates" className="font-semibold text-brand-primary">
+                {queues.estimates.toApprove}
+              </Link>
+            </li>
+            <li className="flex justify-between text-muted-foreground">
+              <span>Waiting on Customer</span>
+              <span>{queues.estimates.waitingOnCustomer}</span>
+            </li>
+            <li className="flex justify-between">
+              <span>Agreed (ready for job work)</span>
+              <span className="font-semibold">{queues.estimates.finalAgreed}</span>
+            </li>
+          </ul>
         ) : (
-          <div className="space-y-6">
-            {reviewQueue.slice(0, 3).map((job) => (
-              <EstimateReviewCard key={job.id} job={job} onUpdated={() => setReviewKey((k) => k + 1)} />
-            ))}
-          </div>
+          <p className="text-sm text-amber-800">Could not load estimate queues. Refresh to retry.</p>
+        )}
+        {reviewQueue.length > 0 && (
+          <p className="mt-4 text-xs text-muted-foreground">
+            {reviewQueue.length} legacy field photo review(s) still open —{" "}
+            <Link href="/admin/review" className="underline">
+              view legacy queue
+            </Link>
+          </p>
         )}
       </PremiumCard>
 
@@ -465,18 +562,27 @@ export function OperationsCommandCenter() {
       <CustomerCrmDrawer profile={crmProfile} open={!!crmProfile} onOpenChange={(o) => !o && setCrmProfile(null)} />
 
       <PremiumCard className="p-5">
-        <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-muted-foreground">Coming soon</h3>
+        <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+          Operations shortcuts
+        </h3>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {COMING_SOON.map((w) => {
+          {[
+            { label: "Schedule", href: "/admin/schedule", icon: Briefcase },
+            { label: "Jobs", href: "/admin/jobs", icon: FileText },
+            { label: "Invoices", href: "/admin/invoices", icon: DollarSign },
+            { label: "Fleet", href: "/admin/fleet", icon: TrendingUp },
+            { label: "Divisions", href: "/admin/divisions", icon: AlertTriangle },
+          ].map((w) => {
             const Icon = w.icon;
             return (
-              <div
+              <Link
                 key={w.label}
-                className="flex flex-col items-center gap-2 rounded-xl border border-dashed bg-muted/20 p-4 text-center"
+                href={w.href}
+                className="flex flex-col items-center gap-2 rounded-xl border border-black/5 bg-white p-4 text-center shadow-sm transition hover:border-brand-primary/25"
               >
-                <Icon className="h-5 w-5 text-muted-foreground" />
-                <p className="text-xs font-medium text-muted-foreground">{w.label}</p>
-              </div>
+                <Icon className="h-5 w-5 text-brand-primary" />
+                <p className="text-xs font-medium">{w.label}</p>
+              </Link>
             );
           })}
         </div>

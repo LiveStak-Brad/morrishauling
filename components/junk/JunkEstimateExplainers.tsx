@@ -6,11 +6,11 @@ import { cn } from "@/lib/utils";
 export function TransportationDetailsCollapsible({
   amount,
   breakdownSteps,
-  originCity,
   className,
 }: {
   amount: number;
   breakdownSteps: string[];
+  /** @deprecated Internal origin city is never shown to customers. */
   originCity?: string;
   className?: string;
 }) {
@@ -29,11 +29,6 @@ export function TransportationDetailsCollapsible({
           </li>
         ))}
       </ul>
-      {originCity && (
-        <p className="mt-2 text-[11px] text-muted-foreground/80">
-          Routed from our {originCity} operating area.
-        </p>
-      )}
     </div>
   );
 }

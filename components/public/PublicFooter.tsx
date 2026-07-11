@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
 
 export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | "company" }) {
   const { company } = useCompany();
-  const hauling = morrisServicesConfig.operatingCompanies[0];
+  const junk = morrisServicesConfig.operatingCompanies[0];
+  const haulingDiv = morrisServicesConfig.haulingDivision;
   const isUmbrella = variant === "umbrella";
 
   return (
@@ -34,7 +35,7 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
               </>
             ) : (
               <>
-                <p className="text-lg font-bold">{hauling.name}</p>
+                <p className="text-lg font-bold">{junk.name}</p>
                 <p className="mt-1 text-sm text-white/70">
                   A {morrisServicesConfig.publicBrandName} Company
                 </p>
@@ -52,7 +53,7 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                 isUmbrella ? "text-muted-foreground" : "text-white/60"
               )}
             >
-              {isUmbrella ? "Explore" : hauling.name}
+              {isUmbrella ? "Explore" : junk.name}
             </p>
             <nav className="mt-3 flex flex-col gap-2 text-sm">
               {isUmbrella ? (
@@ -60,14 +61,20 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                   <Link href="/" className="text-foreground/90 hover:text-brand-primary hover:underline">
                     Home
                   </Link>
+                  <Link href={junk.hubPath} className="text-foreground/90 hover:text-brand-primary hover:underline">
+                    {junk.name}
+                  </Link>
+                  <Link href={haulingDiv.hubPath} className="text-foreground/90 hover:text-brand-primary hover:underline">
+                    {haulingDiv.name}
+                  </Link>
                   <Link href="/about" className="text-foreground/90 hover:text-brand-primary hover:underline">
                     About
                   </Link>
+                  <Link href="/careers" className="text-foreground/90 hover:text-brand-primary hover:underline">
+                    Careers
+                  </Link>
                   <Link href="/contact" className="text-foreground/90 hover:text-brand-primary hover:underline">
                     Contact
-                  </Link>
-                  <Link href={hauling.hubPath} className="text-foreground/90 hover:text-brand-primary hover:underline">
-                    {hauling.name}
                   </Link>
                 </>
               ) : (
@@ -115,7 +122,7 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
               </a>
             </p>
             <p className={cn("mt-2 text-sm", isUmbrella ? "text-muted-foreground" : "text-white/70")}>
-              Preparing to serve {company.serviceArea.label ?? PRELAUNCH_SERVICE_AREA}
+              {PRELAUNCH_SERVICE_AREA}
             </p>
           </div>
         </div>

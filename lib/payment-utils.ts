@@ -47,15 +47,15 @@ export function derivePaymentStatus(
 
 export function getPaymentStatusLabel(status: AccountPaymentStatus): string {
   const labels: Record<AccountPaymentStatus, string> = {
-    estimate_pending: "Estimate pending",
-    deposit_due: "Deposit due",
-    deposit_paid: "Deposit paid",
-    balance_due: "Balance due",
-    paid_in_full: "Paid in full",
-    financing_requested: "Financing requested",
-    financing_approved: "Financing approved",
-    financing_denied: "Financing denied",
-    past_due: "Past due",
+    past_due: "Overdue",
+    paid_in_full: "Paid",
+    balance_due: "Partially Paid",
+    deposit_due: "Deposit Due",
+    deposit_paid: "Deposit Paid",
+    estimate_pending: "Estimate Pending",
+    financing_requested: "Financing Requested",
+    financing_approved: "Financing Approved",
+    financing_denied: "Financing Denied",
   };
   return labels[status];
 }

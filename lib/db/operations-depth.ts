@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isDemoDataEnabled } from "@/lib/is-demo-data";
 import { isDbReady } from "@/lib/db/operations";
 import { logActivity } from "@/lib/db/activity";
+import { businessDateString } from "@/lib/datetime/business-timezone";
 import {
   interactionToRow,
   maintenanceLogToRow,
@@ -96,7 +97,7 @@ export async function clockIn(
   params: { employeeId: string; profileId?: string; notes?: string },
   options?: { actorProfileId?: string }
 ): Promise<EmployeeTimeclockEntry> {
-  const today = format(new Date(), "yyyy-MM-dd");
+  const today = businessDateString(new Date());
   const existing = await getActiveTimeclockForEmployee(companyId, params.employeeId);
   if (existing) throw new Error("Already clocked in");
 

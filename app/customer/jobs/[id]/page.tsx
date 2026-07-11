@@ -19,7 +19,7 @@ import type { Job } from "@/types/job";
 import type { Invoice } from "@/types/payment";
 import type { FinancingRequest } from "@/types/financing";
 import type { JobStatus } from "@/types/job";
-import { MapPin, MessageCircle, Upload, Star } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 
 const STATUS_VARIANT: Record<JobStatus, "success" | "warning" | "info" | "urgent" | "neutral" | "live"> = {
   draft: "neutral",
@@ -40,7 +40,7 @@ function buildTimeline(status: JobStatus): TimelineStep[] {
     id: String(i),
     label,
     status: i < idx ? "completed" : i === idx ? "current" : "upcoming",
-    time: i === idx && status === "scheduled" ? "Today, 10am–2pm" : undefined,
+    time: undefined,
   })) as TimelineStep[];
 }
 
@@ -146,7 +146,7 @@ export default function CustomerJobDetailPage() {
 
       <main className="mx-auto max-w-lg px-4 -mt-4 space-y-4">
         <PremiumCard className="p-5">
-          <h2 className="font-bold">Live tracking</h2>
+          <h2 className="font-heading text-lg font-medium tracking-tight">Job progress</h2>
           <div className="mt-4">
             <Timeline steps={buildTimeline(job.status)} />
           </div>
@@ -160,30 +160,19 @@ export default function CustomerJobDetailPage() {
           estimateResult && <LiveEstimate estimate={estimateResult} />
         )}
 
-        <div className="grid grid-cols-2 gap-3">
-          <button type="button" className="flex flex-col items-center gap-2 rounded-2xl bg-card p-4 shadow-sm">
-            <MessageCircle className="h-6 w-6 text-morris-info" />
-            <span className="text-xs font-semibold">Chat</span>
-          </button>
-          <button type="button" className="flex flex-col items-center gap-2 rounded-2xl bg-card p-4 shadow-sm">
-            <Upload className="h-6 w-6 text-brand-primary" />
-            <span className="text-xs font-semibold">Add photos</span>
-          </button>
-        </div>
+        <a
+          href={`tel:${company.phone.replace(/\D/g, "")}`}
+          className="flex items-center justify-center gap-2 rounded-2xl border border-black/5 bg-white p-4 text-sm font-semibold text-brand-primary shadow-sm"
+        >
+          <Phone className="h-5 w-5" aria-hidden />
+          Call {company.phone}
+        </a>
 
         <PaymentPortal jobId={job.id} total={total} balanceDue={balanceDue} amountPaid={amountPaid} />
 
         {company.financingOptions.inHouseEnabled && (
           <FinancingRequestForm jobId={job.id} totalAmount={total} />
         )}
-
-        <PremiumCard className="flex items-center gap-3 p-4">
-          <Star className="h-8 w-8 fill-yellow-400 text-yellow-400" />
-          <div>
-            <p className="font-semibold">Job complete? Leave a review</p>
-            <p className="text-sm text-muted-foreground">Help us grow — earn $10 off next pickup</p>
-          </div>
-        </PremiumCard>
       </main>
     </div>
   );

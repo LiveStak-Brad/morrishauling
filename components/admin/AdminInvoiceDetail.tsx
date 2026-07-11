@@ -74,9 +74,9 @@ export function AdminInvoiceDetail({ invoiceId }: { invoiceId: string }) {
   }, [load]);
 
   const recalcTotals = (items: InvoiceAdjustment[], fees: number) => {
+    // Line items ARE the invoice body (from estimate). Do not add estimateAmount again.
     const subtotal = items.reduce((s, i) => s + i.amount, 0);
-    const estimateAmount = detail?.invoice.estimateAmount ?? subtotal;
-    const total = estimateAmount + subtotal + fees;
+    const total = Math.max(0, subtotal + fees);
     const amountPaid = detail?.invoice.amountPaid ?? 0;
     return { subtotal, total, balanceDue: Math.max(0, total - amountPaid) };
   };
@@ -87,6 +87,7 @@ export function AdminInvoiceDetail({ invoiceId }: { invoiceId: string }) {
     try {
       const fees = detail.invoice.fees;
       const { subtotal, total, balanceDue } = recalcTotals(lineItems, fees);
+      const amountPaid = detail.invoice.amountPaid ?? 0;
       const res = await fetch(`/api/admin/invoices/${invoiceId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -96,7 +97,14 @@ export function AdminInvoiceDetail({ invoiceId }: { invoiceId: string }) {
             subtotal,
             total,
             balanceDue,
-            status: balanceDue <= 0 ? "paid" : detail.invoice.status === "void" ? "void" : "partial",
+            status:
+              balanceDue <= 0
+                ? "paid"
+                : detail.invoice.status === "void"
+                  ? "void"
+                  : amountPaid > 0
+                    ? "partially_paid"
+                    : detail.invoice.status,
           },
         }),
       });
@@ -212,9 +220,24 @@ export function AdminInvoiceDetail({ invoiceId }: { invoiceId: string }) {
       />
 
       <div className="flex flex-wrap gap-2">
+        {invoice.deliveryStatus && (
+          <span className="inline-flex h-8 items-center rounded-md border px-3 text-xs font-medium text-muted-foreground">
+            Delivery:{" "}
+            {invoice.deliveryStatus === "skipped"
+              ? "unavailable — use customer link"
+              : invoice.deliveryStatus}
+          </span>
+        )}
+        <Link
+          href={`/admin/invoices/${invoiceId}/preview`}
+          className="inline-flex h-8 items-center rounded-md border px-3 text-sm font-medium hover:bg-muted"
+        >
+          <ExternalLink className="mr-2 h-4 w-4" />
+          Preview as Customer
+        </Link>
         {job && (
           <Link
-            href="/admin/jobs"
+            href={`/admin/jobs/${job.id}`}
             className="inline-flex h-8 items-center rounded-md border px-3 text-sm font-medium hover:bg-muted"
           >
             <ExternalLink className="mr-2 h-4 w-4" />
@@ -223,11 +246,20 @@ export function AdminInvoiceDetail({ invoiceId }: { invoiceId: string }) {
         )}
         {customer && (
           <Link
-            href="/admin/customers"
+            href={`/admin/customers/${customer.id}`}
             className="inline-flex h-8 items-center rounded-md border px-3 text-sm font-medium hover:bg-muted"
           >
             <ExternalLink className="mr-2 h-4 w-4" />
             View customer
+          </Link>
+        )}
+        {invoice.estimateId && (
+          <Link
+            href={`/admin/estimates/${invoice.estimateId}`}
+            className="inline-flex h-8 items-center rounded-md border px-3 text-sm font-medium hover:bg-muted"
+          >
+            <ExternalLink className="mr-2 h-4 w-4" />
+            View estimate
           </Link>
         )}
         {!isVoid && invoice.balanceDue > 0 && (
@@ -321,8 +353,10 @@ export function AdminInvoiceDetail({ invoiceId }: { invoiceId: string }) {
                 <SelectContent>
                   <SelectItem value="cash">Cash</SelectItem>
                   <SelectItem value="check">Check</SelectItem>
-                  <SelectItem value="card">Card</SelectItem>
-                  <SelectItem value="invoice">Invoice</SelectItem>
+                  <SelectItem value="manual_card">Card (in person / phone)</SelectItem>
+                  <SelectItem value="bank_transfer">Bank transfer</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="financing">Financing</SelectItem>
                 </SelectContent>
               </Select>
             </div>

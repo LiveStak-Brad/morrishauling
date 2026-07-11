@@ -79,7 +79,7 @@ function dateKey(iso: string): string {
 }
 
 function completedPayments(payments: Payment[]): Payment[] {
-  return payments.filter((p) => p.status === "completed");
+  return payments.filter((p) => p.status === "completed" && !p.reversedAt);
 }
 
 function sumPayments(payments: Payment[]): number {

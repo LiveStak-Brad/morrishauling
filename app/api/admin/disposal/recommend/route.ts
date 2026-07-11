@@ -3,6 +3,7 @@ import { getDisposalFacilities } from "@/lib/db/disposal-facilities";
 import { getFacilityHistoricalStats } from "@/lib/db/disposal-dashboard";
 import { getJobById } from "@/lib/db/operations";
 import { rankDisposalSites } from "@/lib/disposal/disposal-recommendation";
+import { planDisposalRoute } from "@/lib/disposal/multi-facility-plan";
 import { normalizeAcceptedMaterials, type MaterialCategory } from "@/lib/disposal/material-categories";
 import { approximateCustomerLocation } from "@/lib/disposal/disposal-routing";
 import { requireApiProfile } from "@/lib/api/require-profile";
@@ -29,6 +30,9 @@ export async function POST(request: Request) {
       sortBy?: DisposalSortMode;
       filters?: DisposalFilterOptions;
       strictMaterials?: boolean;
+      allowMultiFacility?: boolean;
+      requireCommercial?: boolean;
+      trailerLengthFt?: number;
     }>(request);
 
     const companyId = morrisConfig.companyId;
@@ -61,7 +65,7 @@ export async function POST(request: Request) {
       origin = approximateCustomerLocation(body.zip, base);
     }
 
-    const result = rankDisposalSites({
+    const rankInput = {
       sites,
       origin,
       materials,
@@ -70,14 +74,22 @@ export async function POST(request: Request) {
       loadPercent,
       itemCount,
       jobRevenue,
-      sortBy: body.sortBy ?? "recommended",
+      sortBy: body.sortBy ?? ("recommended" as DisposalSortMode),
       filters: body.filters,
       strictMaterials,
       facilityStats,
+    };
+
+    const recommendation = rankDisposalSites(rankInput);
+    const plan = planDisposalRoute({
+      ...rankInput,
+      allowMultiFacility: body.allowMultiFacility ?? true,
+      requireCommercial: body.requireCommercial ?? true,
+      trailerLengthFt: body.trailerLengthFt,
     });
 
-    return apiOk({ recommendation: result });
+    return apiOk({ recommendation, plan });
   } catch (e) {
-    return apiError(e instanceof Error ? e.message : "Failed to rank disposal sites", 500);
+    return apiError(e instanceof Error ? e.message : "Recommendation failed", 500);
   }
 }

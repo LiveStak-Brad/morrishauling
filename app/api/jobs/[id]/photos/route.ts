@@ -1,5 +1,5 @@
 import { morrisConfig } from "@/lib/morris-config";
-import { getJobById } from "@/lib/db/operations";
+import { getJobById, updateJob } from "@/lib/db/operations";
 import { insertJobPhoto, listJobPhotos, type JobPhotoType } from "@/lib/db/job-photos";
 import { uploadToStorage } from "@/lib/storage/upload";
 import { STORAGE_BUCKETS } from "@/lib/storage/buckets";
@@ -9,6 +9,23 @@ import { apiOk, apiError } from "@/lib/api/route-utils";
 
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/heic"]);
 const MAX_BYTES = 10 * 1024 * 1024;
+
+const ALLOWED_PHOTO_TYPES = new Set<string>([
+  "customer_upload",
+  "before",
+  "after",
+  "damage",
+  "dump_receipt",
+  "arrival",
+  "loaded_trailer",
+  "disposal_proof",
+  "pickup_condition",
+  "securement",
+  "loaded",
+  "delivery",
+  "exception",
+  "other",
+]);
 
 export async function GET(
   _request: Request,
@@ -53,7 +70,9 @@ export async function POST(
 
     const form = await request.formData();
     const file = form.get("file");
-    const photoType = (form.get("photoType") as JobPhotoType) ?? "customer_upload";
+    const rawType = String(form.get("photoType") ?? "customer_upload");
+    const photoType = (ALLOWED_PHOTO_TYPES.has(rawType) ? rawType : "other") as JobPhotoType;
+    const photoStage = String(form.get("photoStage") ?? photoType);
     const notes = (form.get("notes") as string) ?? undefined;
 
     if (!(file instanceof File)) return apiError("file required", 400);
@@ -76,11 +95,40 @@ export async function POST(
       jobId,
       storagePath,
       photoType,
+      photoStage,
       uploadedByProfileId: profile.id,
       notes,
     });
 
-    return apiOk({ photo });
+    let displayUrl = storagePath;
+    try {
+      const { createSignedStorageUrl } = await import("@/lib/storage/upload");
+      displayUrl = await createSignedStorageUrl(STORAGE_BUCKETS.jobPhotos, storagePath);
+    } catch {
+      /* keep path */
+    }
+
+    // Keep jobs.payload.photos in sync — completion gates read this source of truth.
+    const nextPhotos = [
+      ...(job.photos ?? []),
+      {
+        id: photo.id,
+        url: displayUrl,
+        caption: photoStage,
+        photoStage,
+      },
+    ];
+    await updateJob(
+      companyId,
+      jobId,
+      { photos: nextPhotos },
+      {
+        actorProfileId: profile.id,
+        actorRole: profile.role,
+      }
+    );
+
+    return apiOk({ photo: { ...photo, signedUrl: displayUrl } });
   } catch (e) {
     return apiError(e instanceof Error ? e.message : "Upload failed", 500);
   }

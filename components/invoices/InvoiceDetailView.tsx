@@ -17,12 +17,15 @@ import { buildPaymentActivity } from "@/lib/payment-utils";
 import { formatCurrency, formatDate } from "@/components/payments/payment-ui";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
+import { isOnlineCardPaymentEnabled } from "@/lib/payments/online-payments-enabled";
+import { MANUAL_PAYMENT_METHODS } from "@/lib/payments/manual-methods";
 import {
   Camera,
   Download,
   MapPin,
   Send,
   User,
+  Banknote,
 } from "lucide-react";
 
 interface InvoiceDetailViewProps {
@@ -69,8 +72,26 @@ export function InvoiceDetailView({
   };
 
   const sendInvoice = async () => {
-    await downloadPdf();
-    toast.info("Email provider not connected yet — PDF generated for download.");
+    try {
+      const res = await fetch(`/api/admin/invoices/${invoice.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send" }),
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        toast.error(data.error ?? "Send failed");
+        return;
+      }
+      if (data.customerUrl) {
+        await navigator.clipboard.writeText(data.customerUrl);
+        toast.success("Customer link copied");
+      }
+      toast.info(data.deliveryMessage ?? "Send recorded");
+      await downloadPdf();
+    } catch {
+      toast.error("Send failed");
+    }
   };
 
   return (
@@ -166,6 +187,27 @@ export function InvoiceDetailView({
             <span>{formatCurrency(invoice.balanceDue)}</span>
           </div>
         </div>
+      </PremiumCard>
+
+      <PremiumCard className="p-5">
+        <h3 className="flex items-center gap-2 font-semibold">
+          <Banknote className="h-4 w-4" />
+          How to pay
+        </h3>
+        {isOnlineCardPaymentEnabled() ? (
+          <p className="mt-2 text-sm text-muted-foreground">
+            Pay online with card, or use cash, check, bank transfer, or another arranged method.
+          </p>
+        ) : (
+          <ul className="mt-3 space-y-2 text-sm">
+            {MANUAL_PAYMENT_METHODS.map((m) => (
+              <li key={m.id} className="flex flex-col rounded-lg border border-black/5 bg-[#F7F5F2] px-3 py-2">
+                <span className="font-medium">{m.label}</span>
+                <span className="text-xs text-muted-foreground">{m.description}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </PremiumCard>
 
       {invoice.finalPriceNotes && (

@@ -1,12 +1,30 @@
 import type { Metadata } from "next";
-import { HaulingHomePage } from "@/components/public/HaulingHomePage";
+import { JunkRemovalHomePage } from "@/components/public/JunkRemovalHomePage";
 
 export const metadata: Metadata = {
-  title: "Morris Hauling & Junk Removal | Morris Services",
+  title: "Morris Junk Removal",
   description:
-    "Morris Hauling & Junk Removal is launching soon — preparing professional junk removal for Warren, Lincoln & St. Charles Counties, MO.",
+    "Professional junk removal and property cleanouts for Warren, Lincoln & St. Charles Counties, MO. Book online today.",
+  openGraph: {
+    title: "Morris Junk Removal | Morris Services",
+    description:
+      "Professional junk removal and property cleanouts for Warren, Lincoln & St. Charles Counties, MO. Book online.",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1146,
+        height: 758,
+        alt: "Morris Junk Removal",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Morris Junk Removal | Morris Services",
+    images: ["/logo.png"],
+  },
 };
 
 export default function JunkRemovalPage() {
-  return <HaulingHomePage />;
+  return <JunkRemovalHomePage />;
 }

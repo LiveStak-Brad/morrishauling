@@ -1,0 +1,21 @@
+export type ReferenceDumpSiteSeed = {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  county: string;
+  latitude: number;
+  longitude: number;
+  phone?: string;
+  website?: string;
+  acceptedMaterials: string[];
+  restrictions?: string;
+  feeType: "flat" | "weight" | "volume" | "mixed" | "per_item";
+  baseFee?: number;
+  perTonFee?: number;
+  minimumFee?: number;
+  hoursJson?: Record<string, string>;
+  notes?: string;
+};

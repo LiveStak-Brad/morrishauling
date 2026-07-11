@@ -32,7 +32,7 @@ export function CareersLegalNote() {
     <section className="py-10 bg-white border-t">
       <div className="mx-auto max-w-3xl px-4 text-center text-sm text-muted-foreground space-y-3">
         <p>
-          Morris Hauling &amp; Junk Removal is an equal opportunity employer. We consider all
+          Morris Junk Removal is an equal opportunity employer. We consider all
           qualified applicants without regard to race, color, religion, sex, national origin,
           age, disability, or veteran status.
         </p>

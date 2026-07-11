@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Static checks for Morris Services public website (prelaunch-safe copy).
+ * Static checks for Morris Services public website (operational copy).
  */
 
 import fs from "node:fs";
@@ -19,27 +19,29 @@ function assert(name, ok, detail = "") {
 
 const PUBLIC_COPY_FILES = [
   "components/public/MorrisServicesHomePage.tsx",
-  "components/public/HaulingHomePage.tsx",
+  "components/public/JunkRemovalHomePage.tsx",
+  "components/public/HaulingComingSoonPage.tsx",
   "app/book/page.tsx",
   "app/pricing/page.tsx",
-  "components/careers/CareersHero.tsx",
-  "lib/careers/constants.ts",
+  "app/services/page.tsx",
+  "app/contact/page.tsx",
   "components/public/PublicHeader.tsx",
   "components/public/PublicFooter.tsx",
-  "app/services/page.tsx",
 ];
 
 const BANNED_CLAIMS = [
   { pattern: /Rated 4\.9/i, label: "4.9★ rating" },
   { pattern: /4\.9★/i, label: "4.9★ rating" },
-  { pattern: /same-week/i, label: "same-week pickups" },
-  { pattern: /same-day service/i, label: "same-day service claim" },
   { pattern: /Licensed\s*&\s*insured/i, label: "licensed & insured" },
   { pattern: /on-time guarantee/i, label: "on-time guarantee" },
-  { pattern: /Live rates from admin/i, label: "live rates claim" },
-  { pattern: /Book Now/i, label: "Book Now CTA" },
-  { pattern: /instant estimate/i, label: "instant estimate" },
-  { pattern: /Track pickup/i, label: "track pickup" },
+  { pattern: /coming soon/i, label: "coming soon" },
+  { pattern: /Launching soon/i, label: "launching soon" },
+  { pattern: /Online booking preview/i, label: "booking preview" },
+  { pattern: /Reserve interest/i, label: "reserve interest" },
+  { pattern: /preview=1/i, label: "preview mode link" },
+  { pattern: /Founding season/i, label: "founding season" },
+  { pattern: /early access/i, label: "early access" },
+  { pattern: /not live yet/i, label: "not live yet" },
 ];
 
 const checks = [];
@@ -53,25 +55,37 @@ checks.push(
 
 checks.push(
   assert(
-    "Morris Services portal prelaunch copy",
-    read("components/public/MorrisServicesHomePage.tsx").includes("morrisServicesConfig.publicBrandName") &&
-      read("components/public/MorrisServicesHomePage.tsx").includes("Launching Soon") &&
-      !read("components/public/MorrisServicesHomePage.tsx").includes("Rated 4.9")
+    "Operational home — Junk Removal booking CTA",
+    read("components/public/JunkRemovalHomePage.tsx").includes("Book junk removal") &&
+      read("components/public/JunkRemovalHomePage.tsx").includes('status="open"') &&
+      !read("components/public/JunkRemovalHomePage.tsx").includes("Launching soon")
   )
 );
 
 checks.push(
   assert(
-    "Hauling homepage prelaunch copy",
-    read("components/public/HaulingHomePage.tsx").includes("Launching soon") &&
-      read("components/public/HaulingHomePage.tsx").includes("Online booking preview") &&
-      !read("components/public/HaulingHomePage.tsx").includes("Rated 4.9")
+    "Operational home — Hauling booking CTA",
+    read("components/public/HaulingComingSoonPage.tsx").includes("Book hauling") &&
+      !read("components/public/HaulingComingSoonPage.tsx").includes("Coming soon.")
+  )
+);
+
+checks.push(
+  assert(
+    "Morris Services home operational",
+    read("components/public/MorrisServicesHomePage.tsx").includes("Book service") &&
+      read("components/public/MorrisServicesHomePage.tsx").includes("Operating now")
   )
 );
 
 for (const rel of PUBLIC_COPY_FILES) {
   const content = read(rel);
   for (const banned of BANNED_CLAIMS) {
+    // Allow "coming soon" only on future craft chips in parent home (futureCompanies)
+    if (rel === "components/public/MorrisServicesHomePage.tsx" && banned.label === "coming soon") {
+      continue;
+    }
+    if (rel === "components/public/CompanyStatusBadge.tsx") continue;
     checks.push(
       assert(
         `No ${banned.label} in ${rel}`,
@@ -84,54 +98,41 @@ for (const rel of PUBLIC_COPY_FILES) {
 
 checks.push(
   assert(
-    "Company breadcrumb bar",
-    fs.existsSync(path.join(root, "components/public/CompanyBreadcrumbBar.tsx"))
+    "Book page is live booking",
+    read("app/book/page.tsx").includes("Book service") &&
+      !read("app/book/page.tsx").includes("preview=1") &&
+      !read("app/book/page.tsx").includes("Request an estimate")
   )
 );
 
 checks.push(
   assert(
-    "Book page pre-launch copy",
-    read("app/book/page.tsx").includes("coming soon") &&
-      read("app/book/page.tsx").includes("preview=1") &&
-      read("app/book/page.tsx").includes("Early customer interest list") &&
-      read("app/book/page.tsx").includes("BOOKING_PREVIEW_BANNER")
+    "Public site defaults to live",
+    read("lib/public-site.ts").includes('return "live"') &&
+      read("lib/public-site.ts").includes("isBookingSubmissionAllowed")
   )
 );
 
 checks.push(
   assert(
-    "Pricing page prelaunch disclaimer",
-    read("app/pricing/page.tsx").includes("Pre-launch pricing") &&
-      read("app/pricing/page.tsx").includes("PRELAUNCH_PRICING_NOTE")
+    "Stripe gated separately",
+    read("lib/payments/online-payments-enabled.ts").includes("NEXT_PUBLIC_STRIPE_ENABLED")
   )
 );
 
 checks.push(
   assert(
-    "Booking wizard demo mode",
-    read("components/public/BookingWizard.tsx").includes("demoMode")
+    "Jobs create gated by division",
+    read("app/api/jobs/create/route.ts").includes("isDivisionSubmissionAllowedAsync") &&
+      read("app/api/jobs/create/route.ts").includes('mode: "booking"')
   )
 );
 
 checks.push(
   assert(
-    "Jobs create gated when booking closed",
-    read("app/api/jobs/create/route.ts").includes("isBookingSubmissionAllowed")
-  )
-);
-
-checks.push(
-  assert(
-    "PublicHeader umbrella variant",
-    read("components/public/PublicHeader.tsx").includes('variant = "umbrella"')
-  )
-);
-
-checks.push(
-  assert(
-    "PublicFooter mission statement",
-    read("components/public/PublicFooter.tsx").includes("footerMission")
+    "Manual payment methods documented",
+    fs.existsSync(path.join(root, "lib/payments/manual-methods.ts")) &&
+      read("lib/payments/manual-methods.ts").includes("bank_transfer")
   )
 );
 

@@ -14,13 +14,14 @@ const APPLIANCE_ITEM_IDS = new Set([
   "water_heater",
 ]);
 
-export function buildTransportationBreakdownSteps(originCity?: string): string[] {
-  const facility = originCity ?? "our operating";
+/** Customer-facing travel steps — no internal base/routing language. */
+export function buildTransportationBreakdownSteps(_originCity?: string): string[] {
   return [
-    `Dispatch from our ${facility} facility`,
     "Travel to your property",
-    "Transportation to the proper disposal/recycling location",
-    "Return travel for our truck and crew",
+    "On-site loading and removal",
+    "Transportation of collected items",
+    "Responsible disposal or recycling",
+    "Return travel",
   ];
 }
 
@@ -44,7 +45,7 @@ export function buildPriceFactors(
   if (route.totalRouteMiles >= longTravelThreshold) {
     factors.push({
       id: "long_travel",
-      label: "Long travel distance from operating base",
+      label: "Extended travel distance to your property",
       detail: `${route.totalRouteMiles} mi total route from ${route.originBaseName}`,
     });
   }

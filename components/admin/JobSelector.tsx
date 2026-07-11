@@ -2,11 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Job } from "@/types";
+import { canCompleteWithProof } from "@/lib/jobs/workflow";
+import { serviceTypeToDivision } from "@/lib/divisions";
 
 interface Props {
   value: string;
   onChange: (jobId: string, job?: Job) => void;
   customerId?: string;
+  /** When true, only completed jobs with proof (or override) are selectable. */
+  completedOnly?: boolean;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
@@ -16,6 +20,7 @@ export function JobSelector({
   value,
   onChange,
   customerId,
+  completedOnly,
   placeholder = "Search jobs…",
   disabled,
   className,
@@ -35,6 +40,14 @@ export function JobSelector({
   const filtered = useMemo(() => {
     let list = jobs;
     if (customerId) list = list.filter((j) => j.customerId === customerId);
+    if (completedOnly) {
+      list = list.filter((j) => {
+        if (j.status !== "completed") return false;
+        if (j.completionOverrideReason) return true;
+        const divisionId = j.divisionId ?? serviceTypeToDivision(j.serviceType);
+        return canCompleteWithProof(j, divisionId).ok;
+      });
+    }
     if (query.trim()) {
       const q = query.toLowerCase();
       list = list.filter(
@@ -45,8 +58,10 @@ export function JobSelector({
           j.status.includes(q)
       );
     }
-    return list.slice(0, 50);
-  }, [jobs, customerId, query]);
+    return [...list]
+      .sort((a, b) => Number(b.status === "completed") - Number(a.status === "completed"))
+      .slice(0, 50);
+  }, [jobs, customerId, completedOnly, query]);
 
   const selected = jobs.find((j) => j.id === value);
 

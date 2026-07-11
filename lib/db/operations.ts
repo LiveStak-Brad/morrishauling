@@ -160,7 +160,11 @@ export async function createJobFromBooking(
     await reserveScheduleSlot(companyId, slotId, { actorProfileId: options?.actorProfileId });
   }
 
-  const newJob = mockCreateJob(companyId, job);
+  const newJob = mockCreateJob(companyId, {
+    ...job,
+    divisionId: job.divisionId ?? "junk_removal",
+    serviceType: job.serviceType ?? "junk_removal",
+  });
   if (newJob.estimate) {
     newJob.estimate = { ...newJob.estimate, jobId: newJob.id };
   }
@@ -178,6 +182,7 @@ export async function createJobFromBooking(
         company_id: companyId,
         job_id: newJob.id,
         customer_id: newJob.customerId,
+        division_id: "junk_removal",
         estimate_number: `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
         status: jrd?.reviewRequired ? "draft" : "sent",
         base_amount: newJob.estimate.subtotal,
@@ -202,8 +207,8 @@ export async function createJobFromBooking(
       entityType: "job",
       entityId: newJob.id,
       action: "created",
-      message: `New booking submitted — ${newJob.address.street}, ${newJob.address.city}`,
-      metadata: { status: newJob.status, junkType: newJob.junkType },
+      message: `New Junk Removal booking — ${newJob.address.street}, ${newJob.address.city}`,
+      metadata: { status: newJob.status, junkType: newJob.junkType, divisionId: "junk_removal" },
     });
   } else {
     await logActivity({
@@ -212,10 +217,21 @@ export async function createJobFromBooking(
       entityType: "job",
       entityId: newJob.id,
       action: "created",
-      message: `New booking submitted — ${newJob.address.street}, ${newJob.address.city}`,
-      metadata: { status: newJob.status, junkType: newJob.junkType },
+      message: `New Junk Removal booking — ${newJob.address.street}, ${newJob.address.city}`,
+      metadata: { status: newJob.status, junkType: newJob.junkType, divisionId: "junk_removal" },
     });
   }
+
+  const { enqueueNotification } = await import("@/lib/notifications/enqueue");
+  await enqueueNotification({
+    companyId,
+    divisionId: "junk_removal",
+    jobId: newJob.id,
+    customerId: newJob.customerId,
+    profileId: options?.actorProfileId,
+    eventType: "request_received",
+  });
+
   return newJob;
 }
 
@@ -228,15 +244,19 @@ export async function createJobFromHauling(
     total: number;
     disclaimerAccepted: boolean;
     preferredPickupDate?: string;
+    reviewRequired?: boolean;
+    reviewReasons?: string[];
   },
   options?: { actorProfileId?: string }
 ): Promise<Job> {
   const hd = params.haulingDetails;
+  const review = Boolean(params.reviewRequired);
   const jobInput: Omit<Job, "id" | "createdAt" | "updatedAt"> = {
     companyId,
     customerId: params.customerId,
+    divisionId: "hauling",
     serviceType: "hauling_transport",
-    status: "submitted",
+    status: review ? "submitted" : "estimated",
     junkType: hd.cargoCategory,
     items: [],
     loadSizeTier: "quarter_25",
@@ -256,13 +276,26 @@ export async function createJobFromHauling(
       city: hd.pickup.city,
       state: hd.pickup.state,
       zip: hd.pickup.zip,
+      location: hd.pickup.location,
+      line2: hd.pickup.line2,
+      placeId: hd.pickup.placeId,
+      formattedAddress: hd.pickup.formattedAddress,
+      country: hd.pickup.country,
+      verificationStatus: hd.pickup.verificationStatus,
+      provider: hd.pickup.provider,
+      verifiedAt: hd.pickup.verifiedAt,
     },
     photos: [],
     estimateType: "hauling_transport",
     pricingBreakdown: params.pricingBreakdown,
     disclaimerAccepted: params.disclaimerAccepted,
     haulingDetails: hd,
-    warnings: hd.rentalRequired ? ["price_may_need_adjustment"] : [],
+    warnings: [
+      ...(hd.rentalRequired || review ? ["price_may_need_adjustment"] : []),
+      ...(params.reviewReasons?.includes("outside_service_area")
+        ? ["outside_service_area"]
+        : []),
+    ] as Job["warnings"],
     scheduledDate: params.preferredPickupDate,
     customerNotes: hd.cargoDescription,
   };
@@ -283,6 +316,26 @@ export async function createJobFromHauling(
   if (await isDbReady()) {
     await (await sbWrite()).from("jobs").upsert(jobToRow(newJob));
     await (await sbWrite()).from("hauling_details").upsert(haulingDetailsToRow(newJob.haulingDetails!));
+    await (await sbWrite()).from("estimates").upsert({
+      id: newJob.estimate.id,
+      company_id: companyId,
+      job_id: newJob.id,
+      customer_id: newJob.customerId,
+      division_id: "hauling",
+      estimate_number: `EST-H-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+      status: review ? "draft" : "sent",
+      base_amount: params.total,
+      adjustments_total: 0,
+      estimated_total: params.total,
+      disclaimer_accepted: params.disclaimerAccepted,
+      estimate_type: "hauling_transport",
+      review_status: review ? "needs_review" : "auto_ready",
+      pricing_breakdown: params.pricingBreakdown,
+      internal_cost_breakdown: hd.internalCostBreakdown ?? [],
+      estimated_profit: hd.estimatedProfit ?? null,
+      estimated_margin: hd.estimatedMargin ?? null,
+      review_reasons: params.reviewReasons ?? [],
+    });
     await logActivity({
       companyId,
       actorProfileId: options?.actorProfileId ?? params.customerId,
@@ -290,9 +343,25 @@ export async function createJobFromHauling(
       entityId: newJob.id,
       action: "created",
       message: `Hauling request — ${hd.pickup.city} → ${hd.delivery.city}`,
-      metadata: { serviceType: "hauling_transport", cargo: hd.cargoCategory },
+      metadata: {
+        serviceType: "hauling_transport",
+        divisionId: "hauling",
+        cargo: hd.cargoCategory,
+        reviewRequired: review,
+      },
     });
   }
+
+  const { enqueueNotification } = await import("@/lib/notifications/enqueue");
+  await enqueueNotification({
+    companyId,
+    divisionId: "hauling",
+    jobId: newJob.id,
+    customerId: newJob.customerId,
+    profileId: options?.actorProfileId,
+    eventType: "request_received",
+  });
+
   return newJob;
 }
 
@@ -309,7 +378,11 @@ export async function updateJob(
   companyId: string,
   jobId: string,
   updates: Partial<Job>,
-  options?: { actorProfileId?: string }
+  options?: {
+    actorProfileId?: string;
+    actorRole?: string;
+    assignmentOverrideReason?: string;
+  }
 ): Promise<Job | undefined> {
   const dbReady = await isDbReady();
   let updated: Job | undefined;
@@ -317,12 +390,129 @@ export async function updateJob(
   if (dbReady) {
     const existing = await getJobById(companyId, jobId);
     if (!existing) return undefined;
+
+    const assigning =
+      updates.assignedEmployeeIds !== undefined ||
+      updates.assignedTruckId !== undefined ||
+      updates.assignedTrailerId !== undefined ||
+      updates.driverEmployeeId !== undefined;
+
+    if (assigning) {
+      const { validateJobAssignments } = await import("@/lib/scheduling/validate-assignments");
+      const { getHrEmployees } = await import("@/lib/db/hr/employees");
+      const { getOperationalTrucks, getOperationalTrailers } = await import("@/lib/db/operations-depth");
+      const [allJobs, employees, trucks, trailerRows] = await Promise.all([
+        getJobs(companyId),
+        getHrEmployees(companyId, { lifecycleStatus: "active" }).catch(() => []),
+        getOperationalTrucks(companyId).catch(() => []),
+        getOperationalTrailers(companyId).catch(() => []),
+      ]);
+      const trailers: import("@/types/operations-depth").OperationalTruck[] = (
+        trailerRows as Array<{
+          id: string;
+          name: string;
+          status?: string;
+          licensePlate?: string;
+        }>
+      ).map((t) => ({
+        id: t.id,
+        companyId,
+        name: t.name,
+        licensePlate: t.licensePlate,
+        maintenanceStatus:
+          t.status === "maintenance" || t.status === "out_of_service"
+            ? "out_of_service"
+            : "good",
+        status: t.status,
+      }));
+
+      const nextCrew = [
+        ...(updates.assignedEmployeeIds ?? existing.assignedEmployeeIds ?? []),
+      ];
+      let nextDriver =
+        updates.driverEmployeeId !== undefined
+          ? updates.driverEmployeeId
+          : existing.driverEmployeeId;
+      if (nextDriver && !nextCrew.includes(nextDriver)) {
+        nextCrew.push(nextDriver);
+      }
+
+      const validation = validateJobAssignments({
+        job: existing,
+        allJobs,
+        employees,
+        trucks,
+        trailers,
+        assignedEmployeeIds: nextCrew,
+        driverEmployeeId: nextDriver,
+        assignedTruckId:
+          updates.assignedTruckId !== undefined ? updates.assignedTruckId : existing.assignedTruckId,
+        assignedTrailerId:
+          updates.assignedTrailerId !== undefined
+            ? updates.assignedTrailerId
+            : existing.assignedTrailerId,
+        scheduledDate: updates.scheduledDate ?? existing.scheduledDate,
+      });
+
+      if (validation.hardBlocks.length) {
+        throw new Error(validation.hardBlocks.map((b) => b.message).join(" "));
+      }
+      if (validation.softConflicts.length) {
+        const canOverride =
+          options?.actorRole === "admin" && Boolean(options?.assignmentOverrideReason?.trim());
+        if (!canOverride) {
+          throw new Error(
+            `Scheduling conflict: ${validation.softConflicts.map((c) => c.message).join(" ")} An owner override reason is required to continue.`
+          );
+        }
+        await logActivity({
+          companyId,
+          actorProfileId: options.actorProfileId,
+          entityType: "job",
+          entityId: jobId,
+          action: "assignment_conflict_overridden",
+          message: `Assignment conflict overridden: ${options.assignmentOverrideReason}`,
+          metadata: {
+            reason: options.assignmentOverrideReason,
+            conflicts: validation.softConflicts,
+            actorRole: options.actorRole,
+          },
+        });
+      }
+
+      updates.assignedEmployeeIds = nextCrew;
+      if (nextDriver) updates.driverEmployeeId = nextDriver;
+    }
+
     updated = {
       ...existing,
       ...updates,
       updatedAt: new Date().toISOString(),
     };
     await (await sbWrite()).from("jobs").upsert(jobToRow(updated));
+
+    // Keep job_assignments table in sync with jobs.payload (shared source of truth).
+    if (updates.assignedEmployeeIds !== undefined || updates.driverEmployeeId !== undefined) {
+      try {
+        const client = await sbWrite();
+        await client.from("job_assignments").delete().eq("job_id", jobId).eq("company_id", companyId);
+        const crew = updated.assignedEmployeeIds ?? [];
+        const driverId = updated.driverEmployeeId;
+        for (const employeeId of crew) {
+          await client.from("job_assignments").upsert({
+            id: `ja-${jobId}-${employeeId}`,
+            company_id: companyId,
+            job_id: jobId,
+            employee_id: employeeId,
+            role: employeeId === driverId ? "driver" : "helper",
+            assigned_at: new Date().toISOString(),
+          });
+        }
+      } catch {
+        // Payload remains authoritative if assignment rows fail (e.g. legacy employee ids).
+      }
+    }
+
     if (updates.junkRemovalDetails && updated.junkRemovalDetails) {
       await (await sbWrite())
         .from("junk_removal_details")
@@ -341,11 +531,90 @@ export async function updateJob(
       actorProfileId: options?.actorProfileId,
       entityType: "job",
       entityId: jobId,
-      action: "status_changed",
-      message: `Job status updated to ${updates.status}`,
-      metadata: { status: updates.status },
+      action: updates.status === "completed" ? "job_completed" : "status_changed",
+      message:
+        updates.status === "completed"
+          ? `Job completed${updates.completionOverrideReason ? ` (override: ${updates.completionOverrideReason})` : ""}`
+          : `Job status updated to ${updates.status}`,
+      metadata: {
+        oldStatus: undefined,
+        newStatus: updates.status,
+        completionOverrideReason: updates.completionOverrideReason,
+      },
     });
-  } else if (Object.keys(updates).length) {
+  }
+
+  if (
+    updates.scheduledDate !== undefined ||
+    updates.scheduledWindowLabel !== undefined ||
+    updates.selectedScheduleSlotId !== undefined
+  ) {
+    await logActivity({
+      companyId,
+      actorProfileId: options?.actorProfileId,
+      entityType: "job",
+      entityId: jobId,
+      action: "job_scheduled",
+      message: `Schedule set to ${updates.scheduledDate ?? "cleared"}${
+        updates.scheduledWindowLabel ? ` (${updates.scheduledWindowLabel})` : ""
+      }`,
+      metadata: {
+        scheduledDate: updates.scheduledDate,
+        scheduledWindowLabel: updates.scheduledWindowLabel,
+        selectedScheduleSlotId: updates.selectedScheduleSlotId,
+        estimatedDurationMinutes: updates.estimatedDurationMinutes,
+      },
+    });
+  }
+
+  if (
+    updates.assignedEmployeeIds !== undefined ||
+    updates.driverEmployeeId !== undefined ||
+    updates.assignedTruckId !== undefined ||
+    updates.assignedTrailerId !== undefined
+  ) {
+    await logActivity({
+      companyId,
+      actorProfileId: options?.actorProfileId,
+      entityType: "job",
+      entityId: jobId,
+      action: "job_assignment_changed",
+      message: "Crew / equipment assignment updated",
+      metadata: {
+        assignedEmployeeIds: updates.assignedEmployeeIds,
+        driverEmployeeId: updates.driverEmployeeId,
+        assignedTruckId: updates.assignedTruckId,
+        assignedTrailerId: updates.assignedTrailerId,
+        overrideReason: options?.assignmentOverrideReason,
+      },
+    });
+  }
+
+  if (updates.photos !== undefined) {
+    const prevCount = 0;
+    const nextCount = updates.photos?.length ?? 0;
+    await logActivity({
+      companyId,
+      actorProfileId: options?.actorProfileId,
+      entityType: "job",
+      entityId: jobId,
+      action: "proof_uploaded",
+      message: `Completion proof photos updated (${nextCount} on file)`,
+      metadata: {
+        photoCount: nextCount,
+        stages: (updates.photos ?? []).map((p) => p.photoStage ?? p.caption),
+      },
+    });
+    void prevCount;
+  } else if (
+    !updates.status &&
+    updates.scheduledDate === undefined &&
+    updates.assignedEmployeeIds === undefined &&
+    updates.driverEmployeeId === undefined &&
+    updates.assignedTruckId === undefined &&
+    updates.assignedTrailerId === undefined &&
+    Object.keys(updates).length
+  ) {
     await logActivity({
       companyId,
       actorProfileId: options?.actorProfileId,
@@ -444,8 +713,21 @@ export async function assignJobToEmployee(
   const job = await getJobById(companyId, jobId);
   if (!job) return;
 
-  const ids = new Set([...(job.assignedEmployeeIds ?? []), employeeId]);
-  await updateJob(companyId, jobId, { assignedEmployeeIds: [...ids] });
+  const ids = [...new Set([...(job.assignedEmployeeIds ?? []), employeeId])];
+  const { findAssignmentConflicts } = await import("@/lib/scheduling/assignment-conflicts");
+  const conflicts = findAssignmentConflicts({
+    jobs: await getJobs(companyId),
+    jobId,
+    scheduledDate: job.scheduledDate,
+    assignedEmployeeIds: ids,
+    assignedTruckId: job.assignedTruckId,
+    assignedTrailerId: job.assignedTrailerId,
+  });
+  if (conflicts.length) {
+    throw new Error(conflicts.map((c) => c.message).join(" "));
+  }
+
+  await updateJob(companyId, jobId, { assignedEmployeeIds: ids });
 
   await logActivity({
     companyId,
@@ -503,6 +785,29 @@ export async function updateInvoice(
 ): Promise<Invoice | undefined> {
   const existing = await getInvoiceById(companyId, invoiceId);
   if (!existing) return undefined;
+
+  // Paid invoices cannot be silently rewritten — use void/replacement/reversal.
+  if (existing.status === "paid" || existing.balanceDue <= 0) {
+    const allowed = new Set([
+      "status",
+      "paymentStatus",
+      "amountPaid",
+      "balanceDue",
+      "finalPriceNotes",
+    ]);
+    const keys = Object.keys(updates);
+    const financialRewrite = keys.some(
+      (k) =>
+        !allowed.has(k) &&
+        ["adjustments", "subtotal", "fees", "total", "estimateAmount", "discount"].includes(k)
+    );
+    if (financialRewrite && updates.status !== "void") {
+      throw new Error(
+        "Paid invoices cannot be edited silently. Void and replace, or record a credit/reversal."
+      );
+    }
+  }
+
   const updated = { ...existing, ...updates };
   if (await isDbReady()) {
     await (await sbWrite()).from("invoices").upsert(invoiceToRow(updated));
@@ -545,20 +850,24 @@ export async function createAdminInvoice(
 ): Promise<Invoice> {
   let jobId = input.jobId;
   if (!jobId) {
-    const job = await createAdminJobManual(
-      companyId,
-      {
-        customerId: input.customerId,
-        serviceType: "junk_removal",
-        street: "Admin billing",
-        city: "Office",
-        state: "MO",
-        zip: "63383",
-        notes: "Placeholder job for standalone invoice",
-      },
-      options
+    throw new Error(
+      "A related completed job is required. Invoices cannot be created without a customer job."
     );
-    jobId = job.id;
+  }
+
+  const job = await getJobById(companyId, jobId);
+  if (!job) throw new Error("Job not found");
+  if (job.customerId !== input.customerId) {
+    throw new Error("Invoice customer must match the job customer");
+  }
+  const { assertJobCompletableForInvoice } = await import("@/lib/billing/workflow");
+  assertJobCompletableForInvoice(job);
+
+  const existingForJob = (await getInvoices(companyId)).find(
+    (i) => i.jobId === jobId && i.status !== "void"
+  );
+  if (existingForJob) {
+    return existingForJob;
   }
 
   const lineTotal = input.lineItems.reduce((s, l) => s + l.amount, 0);
@@ -943,8 +1252,15 @@ export async function getCustomers(companyId: string): Promise<Customer[]> {
   const { data, error } = await (await sb())
     .from("customers")
     .select("*")
-    .eq("company_id", companyId);
-  if (error) throw error;
+    .eq("company_id", companyId)
+    .is("archived_at", null)
+    .is("merged_into_customer_id", null);
+  if (error) {
+    // Pre-migration fallback if archive columns missing
+    const fallback = await (await sb()).from("customers").select("*").eq("company_id", companyId);
+    if (fallback.error) throw fallback.error;
+    return filterCustomers((fallback.data ?? []).map(rowToCustomerUser));
+  }
   return filterCustomers((data ?? []).map(rowToCustomerUser));
 }
 
@@ -990,6 +1306,50 @@ export async function createAdminCustomer(
     message: `Customer created — ${input.firstName} ${input.lastName}`,
   });
   return rowToCustomerUser({ ...row, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), lifetime_value: 0, total_jobs: 0 });
+}
+
+export async function updateCustomer(
+  companyId: string,
+  customerId: string,
+  updates: { name?: string; email?: string; phone?: string; notes?: string },
+  options?: { actorProfileId?: string }
+): Promise<Customer | undefined> {
+  const customers = await getCustomers(companyId);
+  const existing = customers.find((c) => c.id === customerId);
+  if (!existing) return undefined;
+
+  const nameParts = (updates.name ?? existing.name).trim().split(/\s+/);
+  const firstName = nameParts[0] ?? "";
+  const lastName = nameParts.slice(1).join(" ") || "";
+  const patch = {
+    first_name: firstName,
+    last_name: lastName,
+    email: updates.email ?? existing.email,
+    phone: updates.phone ?? existing.phone,
+    notes: updates.notes,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (await isDbReady()) {
+    await (await sbWrite()).from("customers").update(patch).eq("id", customerId).eq("company_id", companyId);
+  }
+
+  await logActivity({
+    companyId,
+    actorProfileId: options?.actorProfileId,
+    entityType: "customer",
+    entityId: customerId,
+    action: "customer_profile_changed",
+    message: `Customer profile updated`,
+    metadata: { fields: Object.keys(updates) },
+  });
+
+  return {
+    ...existing,
+    name: updates.name ?? existing.name,
+    email: updates.email ?? existing.email,
+    phone: updates.phone ?? existing.phone,
+  };
 }
 
 export async function createAdminJobManual(

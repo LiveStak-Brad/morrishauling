@@ -1,18 +1,18 @@
 {
   "name": "Morris Services",
   "short_name": "Morris Services",
-  "description": "Professional local service companies in Missouri — Morris Hauling & Junk Removal launching soon.",
+  "description": "Professional local service companies in Missouri — Morris Junk Removal and Morris Hauling. Book online.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAFAFA",
+  "background_color": "#0A0A0A",
   "theme_color": "#9B1B30",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/logo.png",
-      "sizes": "512x512",
+      "src": "/MorrisServicesLogo.png",
+      "sizes": "1334x820",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-192.svg",

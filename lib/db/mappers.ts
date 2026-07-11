@@ -27,12 +27,17 @@ export function rowToJob(row: Record<string, unknown>, hauling?: Record<string, 
   const serviceTypeRaw = (row.service_type as string) ?? payload.serviceType ?? "junk_removal";
   const serviceType =
     serviceTypeRaw === "hauling_transport" ? "hauling_transport" : "junk_removal";
+  const divisionId =
+    (row.division_id as "junk_removal" | "hauling" | undefined) ??
+    payload.divisionId ??
+    (serviceType === "hauling_transport" ? "hauling" : "junk_removal");
 
   const job: Job = {
     ...payload,
     id: row.id as string,
     companyId: row.company_id as string,
     customerId: row.customer_id as string,
+    divisionId,
     serviceType,
     status: (row.status ?? payload.status ?? "submitted") as JobStatus,
     junkType: (row.junk_type ?? payload.junkType ?? "general") as string,
@@ -57,6 +62,18 @@ export function rowToJob(row: Record<string, unknown>, hauling?: Record<string, 
         row.latitude != null && row.longitude != null
           ? { lat: Number(row.latitude), lng: Number(row.longitude) }
           : payload.address?.location,
+      line2: (row.address_line2 as string) ?? payload.address?.line2,
+      placeId: (row.address_place_id as string) ?? payload.address?.placeId,
+      formattedAddress:
+        (row.address_formatted as string) ?? payload.address?.formattedAddress,
+      country: (row.address_country as string) ?? payload.address?.country ?? "US",
+      verificationStatus:
+        (row.address_verification_status as Job["address"]["verificationStatus"]) ??
+        (row.address_verified
+          ? "verified"
+          : payload.address?.verificationStatus),
+      provider: payload.address?.provider,
+      verifiedAt: payload.address?.verifiedAt,
     },
     photos: payload.photos ?? [],
     estimate: payload.estimate,
@@ -110,6 +127,18 @@ export function rowToHaulingDetails(row: Record<string, unknown>): import("@/typ
       accessNotes: (row.pickup_access_notes as string) ?? undefined,
       loadingDock: Boolean(row.loading_dock_pickup),
       forkliftAvailable: Boolean(row.forklift_available_pickup),
+      assistanceAvailable: Boolean(row.assistance_available_pickup),
+      location:
+        row.pickup_latitude != null && row.pickup_longitude != null
+          ? { lat: Number(row.pickup_latitude), lng: Number(row.pickup_longitude) }
+          : undefined,
+      line2: (row.pickup_line2 as string) ?? undefined,
+      placeId: (row.pickup_place_id as string) ?? undefined,
+      formattedAddress: (row.pickup_formatted as string) ?? undefined,
+      country: (row.pickup_country as string) ?? "US",
+      verificationStatus:
+        (row.pickup_verification_status as import("@/types/hauling").HaulingLocation["verificationStatus"]) ??
+        (row.pickup_verified ? "verified" : "unverified"),
     },
     delivery: {
       address: row.delivery_address as string,
@@ -119,7 +148,25 @@ export function rowToHaulingDetails(row: Record<string, unknown>): import("@/typ
       accessNotes: (row.delivery_access_notes as string) ?? undefined,
       loadingDock: Boolean(row.loading_dock_delivery),
       forkliftAvailable: Boolean(row.forklift_available_delivery),
+      assistanceAvailable: Boolean(row.assistance_available_delivery),
+      location:
+        row.delivery_latitude != null && row.delivery_longitude != null
+          ? {
+              lat: Number(row.delivery_latitude),
+              lng: Number(row.delivery_longitude),
+            }
+          : undefined,
+      line2: (row.delivery_line2 as string) ?? undefined,
+      placeId: (row.delivery_place_id as string) ?? undefined,
+      formattedAddress: (row.delivery_formatted as string) ?? undefined,
+      country: (row.delivery_country as string) ?? "US",
+      verificationStatus:
+        (row.delivery_verification_status as import("@/types/hauling").HaulingLocation["verificationStatus"]) ??
+        (row.delivery_verified ? "verified" : "unverified"),
     },
+    stops: Array.isArray(row.stops)
+      ? (row.stops as import("@/types/hauling").HaulingLocation[])
+      : [],
     cargoCategory: row.cargo_category as import("@/types/hauling").HaulingCargoCategory,
     cargoDescription: row.cargo_description as string,
     estimatedWeightLbs: row.estimated_weight_lbs != null ? Number(row.estimated_weight_lbs) : undefined,
@@ -170,6 +217,25 @@ export function haulingDetailsToRow(details: import("@/types/hauling").HaulingDe
     pickup_longitude: details.pickup.location?.lng ?? null,
     delivery_latitude: details.delivery.location?.lat ?? null,
     delivery_longitude: details.delivery.location?.lng ?? null,
+    pickup_line2: details.pickup.line2 ?? null,
+    pickup_place_id: details.pickup.placeId ?? null,
+    pickup_formatted: details.pickup.formattedAddress ?? null,
+    pickup_verified:
+      details.pickup.verificationStatus === "verified" ||
+      details.pickup.verificationStatus === "manual_override",
+    pickup_verification_status: details.pickup.verificationStatus ?? "unverified",
+    pickup_country: details.pickup.country ?? "US",
+    delivery_line2: details.delivery.line2 ?? null,
+    delivery_place_id: details.delivery.placeId ?? null,
+    delivery_formatted: details.delivery.formattedAddress ?? null,
+    delivery_verified:
+      details.delivery.verificationStatus === "verified" ||
+      details.delivery.verificationStatus === "manual_override",
+    delivery_verification_status: details.delivery.verificationStatus ?? "unverified",
+    delivery_country: details.delivery.country ?? "US",
+    stops: details.stops ?? [],
+    assistance_available_pickup: details.pickup.assistanceAvailable ?? false,
+    assistance_available_delivery: details.delivery.assistanceAvailable ?? false,
     cargo_category: details.cargoCategory,
     cargo_description: details.cargoDescription,
     estimated_weight_lbs: details.estimatedWeightLbs ?? null,
@@ -340,7 +406,9 @@ export function jobToRow(job: Job) {
       job.loadSizeTier
     ] ?? 25);
 
-  const { id, companyId, customerId, status, junkType, serviceType, scheduledDate, address, items, accessDetails, customerNotes, ...rest } = job;
+  const { id, companyId, customerId, status, junkType, serviceType, scheduledDate, address, items, accessDetails, customerNotes, divisionId, ...rest } = job;
+  const resolvedDivision =
+    divisionId ?? (serviceType === "hauling_transport" ? "hauling" : "junk_removal");
 
   return {
     id,
@@ -349,6 +417,7 @@ export function jobToRow(job: Job) {
     status,
     junk_type: junkType,
     service_type: serviceType ?? "junk_removal",
+    division_id: resolvedDivision,
     estimate_type: job.estimateType ?? serviceType ?? "junk_removal",
     pricing_breakdown: job.pricingBreakdown ?? [],
     disclaimer_accepted: job.disclaimerAccepted ?? false,
@@ -362,6 +431,14 @@ export function jobToRow(job: Job) {
     zip: address.zip,
     latitude: address.location?.lat ?? null,
     longitude: address.location?.lng ?? null,
+    address_line2: address.line2 ?? null,
+    address_place_id: address.placeId ?? null,
+    address_formatted: address.formattedAddress ?? null,
+    address_verified:
+      address.verificationStatus === "verified" ||
+      address.verificationStatus === "manual_override",
+    address_country: address.country ?? "US",
+    address_verification_status: address.verificationStatus ?? null,
     load_percentage: loadPct,
     estimated_price: job.estimate?.total ?? null,
     final_price: job.finalPriceAdjustment != null && job.estimate
@@ -372,7 +449,24 @@ export function jobToRow(job: Job) {
     item_list: items,
     customer_notes: customerNotes ?? null,
     internal_notes: job.priceAdjustmentNotes ?? null,
-    payload: { ...rest, id, companyId, customerId, serviceType, status, junkType, scheduledDate, address, items, accessDetails, customerNotes },
+    completion_override_reason: job.completionOverrideReason ?? null,
+    completion_override_by: job.completionOverrideBy ?? null,
+    completion_override_at: job.completionOverrideAt ?? null,
+    payload: {
+      ...rest,
+      id,
+      companyId,
+      customerId,
+      serviceType,
+      divisionId: resolvedDivision,
+      status,
+      junkType,
+      scheduledDate,
+      address,
+      items,
+      accessDetails,
+      customerNotes,
+    },
     updated_at: new Date().toISOString(),
   };
 }
@@ -399,6 +493,18 @@ export function rowToInvoice(row: Record<string, unknown>): Invoice {
     terms: (row.terms as string) ?? undefined,
     finalPriceNotes: (row.final_price_notes as string) ?? undefined,
     pdfStoragePath: (row.pdf_storage_path as string) ?? undefined,
+    estimateId: (row.estimate_id as string) ?? undefined,
+    originalEstimateTotal:
+      row.original_estimate_total != null ? Number(row.original_estimate_total) : undefined,
+    approvedAdjustmentsTotal:
+      row.approved_adjustments_total != null ? Number(row.approved_adjustments_total) : undefined,
+    customerNotes: (row.customer_notes as string) ?? undefined,
+    internalNotes: (row.internal_notes as string) ?? undefined,
+    deliveryStatus: (row.delivery_status as Invoice["deliveryStatus"]) ?? undefined,
+    deliveryError: (row.delivery_error as string) ?? undefined,
+    sentAt: (row.sent_at as string) ?? undefined,
+    viewedAt: (row.viewed_at as string) ?? undefined,
+    issueDate: (row.issue_date as string) ?? undefined,
     createdAt: row.created_at as string,
   };
 }
@@ -414,6 +520,12 @@ export function rowToPayment(row: Record<string, unknown>): Payment {
     timing: (row.timing ?? "full") as Payment["timing"],
     status: row.status as Payment["status"],
     receiptNumber: (row.receipt_number ?? row.transaction_id) as string | undefined,
+    notes: (row.notes as string) ?? undefined,
+    proofUrl: (row.proof_url as string) ?? undefined,
+    reversedAt: (row.reversed_at as string) ?? undefined,
+    reversalReason: (row.reversal_reason as string) ?? undefined,
+    receiptIssuedAt: (row.receipt_issued_at as string) ?? undefined,
+    externalReference: (row.external_reference as string) ?? undefined,
     createdAt: row.created_at as string,
     customerId: row.customer_id as string | undefined,
   };

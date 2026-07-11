@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   try {
     const body = await parseJson<{
       customerId: string;
-      jobId: string;
+      jobId?: string;
       invoiceId?: string;
       amount: number;
       method: Payment["method"];
@@ -41,8 +41,11 @@ export async function POST(request: Request) {
       notes?: string;
       collectedByEmployeeId?: string;
     }>(request);
-    if (!body.customerId || !body.jobId || !body.amount) {
-      return apiError("customerId, jobId, and amount required", 400);
+    if (!body.customerId || !body.amount) {
+      return apiError("customerId and amount required", 400);
+    }
+    if (!body.jobId && !body.invoiceId) {
+      return apiError("invoiceId or jobId required", 400);
     }
     if (isOnlinePaymentMethod(body.method)) {
       return apiError(
@@ -50,12 +53,43 @@ export async function POST(request: Request) {
         400
       );
     }
+
+    let jobId = body.jobId;
+    let invoiceId = body.invoiceId;
+    if (invoiceId && !jobId) {
+      const { getInvoiceById } = await import("@/lib/db/operations");
+      const inv = await getInvoiceById(morrisConfig.companyId, invoiceId);
+      if (!inv) return apiError("Invoice not found", 404);
+      if (inv.customerId !== body.customerId) {
+        return apiError("Invoice does not belong to this customer", 400);
+      }
+      jobId = inv.jobId;
+    }
+
+    // Prefer allocation path when paying a specific invoice so balances stay accurate
+    if (invoiceId) {
+      const { allocatePaymentAcrossInvoices } = await import("@/lib/db/billing-operations");
+      const result = await allocatePaymentAcrossInvoices(
+        morrisConfig.companyId,
+        {
+          customerId: body.customerId,
+          amount: body.amount,
+          method: body.method,
+          allocations: [{ invoiceId, amount: body.amount }],
+          notes: body.notes,
+          timing: body.timing,
+        },
+        { actorProfileId: profile.id, actorRole: profile.role }
+      );
+      return apiOk({ payment: result.payment, allocations: result.allocations });
+    }
+
     const payment = await createPayment(
       morrisConfig.companyId,
       {
         companyId: morrisConfig.companyId,
-        jobId: body.jobId,
-        invoiceId: body.invoiceId,
+        jobId: jobId!,
+        invoiceId,
         amount: body.amount,
         method: body.method,
         timing: body.timing ?? "full",

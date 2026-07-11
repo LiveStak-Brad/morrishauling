@@ -5,11 +5,8 @@ import {
   ArrowRight,
   CalendarPlus,
   CreditCard,
-  Gift,
-  MessageCircle,
-  Star,
+  Phone,
   Truck,
-  Upload,
 } from "lucide-react";
 import { useCompany } from "@/lib/company-context";
 import { useCustomerPortal } from "@/hooks/useCustomerPortal";
@@ -21,20 +18,30 @@ import { CustomerLoginPrompt } from "@/components/customer/CustomerLoginPrompt";
 import { FloatingActionButton } from "@/components/morris/Fab";
 import { Timeline, type TimelineStep } from "@/components/morris/Timeline";
 
+function statusLabel(status: string): string {
+  const map: Record<string, string> = {
+    submitted: "Request received",
+    estimated: "Estimate ready",
+    scheduled: "Scheduled",
+    in_progress: "In progress",
+    completed: "Complete",
+  };
+  return map[status] ?? status;
+}
+
 function getJobTimeline(status: string): TimelineStep[] {
   const steps = [
     { id: "submitted", label: "Request received", description: "We're reviewing your details" },
     { id: "estimated", label: "Estimate confirmed", description: "Price locked in" },
-    { id: "scheduled", label: "Crew scheduled", description: "You'll get a text when we're on the way" },
+    { id: "scheduled", label: "Crew scheduled", description: "We'll confirm your window" },
     { id: "in_progress", label: "Crew on site", description: "Loading in progress" },
-    { id: "completed", label: "Job complete", description: "Thank you!" },
+    { id: "completed", label: "Job complete", description: "Space restored" },
   ];
   const order = ["submitted", "estimated", "scheduled", "in_progress", "completed"];
   const idx = order.indexOf(status);
   return steps.map((s, i) => ({
     ...s,
     status: i < idx ? "completed" : i === idx ? "current" : "upcoming",
-    time: i === idx && status === "scheduled" ? "Today, 10am–2pm" : undefined,
   })) as TimelineStep[];
 }
 
@@ -45,17 +52,17 @@ export default function CustomerDashboard() {
   const activeJob = jobs.find((j) =>
     ["submitted", "estimated", "scheduled", "in_progress"].includes(j.status)
   );
+  const tel = company.phone.replace(/\D/g, "");
 
   const quickActions = [
-    { href: "/book", icon: CalendarPlus, label: "Book pickup", color: "bg-brand-primary" },
-    { href: "/customer/payments", icon: CreditCard, label: "Pay invoice", color: "bg-morris-success" },
-    { href: "#", icon: MessageCircle, label: "Chat", color: "bg-morris-info" },
-    { href: "#", icon: Gift, label: "Refer", color: "bg-orange-500" },
+    { href: "/book", icon: CalendarPlus, label: "Book", color: "bg-brand-primary" },
+    { href: "/customer/payments", icon: CreditCard, label: "Invoices", color: "bg-morris-success" },
+    { href: `tel:${tel}`, icon: Phone, label: "Call us", color: "bg-[#0A0A0A]" },
   ];
 
   if (requiresLogin) {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <div className="min-h-screen bg-[#F7F5F2] p-6">
         <CustomerLoginPrompt redirectPath="/customer" />
       </div>
     );
@@ -63,33 +70,32 @@ export default function CustomerDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <div className="min-h-screen bg-[#F7F5F2] p-6">
         <p className="text-muted-foreground">Loading your account…</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background pb-32">
-      <div className="relative overflow-hidden morris-gradient-bg px-4 pb-8 pt-6 text-white">
-        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-        <p className="text-sm font-medium text-white/70">Welcome back</p>
-        <h1 className="mt-1 text-2xl font-bold">Your pickups</h1>
+    <div className="min-h-screen bg-[#F7F5F2] pb-32">
+      <div className="relative overflow-hidden morris-gradient-bg px-4 pb-8 pt-7 text-white">
+        <p className="text-sm font-medium text-white/70">Morris Home</p>
+        <h1 className="mt-1 font-heading text-3xl font-medium tracking-tight">Your projects</h1>
         <p className="mt-1 text-sm text-white/60">{company.companyName}</p>
 
         {activeJob && (
           <PremiumCard className="mt-6 border-0 bg-white/10 p-4 backdrop-blur-md">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20">
                   <Truck className="h-5 w-5" />
                 </div>
-                <div>
-                  <StatusChip label="Crew en route" variant="live" pulse />
-                  <p className="mt-1 text-sm font-medium">{activeJob.address.street}</p>
+                <div className="min-w-0">
+                  <StatusChip label={statusLabel(activeJob.status)} variant="live" />
+                  <p className="mt-1 truncate text-sm font-medium">{activeJob.address.street}</p>
                 </div>
               </div>
-              <Link href={`/customer/jobs/${activeJob.id}`}>
+              <Link href={`/customer/jobs/${activeJob.id}`} aria-label="View job">
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </div>
@@ -97,25 +103,27 @@ export default function CustomerDashboard() {
         )}
       </div>
 
-      <main className="mx-auto max-w-lg px-4 -mt-4 md:max-w-2xl">
-        <div className="grid grid-cols-4 gap-2">
+      <main className="mx-auto -mt-4 max-w-lg px-4 md:max-w-2xl">
+        <div className="grid grid-cols-3 gap-2">
           {quickActions.map((action) => (
             <Link
               key={action.label}
               href={action.href}
-              className="flex flex-col items-center gap-2 rounded-2xl bg-card p-3 shadow-sm transition-transform hover:scale-105"
+              className="flex flex-col items-center gap-2 rounded-2xl border border-black/5 bg-white p-4 shadow-sm transition hover:border-brand-primary/20"
             >
-              <div className={`flex h-11 w-11 items-center justify-center rounded-xl text-white ${action.color}`}>
+              <div
+                className={`flex h-11 w-11 items-center justify-center rounded-xl text-white ${action.color}`}
+              >
                 <action.icon className="h-5 w-5" />
               </div>
-              <span className="text-[10px] font-semibold text-center leading-tight">{action.label}</span>
+              <span className="text-xs font-semibold">{action.label}</span>
             </Link>
           ))}
         </div>
 
         {activeJob && (
           <section className="mt-8">
-            <h2 className="mb-4 text-lg font-bold">Live tracking</h2>
+            <h2 className="mb-4 font-heading text-xl font-medium tracking-tight">Job progress</h2>
             <PremiumCard className="p-5">
               <Timeline steps={getJobTimeline(activeJob.status)} />
             </PremiumCard>
@@ -124,16 +132,23 @@ export default function CustomerDashboard() {
 
         <section className="mt-8">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-bold">Your jobs</h2>
-            <ButtonLink href="/customer/jobs" variant="link" className="text-brand-primary text-sm font-semibold px-0">
+            <h2 className="font-heading text-xl font-medium tracking-tight">Your jobs</h2>
+            <ButtonLink
+              href="/customer/jobs"
+              variant="link"
+              className="px-0 text-sm font-semibold text-brand-primary"
+            >
               View all
             </ButtonLink>
           </div>
           {jobs.length === 0 ? (
-            <PremiumCard className="p-8 text-center text-muted-foreground">
-              <p>No jobs yet.</p>
-              <ButtonLink href="/book" className="mt-4">
-                Book your first pickup
+            <PremiumCard className="p-8 text-center">
+              <p className="font-medium">No projects yet</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Book Junk Removal or Hauling and track everything here.
+              </p>
+              <ButtonLink href="/book" className="mt-5 h-11 rounded-full">
+                Book service
               </ButtonLink>
             </PremiumCard>
           ) : (
@@ -144,26 +159,9 @@ export default function CustomerDashboard() {
             </div>
           )}
         </section>
-
-        <section className="mt-8">
-          <PremiumCard className="flex items-center gap-4 p-5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-100">
-              <Star className="h-6 w-6 fill-yellow-500 text-yellow-500" />
-            </div>
-            <div className="flex-1">
-              <p className="font-semibold">Love our service?</p>
-              <p className="text-sm text-muted-foreground">Leave a review & earn $10 off</p>
-            </div>
-            <Upload className="h-5 w-5 text-muted-foreground" />
-          </PremiumCard>
-        </section>
       </main>
 
-      <FloatingActionButton
-        href="/book"
-        icon={<CalendarPlus className="h-5 w-5" />}
-        label="Book"
-      />
+      <FloatingActionButton href="/book" icon={<CalendarPlus className="h-5 w-5" />} label="Book" />
     </div>
   );
 }

@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     if (!isOnlineCardPaymentEnabled() && isOnlinePaymentMethod(body.method)) {
       return apiError(
-        "Online payments are not enabled yet. Please contact Morris Hauling to pay.",
+        "Online payments are not enabled yet. Please contact Morris Junk Removal to pay.",
         400
       );
     }

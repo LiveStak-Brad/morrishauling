@@ -1,224 +1,321 @@
 "use client";
 
 import Image from "next/image";
-import {
-  ArrowRight,
-  Building2,
-  MapPin,
-  Rocket,
-  Sparkles,
-  Sprout,
-  Snowflake,
-  Droplets,
-  Home,
-  Layers,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, MapPin, Phone, Shield } from "lucide-react";
 import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CompanyStatusBadge } from "@/components/public/CompanyStatusBadge";
+import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
 import { ButtonLink } from "@/components/ui/button-link";
-import { PremiumCard } from "@/components/morris/PremiumCard";
-import { SectionHeader } from "@/components/morris/SectionHeader";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
-import { PRELAUNCH_HAULING_INTRO, PRELAUNCH_SCHEDULING_NOTE, PRELAUNCH_SERVICE_AREA } from "@/lib/public-copy";
-import { cn } from "@/lib/utils";
-
-const futureCompanyIcons: Record<string, LucideIcon> = {
-  "Morris Window Cleaning": Layers,
-  "Morris Pressure Washing": Droplets,
-  "Morris Landscaping": Sprout,
-  "Morris Gutter Cleaning": Home,
-  "Morris Snow Removal": Snowflake,
-};
+import {
+  HAULING_PROTOCOL,
+  MORRIS_STANDARD_PILLARS,
+  SERVICE_AREA,
+} from "@/lib/public-copy";
 
 export function MorrisServicesHomePage() {
-  const hauling = morrisServicesConfig.operatingCompanies[0];
+  const junk = morrisServicesConfig.operatingCompanies[0];
+  const hauling = morrisServicesConfig.haulingDivision;
 
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden bg-background">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-[#F7F5F2]">
       <PublicHeader variant="umbrella" />
 
-      <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-white via-rose-50/30 to-background">
-        <div className="morris-hero-pattern pointer-events-none absolute inset-0 opacity-50" aria-hidden />
+      <section className="relative overflow-hidden border-b border-black/5">
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(ellipse_at_top,_rgba(155,27,48,0.08)_0%,transparent_65%)]"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(155,27,48,0.12), transparent 55%), linear-gradient(180deg, #fff 0%, #F7F5F2 100%)",
+          }}
           aria-hidden
         />
+        <div className="relative mx-auto flex w-full max-w-5xl flex-col items-center px-4 pb-16 pt-10 text-center sm:pb-20 sm:pt-14 md:pb-24 md:pt-16">
+          <p className="animate-fade-in text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-primary opacity-0 sm:text-xs">
+            {morrisServicesConfig.publicBrandName}
+          </p>
 
-        <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-4 py-12 text-center sm:py-14 md:py-16 lg:py-20">
           <div
-            className="w-full max-w-3xl animate-slide-up opacity-0"
-            style={{ animationFillMode: "forwards" }}
+            className="mt-6 w-full max-w-2xl animate-slide-up opacity-0 sm:mt-8"
+            style={{ animationFillMode: "forwards", animationDelay: "0.05s" }}
           >
             <MorrisServicesLogo
-              height={280}
+              height={220}
               href={undefined}
               priority
-              className="mx-auto w-full max-h-48 sm:max-h-56 md:max-h-64 lg:max-h-72 xl:max-h-80"
+              className="mx-auto w-full max-h-36 sm:max-h-44 md:max-h-52"
             />
           </div>
 
-          <p className="mt-6 max-w-2xl text-sm font-semibold uppercase tracking-[0.18em] text-brand-primary sm:mt-8 sm:text-base">
-            {morrisServicesConfig.brandTagline}
-          </p>
-          <h1 className="sr-only">{morrisServicesConfig.publicBrandName}</h1>
-          <p className="mt-4 max-w-2xl text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
-            {morrisServicesConfig.tagline}
-          </p>
-          <p className="mt-2 max-w-xl text-base text-muted-foreground sm:text-lg">
-            {morrisServicesConfig.serviceCategoriesLine}
+          <h1
+            className="mt-8 max-w-3xl font-heading text-4xl font-medium leading-[1.1] tracking-tight text-foreground opacity-0 animate-slide-up sm:mt-10 sm:text-5xl md:text-6xl"
+            style={{ animationFillMode: "forwards", animationDelay: "0.12s" }}
+          >
+            {morrisServicesConfig.promise}
+          </h1>
+          <p
+            className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground opacity-0 animate-slide-up sm:text-lg"
+            style={{ animationFillMode: "forwards", animationDelay: "0.18s" }}
+          >
+            {morrisServicesConfig.tagline} Junk Removal and Hauling across {SERVICE_AREA}.
           </p>
 
-          <div className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-border bg-white/80 px-3 py-1.5 text-[11px] font-medium text-muted-foreground shadow-sm sm:px-4 sm:text-xs">
-            <Building2 className="h-3.5 w-3.5 shrink-0 text-brand-primary" />
-            <span className="truncate">{morrisServicesConfig.parentLegalName}</span>
-          </div>
-
-          <div className="mt-8 flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center">
+          <div
+            className="mt-8 flex w-full max-w-md flex-col gap-3 opacity-0 animate-slide-up sm:mt-10 sm:max-w-none sm:flex-row sm:justify-center"
+            style={{ animationFillMode: "forwards", animationDelay: "0.24s" }}
+          >
             <ButtonLink
-              href="/#companies"
+              href="/book"
               size="lg"
-              className="h-12 min-h-[48px] w-full rounded-xl bg-brand-primary px-8 text-base font-semibold shadow-md hover:bg-brand-primary/90 sm:w-auto"
+              className="h-12 min-h-[48px] w-full rounded-full bg-brand-primary px-8 text-base font-semibold shadow-lg shadow-brand-primary/20 hover:bg-brand-primary/90 sm:w-auto"
             >
-              Explore Services
+              Book service
               <ArrowRight className="ml-2 h-5 w-5" />
             </ButtonLink>
-            <ButtonLink href="/about" size="lg" variant="outline" className="h-12 min-h-[48px] w-full rounded-xl sm:w-auto">
-              About Us
+            <ButtonLink
+              href="/#standard"
+              size="lg"
+              variant="outline"
+              className="h-12 min-h-[48px] w-full rounded-full border-foreground/15 bg-white/70 sm:w-auto"
+            >
+              See the Standard
             </ButtonLink>
           </div>
 
-          <div className="mt-10 grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-            {[
-              { icon: Rocket, label: "1 company preparing for launch" },
-              { icon: MapPin, label: PRELAUNCH_SERVICE_AREA },
-              { icon: Sparkles, label: "More brands on the horizon" },
-            ].map(({ icon: Icon, label }) => (
-              <div
-                key={label}
-                className="flex items-center justify-center gap-2 rounded-xl border border-border bg-white/90 px-3 py-3 text-xs font-medium text-foreground shadow-sm sm:text-sm"
-              >
-                <Icon className="h-4 w-4 shrink-0 text-brand-primary" />
-                <span>{label}</span>
-              </div>
-            ))}
-          </div>
+          <p
+            className="mt-6 flex items-center gap-2 text-sm text-muted-foreground opacity-0 animate-fade-in"
+            style={{ animationFillMode: "forwards", animationDelay: "0.35s" }}
+          >
+            <MapPin className="h-4 w-4 text-brand-primary" aria-hidden />
+            {SERVICE_AREA}
+          </p>
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:py-12 md:py-16">
-        <section id="companies" className="scroll-mt-20 sm:scroll-mt-24">
-          <SectionHeader
-            title="Launching Soon"
-            subtitle="Morris Hauling & Junk Removal is the first service company under Morris Services"
-            size="lg"
-          />
-          <PremiumCard className="overflow-hidden border-brand-primary/20 p-0" glow>
-            <div className="grid lg:grid-cols-5">
-              <div className="flex flex-col items-center bg-gradient-to-br from-brand-primary/10 via-brand-primary/5 to-white p-6 text-center sm:p-8 lg:col-span-2 lg:items-start lg:text-left">
-                <div className="relative mb-5">
-                  <div className="absolute -inset-2 rounded-full bg-brand-primary/10 blur-xl" aria-hidden />
-                  <Image
-                    src="/logo.png"
-                    alt={hauling.name}
-                    width={120}
-                    height={120}
-                    className="relative h-24 w-24 rounded-full object-cover object-center ring-2 ring-brand-primary/20 shadow-md sm:h-28 sm:w-28"
-                  />
-                </div>
-                <CompanyStatusBadge status="launching_soon" className="mb-4" />
-                <h2 className="text-xl font-bold sm:text-2xl md:text-3xl">{hauling.name}</h2>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">{hauling.tagline}</p>
-                <ul className="mt-5 w-full space-y-2 sm:mt-6">
-                  {hauling.services.map((service) => (
-                    <li key={service} className="flex items-center gap-2 text-sm">
-                      <Sparkles className="h-4 w-4 shrink-0 text-brand-primary" />
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-14 sm:pt-16 md:pb-20 md:pt-20">
+        <section id="how-it-works" className="scroll-mt-24">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
+            How Morris works
+          </p>
+          <h2 className="mt-3 max-w-2xl font-heading text-3xl font-medium tracking-tight sm:text-4xl">
+            A calm protocol for every craft we add.
+          </h2>
+          <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {HAULING_PROTOCOL.map((item, i) => (
+              <li
+                key={item.step}
+                className="rounded-2xl border border-black/5 bg-white p-5 shadow-sm opacity-0 animate-slide-up"
+                style={{ animationDelay: `${0.05 * i}s`, animationFillMode: "forwards" }}
+              >
+                <span className="font-mono text-xs font-semibold text-brand-primary">{item.step}</span>
+                <h3 className="mt-3 text-base font-semibold tracking-tight">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section id="companies" className="mt-20 scroll-mt-24 sm:mt-24">
+          <div className="mb-8 flex flex-col gap-2 sm:mb-10">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
+              Operating now
+            </p>
+            <h2 className="font-heading text-3xl font-medium tracking-tight sm:text-4xl">
+              Junk Removal & Hauling
+            </h2>
+            <p className="max-w-2xl text-muted-foreground">
+              Two divisions. One Morris account. Book the craft you need.
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-[1.75rem] border border-black/5 bg-white shadow-[0_24px_80px_-40px_rgba(10,10,10,0.35)]">
+            <div className="grid lg:grid-cols-12">
+              <div className="flex flex-col items-center justify-center bg-gradient-to-br from-brand-primary/8 via-white to-[#F7F5F2] p-8 text-center lg:col-span-5 lg:p-12">
+                <Image
+                  src="/logo.png?v=4"
+                  alt={junk.name}
+                  width={1146}
+                  height={758}
+                  priority
+                  unoptimized
+                  className="h-auto w-full max-w-[16rem] object-contain sm:max-w-[18rem] md:max-w-[20rem]"
+                  sizes="320px"
+                />
+                <CompanyStatusBadge status="open" className="mt-6" />
+                <p className="mt-4 font-heading text-2xl font-medium text-foreground sm:text-3xl">
+                  {junk.tagline}
+                </p>
+              </div>
+
+              <div className="flex flex-col justify-center border-t border-black/5 p-6 sm:p-8 lg:col-span-7 lg:border-l lg:border-t-0 lg:p-10 xl:p-12">
+                <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">{junk.name}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  Residential and commercial junk removal, estate and garage cleanouts, furniture,
+                  appliances, and full property clearances — under the Morris Standard.
+                </p>
+                <ul className="mt-6 grid gap-2 sm:grid-cols-2">
+                  {junk.services.slice(0, 8).map((service) => (
+                    <li key={service} className="flex items-center gap-2 text-sm text-foreground/90">
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-primary" aria-hidden />
                       {service}
                     </li>
                   ))}
                 </ul>
-                <ButtonLink href={hauling.hubPath} className="mt-6 h-11 w-full rounded-xl sm:mt-8 sm:w-auto">
-                  Visit Website
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </ButtonLink>
-              </div>
-              <div className="flex flex-col justify-center border-t border-border bg-white p-6 sm:p-8 lg:col-span-3 lg:border-l lg:border-t-0 lg:p-10">
-                <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">What to expect</p>
-                <p className="mt-3 text-base font-medium leading-relaxed sm:text-lg">{PRELAUNCH_HAULING_INTRO}</p>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                  {PRELAUNCH_SCHEDULING_NOTE} Online booking preview and an early customer interest list are
-                  available before launch.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {["Booking preview", "Early interest list", "Careers"].map((chip) => (
-                    <span
-                      key={chip}
-                      className="rounded-full border border-brand-primary/20 bg-brand-primary/5 px-3 py-1 text-xs font-semibold text-brand-primary"
-                    >
-                      {chip}
-                    </span>
-                  ))}
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <ButtonLink href={junk.hubPath} className="h-11 rounded-full px-6">
+                    Enter Junk Removal
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </ButtonLink>
+                  <ButtonLink
+                    href="/book?division=junk_removal"
+                    variant="outline"
+                    className="h-11 rounded-full px-6"
+                  >
+                    Book now
+                  </ButtonLink>
                 </div>
               </div>
             </div>
-          </PremiumCard>
-        </section>
-
-        <section className="mt-12 sm:mt-16 md:mt-20">
-          <SectionHeader
-            title="Growing Every Year"
-            subtitle="Future Morris Services companies — realistic expansions on the horizon"
-            size="lg"
-          />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {morrisServicesConfig.futureCompanies.map((co, i) => {
-              const Icon = futureCompanyIcons[co.name] ?? Building2;
-              return (
-                <PremiumCard
-                  key={co.name}
-                  className={cn(
-                    "bg-white p-5 opacity-0 animate-slide-up sm:p-6",
-                    "border-dashed border-border"
-                  )}
-                  style={{ animationDelay: `${i * 0.05}s`, animationFillMode: "forwards" }}
-                >
-                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-primary/10">
-                    <Icon className="h-5 w-5 text-brand-primary" />
-                  </div>
-                  <CompanyStatusBadge status="coming_soon" className="mb-3" />
-                  <h3 className="text-lg font-bold">{co.name}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    A future Morris Services company. No booking or pricing available yet.
-                  </p>
-                </PremiumCard>
-              );
-            })}
           </div>
         </section>
 
-        <PremiumCard className="mt-12 border-brand-primary/15 bg-white p-6 sm:mt-16 sm:p-8 md:mt-20">
-          <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
-            <MorrisServicesLogo height={96} href={undefined} className="shrink-0 max-h-20 md:max-h-24" />
-            <div className="flex-1">
-              <p className="text-lg font-bold sm:text-xl">{morrisServicesConfig.footerMission}</p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Questions before launch?{" "}
-                <ButtonLink href="/contact" variant="link" className="h-auto p-0 text-brand-primary">
-                  Get in touch
-                </ButtonLink>
-              </p>
+        <section className="mt-10">
+          <div className="overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-sm sm:flex sm:items-center sm:justify-between">
+            <div className="flex flex-col items-center gap-4 p-6 sm:flex-row sm:items-center sm:gap-6 sm:p-8">
+              <Image
+                src="/haulinglogo.png?v=1"
+                alt={hauling.name}
+                width={1139}
+                height={754}
+                unoptimized
+                className="h-auto w-full max-w-[9rem] object-contain sm:max-w-[10rem]"
+                sizes="160px"
+              />
+              <div className="text-center sm:text-left">
+                <CompanyStatusBadge status="open" />
+                <h3 className="mt-3 text-xl font-semibold tracking-tight">{hauling.name}</h3>
+                <p className="mt-2 max-w-xl text-sm text-muted-foreground">{hauling.tagline}</p>
+              </div>
             </div>
-            <ButtonLink href="/contact" className="h-11 shrink-0 rounded-xl px-6">
-              Contact Us
+            <div className="flex flex-col gap-2 border-t border-black/5 px-6 pb-6 sm:border-t-0 sm:px-8 sm:pb-0 sm:pr-8">
+              <ButtonLink href={hauling.hubPath} className="h-11 w-full rounded-full sm:w-auto">
+                Enter Hauling
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </ButtonLink>
+              <ButtonLink
+                href="/book?division=hauling"
+                variant="outline"
+                className="h-11 w-full rounded-full sm:w-auto"
+              >
+                Book hauling
+              </ButtonLink>
+            </div>
+          </div>
+        </section>
+
+        <section id="standard" className="mt-20 scroll-mt-24 sm:mt-24">
+          <div className="rounded-[1.75rem] border border-black/5 bg-[#0A0A0A] px-6 py-10 text-white sm:px-10 sm:py-14 md:px-14">
+            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/50">
+              <Shield className="h-3.5 w-3.5 text-brand-primary" aria-hidden />
+              The Morris Standard
+            </div>
+            <h2 className="mt-4 max-w-2xl font-heading text-3xl font-medium tracking-tight sm:text-4xl">
+              Trust you can inspect — not slogans you have to believe.
+            </h2>
+            <div className="mt-10 grid gap-8 md:grid-cols-3">
+              {MORRIS_STANDARD_PILLARS.map((pillar) => (
+                <div key={pillar.title}>
+                  <h3 className="text-lg font-semibold">{pillar.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/65">{pillar.description}</p>
+                </div>
+              ))}
+            </div>
+            <ButtonLink
+              href="/about"
+              variant="outline"
+              className="mt-10 h-11 rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+            >
+              Read our story
               <ArrowRight className="ml-2 h-4 w-4" />
             </ButtonLink>
           </div>
-        </PremiumCard>
+        </section>
+
+        <section className="mt-20 sm:mt-24">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
+            The Morris Atlas
+          </p>
+          <h2 className="mt-3 font-heading text-3xl font-medium tracking-tight sm:text-4xl">
+            More crafts. Same seal.
+          </h2>
+          <p className="mt-3 max-w-xl text-muted-foreground">
+            We open one division at a time — fully — before the next.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-2">
+            <Link
+              href="/junk-removal"
+              className="rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-white"
+            >
+              Junk Removal · booking
+            </Link>
+            <Link
+              href="/hauling"
+              className="rounded-full bg-brand-primary/90 px-4 py-2 text-sm font-semibold text-white"
+            >
+              Hauling · booking
+            </Link>
+            {morrisServicesConfig.futureCompanies.map((co) => (
+              <span
+                key={co.name}
+                className="rounded-full border border-black/10 bg-white/80 px-4 py-2 text-sm text-muted-foreground"
+              >
+                {co.craft}
+              </span>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-20 sm:mt-24">
+          <div className="flex flex-col items-start justify-between gap-8 rounded-[1.75rem] border border-black/5 bg-white p-8 shadow-sm sm:flex-row sm:items-center sm:p-10">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
+                Concierge
+              </p>
+              <h2 className="mt-3 font-heading text-2xl font-medium tracking-tight sm:text-3xl">
+                Ready to book or have a question?
+              </h2>
+              <p className="mt-2 max-w-md text-muted-foreground">
+                Call for scheduling, commercial accounts, or careers.
+              </p>
+            </div>
+            <div className="flex w-full flex-col gap-3 sm:w-auto">
+              <a
+                href="tel:6367514645"
+                className="inline-flex h-12 min-h-[48px] items-center justify-center gap-2 rounded-full bg-brand-primary px-6 text-base font-semibold text-white shadow-md hover:bg-brand-primary/90"
+              >
+                <Phone className="h-5 w-5" aria-hidden />
+                (636) 751-4645
+              </a>
+              <ButtonLink href="/contact" variant="outline" className="h-11 rounded-full">
+                Contact options
+              </ButtonLink>
+            </div>
+          </div>
+        </section>
+
+        <p className="mt-12 text-center text-xs text-muted-foreground">
+          {morrisServicesConfig.parentLegalName} ·{" "}
+          <Link href="/about" className="underline-offset-2 hover:underline">
+            About
+          </Link>
+        </p>
       </main>
 
       <PublicFooter />
+      <StickyMobileConcierge />
     </div>
   );
 }

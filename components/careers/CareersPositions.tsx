@@ -127,7 +127,7 @@ function PositionCard({ posting }: { posting: JobPosting }) {
       <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
         <div className="min-w-0 flex-1">
           <p className="text-xs font-semibold uppercase tracking-wide text-brand-primary/80">
-            {posting.departmentLabel ?? "Morris Hauling"}
+            {posting.departmentLabel ?? "Morris Junk Removal"}
           </p>
           <h3 className="text-lg font-bold mt-1 text-[#0A0A0A]">{posting.title}</h3>
         </div>
