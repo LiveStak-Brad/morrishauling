@@ -63,7 +63,16 @@ export function ServiceMarketingPage({ service }: { service: MarketingService })
             <ConversionCtaGroup divisionId={service.division} className="mt-8" />
           </div>
           <div className="lg:col-span-2">
-            <MarketingImage imageKey={service.imageKey} priority sizes="(max-width: 1024px) 100vw, 420px" />
+            <MarketingImage
+              imageKey={service.imageKey}
+              priority
+              className={
+                service.imageKey === "gooseneck-hauling"
+                  ? "mx-auto w-full max-w-sm lg:max-w-none"
+                  : undefined
+              }
+              sizes="(max-width: 1024px) 90vw, 420px"
+            />
           </div>
         </div>
 

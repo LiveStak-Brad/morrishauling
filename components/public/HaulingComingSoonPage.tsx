@@ -141,8 +141,12 @@ export function HaulingHomePage() {
           <h2 className="mt-3 font-heading text-3xl font-medium tracking-tight sm:text-4xl">
             Equipment, vehicles, and contractor delivery
           </h2>
-          <div className="mt-8">
-            <MarketingImage imageKey="contractor-equipment-yard" sizes="(max-width: 768px) 100vw, 960px" />
+          <div className="mt-8 flex justify-center">
+            <MarketingImage
+              imageKey="gooseneck-hauling"
+              className="w-full max-w-md sm:max-w-lg md:max-w-xl"
+              sizes="(max-width: 640px) 90vw, (max-width: 768px) 512px, 576px"
+            />
           </div>
           <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {haulingServices.map((svc) => (

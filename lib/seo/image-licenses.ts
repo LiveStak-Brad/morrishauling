@@ -8,7 +8,7 @@ export type MarketingImageLicense = {
   key: string;
   localPath: string;
   sourceUrl: string | null;
-  license: "Unsplash License" | "Pexels License";
+  license: "Unsplash License" | "Pexels License" | "Company-provided";
   note: string;
 };
 
@@ -62,6 +62,13 @@ export const MARKETING_IMAGE_LICENSES: readonly MarketingImageLicense[] = [
     sourceUrl: null,
     license: "Unsplash License",
     note: UNVERIFIED_UNSPLASH_NOTE,
+  },
+  {
+    key: "gooseneck-hauling",
+    localPath: "/gooseneckhaulingphoto.jpg",
+    sourceUrl: null,
+    license: "Company-provided",
+    note: "Company-provided gooseneck trailer photo used on Morris Hauling marketing pages.",
   },
   {
     key: "clean-living-room",

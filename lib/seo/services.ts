@@ -271,7 +271,7 @@ export const HAULING_SERVICES: MarketingService[] = [
     restrictions: ["Not every vehicle or trailer combination is available", "Interstate moves may be declined or reviewed"],
     process: ["Submit load details", "Manual review if needed", "Confirm and schedule"],
     related: ["equipment-hauling", "machinery-transport"],
-    imageKey: "contractor-equipment-yard",
+    imageKey: "gooseneck-hauling",
     faqs: [
       {
         q: "Can you haul a vehicle that does not run?",
@@ -294,7 +294,7 @@ export const HAULING_SERVICES: MarketingService[] = [
     restrictions: ["Overweight or oversize loads may require permits we do not provide", "Manual review for specialized gear"],
     process: ["Share specs", "Review", "Schedule pickup and delivery"],
     related: ["skid-steer-transport", "tractor-mower-transport", "machinery-transport"],
-    imageKey: "contractor-equipment-yard",
+    imageKey: "gooseneck-hauling",
     faqs: [
       {
         q: "Do you provide a skid steer or forklift?",
@@ -317,7 +317,7 @@ export const HAULING_SERVICES: MarketingService[] = [
     restrictions: ["Very large ag equipment may exceed our capacity"],
     process: ["Send specs and photos", "Confirm fit", "Schedule"],
     related: ["equipment-hauling", "machinery-transport"],
-    imageKey: "contractor-equipment-yard",
+    imageKey: "gooseneck-hauling",
     faqs: [
       {
         q: "Can you haul a garden tractor?",
@@ -340,7 +340,7 @@ export const HAULING_SERVICES: MarketingService[] = [
     restrictions: ["Overwidth loads may be declined", "Manual review required for heavier units"],
     process: ["Submit specs", "Review", "Confirm schedule"],
     related: ["equipment-hauling", "machinery-transport"],
-    imageKey: "contractor-equipment-yard",
+    imageKey: "gooseneck-hauling",
     faqs: [
       {
         q: "What if I do not know the exact weight?",
@@ -363,7 +363,7 @@ export const HAULING_SERVICES: MarketingService[] = [
     restrictions: ["We do not claim to move every machine", "Permits and escorts are customer responsibilities when required"],
     process: ["Detail the load", "Manual review", "Accept or decline clearly"],
     related: ["equipment-hauling", "vehicle-transport"],
-    imageKey: "construction-materials-site",
+    imageKey: "gooseneck-hauling",
     faqs: [
       {
         q: "Do you haul interstate?",
@@ -386,7 +386,7 @@ export const HAULING_SERVICES: MarketingService[] = [
     restrictions: ["We are not a big-box delivery substitute for every SKU", "Unload help must be arranged if needed"],
     process: ["Describe materials and stops", "Confirm", "Deliver on schedule"],
     related: ["contractor-delivery", "multi-stop-hauling"],
-    imageKey: "construction-materials-site",
+    imageKey: "gooseneck-hauling",
     faqs: [
       {
         q: "Will you carry materials upstairs?",
@@ -409,7 +409,7 @@ export const HAULING_SERVICES: MarketingService[] = [
     restrictions: ["Same-day is not guaranteed", "Capacity limits apply"],
     process: ["Send the route and load", "Confirm", "Execute"],
     related: ["building-material-delivery", "multi-stop-hauling"],
-    imageKey: "construction-materials-site",
+    imageKey: "gooseneck-hauling",
     faqs: [
       {
         q: "Can you run recurring weekly routes?",
@@ -432,7 +432,7 @@ export const HAULING_SERVICES: MarketingService[] = [
     restrictions: ["Unverified addresses are not accepted", "Re-routing mid-day may change price"],
     process: ["List stops", "Confirm plan", "Run the route"],
     related: ["contractor-delivery", "building-material-delivery"],
-    imageKey: "contractor-equipment-yard",
+    imageKey: "gooseneck-hauling",
     faqs: [
       {
         q: "Why do you verify every address?",

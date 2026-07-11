@@ -26,11 +26,13 @@ export function MarketingImage({
         priority={priority}
         loading={priority ? "eager" : "lazy"}
         sizes={sizes}
-        className="h-auto w-full object-cover"
+        className="h-auto w-full object-cover object-center"
       />
-      <figcaption className="sr-only">
-        Representative service image. Not a Morris Services completed project.
-      </figcaption>
+      {img.representative ? (
+        <figcaption className="sr-only">
+          Representative service image. Not a Morris Services completed project.
+        </figcaption>
+      ) : null}
     </figure>
   );
 }

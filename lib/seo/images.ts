@@ -9,7 +9,8 @@ export type MarketingImage = {
   height: number;
   /** Unsplash or other license note for internal reference */
   credit: string;
-  representative: true;
+  /** When true, image is stock/representative — not Morris equipment or a completed Morris job */
+  representative: boolean;
 };
 
 export const MARKETING_IMAGES: Record<string, MarketingImage> = {
@@ -60,6 +61,14 @@ export const MARKETING_IMAGES: Record<string, MarketingImage> = {
     height: 1067,
     credit: "Unsplash — representative atmosphere, not Morris-owned fleet",
     representative: true,
+  },
+  "gooseneck-hauling": {
+    src: "/gooseneckhaulingphoto.jpg",
+    alt: "Gooseneck flatbed trailer used for equipment and material hauling",
+    width: 640,
+    height: 480,
+    credit: "Company-provided gooseneck trailer photo (public/gooseneckhaulingphoto.jpg)",
+    representative: false,
   },
   "clean-living-room": {
     src: "/marketing/clean-living-room.jpg",
