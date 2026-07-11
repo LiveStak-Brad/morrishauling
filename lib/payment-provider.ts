@@ -14,6 +14,9 @@ import {
 } from "@/lib/mock-data";
 import { computeDepositAmount, derivePaymentStatus } from "@/lib/payment-utils";
 import type { CompanyConfig } from "@/types";
+import { isStripeServerReady } from "@/lib/payments/stripe-config";
+import { createInvoiceCheckoutSession } from "@/lib/payments/stripe-service";
+import { getStripe } from "@/lib/payments/stripe-client";
 
 export interface PaymentProvider {
   readonly providerId: string;
@@ -131,22 +134,71 @@ export class MockPaymentProvider implements PaymentProvider {
   }
 }
 
+/**
+ * Real Stripe provider — Checkout Sessions only.
+ * Completion happens exclusively via webhook reconciliation.
+ */
 export class StripeProvider implements PaymentProvider {
   readonly providerId = "stripe";
-  createPaymentIntent(): Promise<PaymentIntentResult> {
-    return Promise.reject(new Error("Stripe integration not configured"));
+
+  async createPaymentIntent(req: CreatePaymentRequest): Promise<PaymentIntentResult> {
+    if (!isStripeServerReady()) {
+      throw new Error("Stripe is not configured");
+    }
+    if (!req.invoiceId) throw new Error("invoiceId required for Stripe checkout");
+    if (!req.customerId && !(req as CreatePaymentRequest & { customerId?: string }).customerId) {
+      /* customer resolved in checkout route */
+    }
+    const customerId = (req as CreatePaymentRequest & { customerId?: string }).customerId;
+    if (!customerId) throw new Error("customerId required for Stripe checkout");
+
+    const session = await createInvoiceCheckoutSession({
+      companyId: req.companyId,
+      customerId,
+      allocations: [{ invoiceId: req.invoiceId, amount: req.amount }],
+      timing: req.timing,
+      jobId: req.jobId,
+    });
+
+    return {
+      intentId: session.sessionId,
+      clientSecret: session.url,
+      status: "pending",
+      amount: req.amount,
+    };
   }
-  capturePayment(): Promise<PaymentResult> {
-    return Promise.reject(new Error("Stripe integration not configured"));
+
+  async capturePayment(): Promise<PaymentResult> {
+    throw new Error("Stripe payments are captured by webhook only — do not capture from the client");
   }
-  refund(): Promise<RefundResult> {
-    return Promise.reject(new Error("Stripe integration not configured"));
+
+  async refund(paymentId: string, amount?: number): Promise<RefundResult> {
+    if (!isStripeServerReady()) throw new Error("Stripe is not configured");
+    const stripe = getStripe();
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+    const sb = createAdminClient();
+    if (!sb) throw new Error("Database unavailable");
+    const { data: payment } = await sb.from("payments").select("*").eq("id", paymentId).maybeSingle();
+    if (!payment?.stripe_payment_intent_id) {
+      throw new Error("Payment has no Stripe payment intent");
+    }
+    const refund = await stripe.refunds.create({
+      payment_intent: payment.stripe_payment_intent_id as string,
+      amount: amount != null ? Math.round(amount * 100) : undefined,
+    });
+    return {
+      refundId: refund.id,
+      status: "refunded",
+      amount: (refund.amount ?? 0) / 100,
+    };
   }
-  saveInvoice(): Promise<Invoice> {
-    return Promise.reject(new Error("Stripe integration not configured"));
+
+  async saveInvoice(): Promise<Invoice> {
+    throw new Error("Use billing-operations createInvoiceFromEstimate for production invoices");
   }
-  processPayment(): Promise<PaymentResult> {
-    return Promise.reject(new Error("Stripe integration not configured"));
+
+  async processPayment(): Promise<PaymentResult> {
+    throw new Error("Use /api/payments/checkout — browser return must not finalize payment");
   }
 }
 
@@ -189,3 +241,9 @@ export class PayPalProvider implements PaymentProvider {
 }
 
 export const mockPaymentProvider = new MockPaymentProvider();
+export const stripePaymentProvider = new StripeProvider();
+
+export function getActivePaymentProvider(): PaymentProvider {
+  if (isStripeServerReady()) return stripePaymentProvider;
+  return mockPaymentProvider;
+}

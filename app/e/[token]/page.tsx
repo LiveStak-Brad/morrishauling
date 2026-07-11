@@ -29,6 +29,7 @@ export default function PublicEstimatePage() {
   const token = params.token as string;
   const [data, setData] = useState<PublicEstimatePayload | null>(null);
   const [loading, setLoading] = useState(true);
+  const [linkError, setLinkError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
@@ -36,9 +37,14 @@ export default function PublicEstimatePage() {
 
   useEffect(() => {
     fetch(`/api/public/estimates/${token}`)
-      .then((r) => r.json())
-      .then((d) => {
+      .then(async (r) => {
+        const d = await r.json();
         if (d.ok) setData(d);
+        else if (r.status === 410) {
+          setLinkError(d.error || "This estimate link has expired or been revoked.");
+        } else {
+          setLinkError(d.error || "This link may be invalid or expired.");
+        }
       })
       .finally(() => setLoading(false));
   }, [token]);
@@ -80,8 +86,13 @@ export default function PublicEstimatePage() {
   if (!data) {
     return (
       <main className="mx-auto max-w-2xl p-6">
-        <p className="font-semibold">Estimate unavailable</p>
-        <p className="text-sm text-muted-foreground">This link may be invalid or expired.</p>
+        <p className="font-semibold">Estimate link unavailable</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {linkError || "This link may be invalid, expired, or revoked."}
+        </p>
+        <p className="mt-4 text-sm text-muted-foreground">
+          Please contact Morris Services and ask them to send a new secure link.
+        </p>
       </main>
     );
   }

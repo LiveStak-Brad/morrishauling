@@ -1,6 +1,7 @@
 import { apiOk, apiError, parseJson } from "@/lib/api/route-utils";
 import {
   getEstimateByShareToken,
+  getEstimateShareAccess,
   listAdjustmentsForEstimate,
   listEstimateVersions,
   logBillingAudit,
@@ -9,16 +10,45 @@ import {
 import { getCustomers, getJobById, isDbReady } from "@/lib/db/operations";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { customerFacingLines } from "@/lib/billing/utils";
+import { checkRateLimit, enforceRateLimit, getClientIp, rateLimitResponse } from "@/lib/api/rate-limit";
 
 type Ctx = { params: Promise<{ token: string }> };
 
-export async function GET(_request: Request, ctx: Ctx) {
-  const { token } = await ctx.params;
-  try {
-    const estimate = await getEstimateByShareToken(token);
-    if (!estimate) return apiError("Estimate not found or link expired", 404);
+function shareError(reason: string) {
+  if (reason === "expired") {
+    return apiError("This estimate link has expired. Please contact Morris Services for a new link.", 410);
+  }
+  if (reason === "revoked") {
+    return apiError("This estimate link is no longer active. Please contact Morris Services.", 410);
+  }
+  return apiError("Estimate not found or link expired", 404);
+}
 
-    // Mark viewed honestly when customer opens the link
+export async function GET(request: Request, ctx: Ctx) {
+  const { token } = await ctx.params;
+  const limited = enforceRateLimit(request, {
+    key: "public-estimate-get",
+    limit: 60,
+    windowMs: 60_000,
+  });
+  if (limited) return limited;
+
+  const tokenLimit = checkRateLimit(request, {
+    key: `public-estimate-token:${token.slice(0, 16)}`,
+    limit: 30,
+    windowMs: 60_000,
+  });
+  if (!tokenLimit.allowed) return rateLimitResponse(tokenLimit.retryAfterSec);
+
+  try {
+    const access = await getEstimateShareAccess(token);
+    if (!access.ok) {
+      console.warn("[public-estimate] denied", { reason: access.reason, ip: getClientIp(request) });
+      return shareError(access.reason);
+    }
+    const estimate = await getEstimateByShareToken(token);
+    if (!estimate) return shareError("not_found");
+
     if (["sent", "ready_to_send", "revised"].includes(estimate.status) && (await isDbReady())) {
       const sb = createAdminClient();
       if (sb) {
@@ -78,9 +108,28 @@ export async function GET(_request: Request, ctx: Ctx) {
 
 export async function POST(request: Request, ctx: Ctx) {
   const { token } = await ctx.params;
+  const limited = enforceRateLimit(request, {
+    key: "public-estimate-post",
+    limit: 15,
+    windowMs: 60_000,
+  });
+  if (limited) return limited;
+
+  const tokenLimit = checkRateLimit(request, {
+    key: `public-estimate-act:${token.slice(0, 16)}`,
+    limit: 10,
+    windowMs: 60_000,
+  });
+  if (!tokenLimit.allowed) return rateLimitResponse(tokenLimit.retryAfterSec);
+
   try {
+    const access = await getEstimateShareAccess(token);
+    if (!access.ok) {
+      console.warn("[public-estimate] action denied", { reason: access.reason, ip: getClientIp(request) });
+      return shareError(access.reason);
+    }
     const estimate = await getEstimateByShareToken(token);
-    if (!estimate) return apiError("Estimate not found or link expired", 404);
+    if (!estimate) return shareError("not_found");
 
     const body = await parseJson<{
       action: "accept" | "decline" | "clarification";

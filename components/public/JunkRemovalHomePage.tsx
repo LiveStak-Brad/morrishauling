@@ -9,6 +9,7 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { CompanyBreadcrumbBar } from "@/components/public/CompanyBreadcrumbBar";
 import { CompanyStatusBadge } from "@/components/public/CompanyStatusBadge";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
+import { useDivisionPublicStatus } from "@/components/public/useDivisionPublicStatus";
 import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import {
@@ -19,10 +20,15 @@ import {
 import { ButtonLink } from "@/components/ui/button-link";
 import { cn } from "@/lib/utils";
 
-/** Flagship division home — operational. */
+/** Flagship division home — status from /admin/divisions (DB). */
 export function JunkRemovalHomePage() {
   const { company } = useCompany();
   const tel = company.phone.replace(/\D/g, "");
+  const { status: divisionStatus } = useDivisionPublicStatus("junk_removal");
+  const canBook =
+    divisionStatus?.acceptsBookings || divisionStatus?.acceptsEstimateRequests;
+  const bookHref = divisionStatus?.bookPath ?? "/book?division=junk_removal";
+  const bookLabel = divisionStatus?.bookingCtaLabel ?? "Request estimate";
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-[#F7F5F2]">
@@ -55,7 +61,11 @@ export function JunkRemovalHomePage() {
             />
           </div>
 
-          <CompanyStatusBadge status="open" className="mt-6" />
+          <CompanyStatusBadge
+            divisionStatus={divisionStatus?.launchStatus ?? "setup"}
+            label={divisionStatus?.statusLabel}
+            className="mt-6"
+          />
 
           <h1
             className="mt-5 max-w-3xl font-heading text-4xl font-medium leading-[1.1] tracking-tight text-foreground opacity-0 animate-slide-up sm:mt-6 sm:text-5xl md:text-6xl"
@@ -77,11 +87,11 @@ export function JunkRemovalHomePage() {
             style={{ animationFillMode: "forwards", animationDelay: "0.24s" }}
           >
             <ButtonLink
-              href="/book?division=junk_removal"
+              href={canBook ? bookHref : "/contact"}
               size="lg"
               className="h-12 min-h-[48px] w-full rounded-full bg-brand-primary px-8 text-base font-semibold shadow-lg shadow-brand-primary/20 hover:bg-brand-primary/90 sm:w-auto"
             >
-              Book junk removal
+              {canBook ? bookLabel : "Contact us"}
               <ArrowRight className="ml-2 h-5 w-5" />
             </ButtonLink>
             <ButtonLink
@@ -202,7 +212,7 @@ export function JunkRemovalHomePage() {
               <div className="max-w-lg">
                 <p className="text-sm font-semibold text-white/70">Ready when you are</p>
                 <h2 className="mt-2 font-heading text-3xl font-medium tracking-tight md:text-4xl">
-                  Book your clear-out online
+                  {canBook ? "Start your clear-out online" : "Reach out when you are ready"}
                 </h2>
                 <ul className="mt-5 space-y-2.5">
                   {[
@@ -218,11 +228,11 @@ export function JunkRemovalHomePage() {
                 </ul>
               </div>
               <ButtonLink
-                href="/book?division=junk_removal"
+                href={canBook ? bookHref : "/contact"}
                 size="lg"
                 className="h-14 shrink-0 rounded-full bg-white px-8 text-base font-bold text-brand-primary hover:bg-white/90"
               >
-                Book now
+                {canBook ? bookLabel : "Contact us"}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </ButtonLink>
             </div>

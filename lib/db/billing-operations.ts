@@ -275,21 +275,17 @@ export async function getEstimateById(
 }
 
 export async function getEstimateByShareToken(token: string): Promise<EstimateRecord | null> {
-  if (!(await isDbReady())) return null;
-  const client = await sb();
-  const { data, error } = await client
-    .from("estimates")
-    .select("*")
-    .eq("share_token_hash", hashShareToken(token))
-    .eq("active", true)
-    .maybeSingle();
-  if (error) throw error;
-  if (!data) return null;
-  const estimate = rowToEstimate(data as Record<string, unknown>);
-  if (estimate.shareTokenExpiresAt && estimate.shareTokenExpiresAt < new Date().toISOString()) {
-    return null;
-  }
-  return estimate;
+  const access = await getEstimateShareAccess(token);
+  if (!access.ok) return null;
+  return rowToEstimate(access.row);
+}
+
+export async function getEstimateShareAccess(token: string) {
+  const { resolveShareToken } = await import("@/lib/billing/share-tokens");
+  const access = await resolveShareToken("estimate", token);
+  if (!access.ok) return access;
+  if (access.row.active === false) return { ok: false as const, reason: "inactive" as const };
+  return access;
 }
 
 export async function getBillingAudit(
@@ -775,17 +771,48 @@ export async function sendEstimate(
   const client = await sb();
   await client.from("estimates").upsert(estimateToRow(next));
 
+  const { getAppBaseUrl } = await import("@/lib/payments/stripe-client");
+  const customerUrl = `${getAppBaseUrl()}/e/${token}`;
+
   const { enqueueNotification } = await import("@/lib/notifications/enqueue");
-  await enqueueNotification({
+  const delivery = await enqueueNotification({
     companyId,
     divisionId: (next.divisionId as "junk_removal" | "hauling") ?? "junk_removal",
     jobId: next.jobId ?? undefined,
     customerId: next.customerId,
-    profileId: options?.actorProfileId,
     eventType: options?.resend || existing.status === "revised" ? "estimate_revised" : "estimate_ready",
-    payload: { estimateId: next.id, deliveryStatus },
-    channel: emailConfigured ? "email" : "in_app",
+    payload: { estimateId: next.id, customerUrl },
+    channel: "email",
   });
+
+  let mappedStatus: DeliveryStatus = deliveryStatus;
+  if (delivery.deliveryStatus === "skipped") mappedStatus = "skipped";
+  else if (delivery.deliveryStatus === "failed") mappedStatus = "failed";
+  else if (
+    delivery.deliveryStatus === "provider_accepted" ||
+    delivery.deliveryStatus === "resent" ||
+    delivery.deliveryStatus === "queued" ||
+    delivery.deliveryStatus === "sending"
+  ) {
+    mappedStatus = "pending";
+  }
+
+  const finalMessage =
+    delivery.deliveryMessage ??
+    deliveryError ??
+    (mappedStatus === "pending"
+      ? "Estimate accepted by email provider (delivery confirmation may follow)."
+      : "Estimate queued for delivery.");
+
+  if (mappedStatus !== deliveryStatus || finalMessage !== deliveryError) {
+    const updated: EstimateRecord = {
+      ...next,
+      deliveryStatus: mappedStatus,
+      deliveryError: mappedStatus === "pending" ? null : finalMessage,
+    };
+    await client.from("estimates").upsert(estimateToRow(updated));
+    Object.assign(next, updated);
+  }
 
   await logBillingAudit({
     companyId,
@@ -794,15 +821,14 @@ export async function sendEstimate(
     action: options?.resend ? "estimate_resent" : "estimate_sent",
     actorProfileId: options?.actorProfileId,
     actorRole: options?.actorRole,
-    newValue: { status: next.status, deliveryStatus },
+    newValue: { status: next.status, deliveryStatus: mappedStatus },
   });
 
-  const base = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
   return {
     estimate: next,
-    customerUrl: `${base}/e/${token}`,
-    deliveryStatus,
-    deliveryMessage: deliveryError ?? "Estimate queued for delivery.",
+    customerUrl,
+    deliveryStatus: mappedStatus,
+    deliveryMessage: finalMessage,
   };
 }
 
@@ -1339,17 +1365,16 @@ export async function createInvoiceFromEstimate(
 }
 
 export async function getInvoiceByShareToken(token: string) {
-  if (!(await isDbReady())) return null;
-  const client = await sb();
-  const { data, error } = await client
-    .from("invoices")
-    .select("*")
-    .eq("share_token_hash", hashShareToken(token))
-    .maybeSingle();
-  if (error) throw error;
-  if (!data) return null;
+  const { resolveShareToken } = await import("@/lib/billing/share-tokens");
+  const access = await resolveShareToken("invoice", token);
+  if (!access.ok) return null;
   const { rowToInvoice } = await import("@/lib/db/mappers");
-  return rowToInvoice(data as Record<string, unknown>);
+  return rowToInvoice(access.row);
+}
+
+export async function getInvoiceShareAccess(token: string) {
+  const { resolveShareToken } = await import("@/lib/billing/share-tokens");
+  return resolveShareToken("invoice", token);
 }
 
 export async function issuePaymentReceipt(
@@ -1406,6 +1431,13 @@ export async function allocatePaymentAcrossInvoices(
     allocations: Array<{ invoiceId: string; amount: number }>;
     notes?: string;
     timing?: Payment["timing"];
+    /** Finalize an existing pending/processing payment row (e.g. Stripe webhook). */
+    existingPaymentId?: string;
+    provider?: string;
+    providerEventId?: string;
+    stripeCheckoutSessionId?: string;
+    stripePaymentIntentId?: string;
+    externalReference?: string;
   },
   options?: { actorProfileId?: string; actorRole?: string }
 ): Promise<{ payment: Payment; allocations: Array<{ invoiceId: string; amount: number }> }> {
@@ -1435,8 +1467,34 @@ export async function allocatePaymentAcrossInvoices(
   }
 
   const primary = prepared[0].inv;
-  const paymentId = billingId("pay");
+  const client = await sb();
   const now = new Date().toISOString();
+
+  if (input.existingPaymentId) {
+    const { data: existing } = await client
+      .from("payments")
+      .select("*")
+      .eq("id", input.existingPaymentId)
+      .eq("company_id", companyId)
+      .maybeSingle();
+    if (!existing) throw new Error("Pending payment not found");
+    if (existing.status === "completed" && existing.provider_event_id === input.providerEventId) {
+      const { rowToPayment } = await import("@/lib/db/mappers");
+      return {
+        payment: rowToPayment(existing as Record<string, unknown>),
+        allocations: input.allocations,
+      };
+    }
+    if (existing.status === "completed") {
+      const { rowToPayment } = await import("@/lib/db/mappers");
+      return {
+        payment: rowToPayment(existing as Record<string, unknown>),
+        allocations: input.allocations,
+      };
+    }
+  }
+
+  const paymentId = input.existingPaymentId ?? billingId("pay");
   const payment: Payment = {
     id: paymentId,
     companyId,
@@ -1450,23 +1508,51 @@ export async function allocatePaymentAcrossInvoices(
     notes: input.notes,
     receiptNumber: receiptNumber(),
     createdAt: now,
+    externalReference: input.externalReference,
   };
 
-  const client = await sb();
-  await client.from("payments").insert({
-    id: payment.id,
-    company_id: companyId,
-    customer_id: input.customerId,
-    job_id: payment.jobId,
-    invoice_id: payment.invoiceId,
-    amount: payment.amount,
-    method: payment.method,
-    timing: payment.timing,
-    status: payment.status,
-    receipt_number: payment.receiptNumber,
-    notes: payment.notes ?? null,
-    created_at: now,
-  });
+  if (input.existingPaymentId) {
+    await client
+      .from("payments")
+      .update({
+        customer_id: input.customerId,
+        job_id: payment.jobId,
+        invoice_id: payment.invoiceId,
+        amount: payment.amount,
+        method: payment.method,
+        timing: payment.timing,
+        status: "completed",
+        receipt_number: payment.receiptNumber,
+        receipt_issued_at: now,
+        notes: payment.notes ?? null,
+        provider: input.provider ?? "manual",
+        provider_event_id: input.providerEventId ?? null,
+        stripe_checkout_session_id: input.stripeCheckoutSessionId ?? null,
+        stripe_payment_intent_id: input.stripePaymentIntentId ?? null,
+        external_reference: input.externalReference ?? null,
+      })
+      .eq("id", paymentId);
+  } else {
+    await client.from("payments").insert({
+      id: payment.id,
+      company_id: companyId,
+      customer_id: input.customerId,
+      job_id: payment.jobId,
+      invoice_id: payment.invoiceId,
+      amount: payment.amount,
+      method: payment.method,
+      timing: payment.timing,
+      status: payment.status,
+      receipt_number: payment.receiptNumber,
+      notes: payment.notes ?? null,
+      created_at: now,
+      provider: input.provider ?? "manual",
+      provider_event_id: input.providerEventId ?? null,
+      stripe_checkout_session_id: input.stripeCheckoutSessionId ?? null,
+      stripe_payment_intent_id: input.stripePaymentIntentId ?? null,
+      external_reference: input.externalReference ?? null,
+    });
+  }
 
   for (const { inv, amount } of prepared) {
     await client.from("payment_allocations").insert({

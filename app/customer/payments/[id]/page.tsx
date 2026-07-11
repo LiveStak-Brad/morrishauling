@@ -10,6 +10,7 @@ import { PaymentStatusStepper } from "@/components/payments/PaymentStatusStepper
 import { PaymentCheckout } from "@/components/payments/PaymentCheckout";
 import { InvoiceDetailView } from "@/components/invoices/InvoiceDetailView";
 import { derivePaymentStatus } from "@/lib/payment-utils";
+import { isOnlineCardPaymentEnabled } from "@/lib/payments/online-payments-enabled";
 import { ArrowLeft } from "lucide-react";
 import { PremiumCard } from "@/components/morris/PremiumCard";
 
@@ -18,6 +19,7 @@ export default function CustomerPaymentDetailPage() {
   const invoiceId = params.id as string;
   const { data, loading, requiresLogin, refresh } = useCustomerPortal();
   const [tick, setTick] = useState(0);
+  const onlineEnabled = isOnlineCardPaymentEnabled();
 
   const invoice = data?.invoices.find((i) => i.id === invoiceId);
   const job = invoice ? data?.jobs.find((j) => j.id === invoice.jobId) : undefined;
@@ -94,6 +96,7 @@ export default function CustomerPaymentDetailPage() {
             <PaymentCheckout
               key={tick}
               invoice={invoice}
+              onlineEnabled={onlineEnabled}
               onComplete={() => {
                 setTick((t) => t + 1);
                 refresh();

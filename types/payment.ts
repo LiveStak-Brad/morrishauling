@@ -121,6 +121,7 @@ export interface CreatePaymentRequest {
   companyId: string;
   jobId: string;
   invoiceId?: string;
+  customerId?: string;
   amount: number;
   method: PaymentMethod;
   timing: PaymentTiming;

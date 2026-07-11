@@ -5,9 +5,14 @@ import { createPayment, getJobById } from "@/lib/db";
 import {
   isOnlineCardPaymentEnabled,
   isOnlinePaymentMethod,
-} from "@/lib/payments/online-payments-enabled";
+} from "@/lib/payments/stripe-config";
 import type { CreatePaymentRequest } from "@/types/payment";
 
+/**
+ * Manual payment recording only.
+ * Online card/ACH must use /api/payments/checkout + Stripe webhooks.
+ * Never marks card payments completed from the browser.
+ */
 export async function POST(request: Request) {
   try {
     const profile = await requireApiProfile();
@@ -24,9 +29,11 @@ export async function POST(request: Request) {
       return apiError("companyId, jobId, and amount required", 400);
     }
 
-    if (!isOnlineCardPaymentEnabled() && isOnlinePaymentMethod(body.method)) {
+    if (isOnlinePaymentMethod(body.method)) {
       return apiError(
-        "Online payments are not enabled yet. Please contact Morris Junk Removal to pay.",
+        isOnlineCardPaymentEnabled()
+          ? "Use /api/payments/checkout to start a Stripe Checkout session. Card payments are finalized only by webhook."
+          : "Online payments are not enabled yet. Please contact Morris Services to pay by cash or check.",
         400
       );
     }
@@ -38,8 +45,12 @@ export async function POST(request: Request) {
       return apiError("Forbidden", 403);
     }
 
-    const customerId =
-      profile.role === "customer" ? profile.customer_id ?? undefined : body.customerId ?? job.customerId;
+    // Customers cannot self-record manual payments
+    if (profile.role === "customer") {
+      return apiError("Customers cannot record manual payments. Use online checkout when available.", 403);
+    }
+
+    const customerId = body.customerId ?? job.customerId;
     const collectedByEmployeeId =
       profile.role === "employee"
         ? profile.employee_id ?? undefined

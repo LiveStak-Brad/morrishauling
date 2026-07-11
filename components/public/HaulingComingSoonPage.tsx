@@ -9,16 +9,22 @@ import { PublicFooter } from "@/components/public/PublicFooter";
 import { CompanyBreadcrumbBar } from "@/components/public/CompanyBreadcrumbBar";
 import { CompanyStatusBadge } from "@/components/public/CompanyStatusBadge";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
+import { useDivisionPublicStatus } from "@/components/public/useDivisionPublicStatus";
 import { ButtonLink } from "@/components/ui/button-link";
 import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import { HAULING_DIVISION_SERVICES, SERVICE_AREA } from "@/lib/public-copy";
 
-/** Morris Hauling — operational division home. */
+/** Morris Hauling — status from /admin/divisions (DB). */
 export function HaulingHomePage() {
   const hauling = morrisServicesConfig.haulingDivision;
   const { company } = useCompany();
   const tel = company.phone.replace(/\D/g, "");
+  const { status: divisionStatus } = useDivisionPublicStatus("hauling");
+  const canBook =
+    divisionStatus?.acceptsBookings || divisionStatus?.acceptsEstimateRequests;
+  const bookHref = divisionStatus?.bookPath ?? "/book?division=hauling";
+  const bookLabel = divisionStatus?.bookingCtaLabel ?? "Request estimate";
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-[#F7F5F2]">
@@ -51,7 +57,11 @@ export function HaulingHomePage() {
             />
           </div>
 
-          <CompanyStatusBadge status="open" className="mt-6" />
+          <CompanyStatusBadge
+            divisionStatus={divisionStatus?.launchStatus ?? "setup"}
+            label={divisionStatus?.statusLabel}
+            className="mt-6"
+          />
 
           <h1
             className="mt-5 max-w-3xl font-heading text-4xl font-medium leading-[1.1] tracking-tight text-foreground opacity-0 animate-slide-up sm:mt-6 sm:text-5xl md:text-6xl"
@@ -71,11 +81,11 @@ export function HaulingHomePage() {
             style={{ animationFillMode: "forwards", animationDelay: "0.24s" }}
           >
             <ButtonLink
-              href="/book?division=hauling"
+              href={canBook ? bookHref : "/contact"}
               size="lg"
               className="h-12 min-h-[48px] w-full rounded-full bg-brand-primary px-8 text-base font-semibold shadow-lg shadow-brand-primary/20 hover:bg-brand-primary/90 sm:w-auto"
             >
-              Book hauling
+              {canBook ? bookLabel : "Contact us"}
               <ArrowRight className="ml-2 h-5 w-5" />
             </ButtonLink>
             <ButtonLink
@@ -149,11 +159,11 @@ export function HaulingHomePage() {
                 </ul>
               </div>
               <ButtonLink
-                href="/book?division=hauling"
+                href={canBook ? bookHref : "/contact"}
                 size="lg"
                 className="h-14 shrink-0 rounded-full bg-white px-8 text-base font-bold text-brand-primary hover:bg-white/90"
               >
-                Book hauling
+                {canBook ? bookLabel : "Contact us"}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </ButtonLink>
             </div>

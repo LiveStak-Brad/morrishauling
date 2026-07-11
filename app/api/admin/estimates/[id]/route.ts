@@ -220,7 +220,10 @@ export async function POST(request: Request, ctx: Ctx) {
         | "create_invoice"
         | "create_adjustment"
         | "internal_approve"
-        | "delete";
+        | "delete"
+        | "regenerate_link"
+        | "revoke_link"
+        | "extend_link";
       method?: string;
       acceptedBy?: string;
       approvedBy?: string;
@@ -228,6 +231,7 @@ export async function POST(request: Request, ctx: Ctx) {
       reason?: string;
       scheduledDate?: string;
       ownerOverride?: boolean;
+      extendDays?: number;
       addedLineItems?: Array<{ label: string; unitPrice: number; quantity?: number }>;
       removedLineItemIds?: string[];
     }>(request);
@@ -325,6 +329,28 @@ export async function POST(request: Request, ctx: Ctx) {
           opts
         );
         return apiOk({ adjustment });
+      }
+      case "regenerate_link": {
+        const { regenerateShareToken } = await import("@/lib/billing/share-tokens");
+        const link = await regenerateShareToken("estimate", morrisConfig.companyId, id, {
+          extendDays: body.extendDays ?? 90,
+        });
+        return apiOk(link);
+      }
+      case "revoke_link": {
+        const { revokeShareToken } = await import("@/lib/billing/share-tokens");
+        await revokeShareToken("estimate", morrisConfig.companyId, id);
+        return apiOk({ revoked: true });
+      }
+      case "extend_link": {
+        const { extendShareToken } = await import("@/lib/billing/share-tokens");
+        const result = await extendShareToken(
+          "estimate",
+          morrisConfig.companyId,
+          id,
+          body.extendDays ?? 90
+        );
+        return apiOk(result);
       }
       default:
         return apiError("Unknown action", 400);

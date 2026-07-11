@@ -8,6 +8,7 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CompanyStatusBadge } from "@/components/public/CompanyStatusBadge";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
+import { useDivisionPublicStatus } from "@/components/public/useDivisionPublicStatus";
 import { ButtonLink } from "@/components/ui/button-link";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import {
@@ -19,6 +20,11 @@ import {
 export function MorrisServicesHomePage() {
   const junk = morrisServicesConfig.operatingCompanies[0];
   const hauling = morrisServicesConfig.haulingDivision;
+  const { status: junkStatus } = useDivisionPublicStatus("junk_removal");
+  const { status: haulingStatus } = useDivisionPublicStatus("hauling");
+  const junkCanBook = junkStatus?.acceptsBookings || junkStatus?.acceptsEstimateRequests;
+  const haulingCanBook =
+    haulingStatus?.acceptsBookings || haulingStatus?.acceptsEstimateRequests;
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-[#F7F5F2]">
@@ -144,7 +150,11 @@ export function MorrisServicesHomePage() {
                   className="h-auto w-full max-w-[16rem] object-contain sm:max-w-[18rem] md:max-w-[20rem]"
                   sizes="320px"
                 />
-                <CompanyStatusBadge status="open" className="mt-6" />
+                <CompanyStatusBadge
+                  divisionStatus={junkStatus?.launchStatus ?? "setup"}
+                  label={junkStatus?.statusLabel}
+                  className="mt-6"
+                />
                 <p className="mt-4 font-heading text-2xl font-medium text-foreground sm:text-3xl">
                   {junk.tagline}
                 </p>
@@ -170,11 +180,11 @@ export function MorrisServicesHomePage() {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </ButtonLink>
                   <ButtonLink
-                    href="/book?division=junk_removal"
+                    href={junkCanBook ? junkStatus?.bookPath ?? "/book?division=junk_removal" : "/contact"}
                     variant="outline"
                     className="h-11 rounded-full px-6"
                   >
-                    Book now
+                    {junkCanBook ? junkStatus?.bookingCtaLabel ?? "Request estimate" : "Contact us"}
                   </ButtonLink>
                 </div>
               </div>
@@ -195,7 +205,10 @@ export function MorrisServicesHomePage() {
                 sizes="160px"
               />
               <div className="text-center sm:text-left">
-                <CompanyStatusBadge status="open" />
+                <CompanyStatusBadge
+                  divisionStatus={haulingStatus?.launchStatus ?? "setup"}
+                  label={haulingStatus?.statusLabel}
+                />
                 <h3 className="mt-3 text-xl font-semibold tracking-tight">{hauling.name}</h3>
                 <p className="mt-2 max-w-xl text-sm text-muted-foreground">{hauling.tagline}</p>
               </div>
@@ -206,11 +219,17 @@ export function MorrisServicesHomePage() {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </ButtonLink>
               <ButtonLink
-                href="/book?division=hauling"
+                href={
+                  haulingCanBook
+                    ? haulingStatus?.bookPath ?? "/book?division=hauling"
+                    : "/contact"
+                }
                 variant="outline"
                 className="h-11 w-full rounded-full sm:w-auto"
               >
-                Book hauling
+                {haulingCanBook
+                  ? haulingStatus?.bookingCtaLabel ?? "Request estimate"
+                  : "Contact us"}
               </ButtonLink>
             </div>
           </div>

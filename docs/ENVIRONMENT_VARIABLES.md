@@ -21,18 +21,33 @@
 | `SUPABASE_SERVICE_ROLE_KEY` | service_role | Required |
 | `STAFF_OWNER_EMAILS` | owner emails | Required |
 | `DEMO_DATA` | unset / not `true` | Never enable in production |
-| `NEXT_PUBLIC_STRIPE_ENABLED` | `false` until Stripe live | Flip to `true` with keys + webhook |
+| `PAYMENTS_PROVIDER` | `manual` until Stripe | Set `stripe` to activate provider |
+| `STRIPE_ENABLED` | `false` until ready | Server enable flag |
+| `NEXT_PUBLIC_STRIPE_ENABLED` | `false` until Stripe live | Client checkout gate |
 | `STRIPE_SECRET_KEY` | unset until Stripe | |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | unset until Stripe | |
-| `STRIPE_WEBHOOK_SECRET` | unset until Stripe | |
+| `STRIPE_WEBHOOK_SECRET` | unset until Stripe | Point to `/api/payments/webhook` |
+| `NOTIFICATIONS_EMAIL_ENABLED` | `false` until ready | |
+| `RESEND_API_KEY` or `SMTP_*` | unset until email | |
+| `EMAIL_FROM` | optional | From address |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | browser Places key | Required for verified address booking |
 | `GOOGLE_MAPS_API_KEY` | server Maps key | Places Details + Geocoding + Directions |
 
-### Stripe activation (only remaining payment blocker)
+### Stripe activation checklist
 
-1. Add `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`
-2. Set `NEXT_PUBLIC_STRIPE_ENABLED=true`
-3. Redeploy — no additional code changes required
+1. Apply migration `045_stripe_email_tokens.sql`
+2. Add `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`
+3. Set webhook endpoint to `https://www.morris-services.com/api/payments/webhook`
+4. Set `PAYMENTS_PROVIDER=stripe`, `STRIPE_ENABLED=true`, `NEXT_PUBLIC_STRIPE_ENABLED=true`
+5. Run `npm run verify:production` and a $1 test charge + refund
+6. Manual cash/check remains available when Stripe is off
+
+### Email activation checklist
+
+1. Set `RESEND_API_KEY` (or `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS`) and `EMAIL_FROM`
+2. Set `NOTIFICATIONS_EMAIL_ENABLED=true`
+3. Optional: cron `POST /api/admin/notifications/retry` with `Authorization: Bearer $CRON_SECRET`
+4. Without credentials, sends stay `skipped` and staff copy customer links
 
 ---
 
@@ -52,6 +67,8 @@
 | `SUPABASE_SERVICE_ROLE_KEY` | **Server-only** | Uploads, signed URLs, privileged writes |
 | `STAFF_OWNER_EMAILS` | **Server-only** | Allowlist for admin/HR privileged roles |
 | `NODE_ENV` | Server (auto) | Set by Vercel to `production` |
+| `PAYMENTS_PROVIDER` | Server | `manual` \| `stripe` |
+| `STRIPE_ENABLED` | Server | Server Stripe enable |
 | `NEXT_PUBLIC_STRIPE_ENABLED` | Public | Online card checkout gate |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Public | Places Autocomplete (referrer-restricted) |
 | `GOOGLE_MAPS_API_KEY` | **Server-only** | Places Details, Geocoding, Directions |
@@ -61,9 +78,14 @@
 | Variable | Purpose |
 |----------|---------|
 | `STRIPE_SECRET_KEY` | Stripe server API |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe.js |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe.js / Checkout |
 | `STRIPE_WEBHOOK_SECRET` | Webhook verification |
+| `NOTIFICATIONS_EMAIL_ENABLED` | Enable outbound email worker |
+| `RESEND_API_KEY` | Resend provider |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` | SMTP fallback |
+| `EMAIL_FROM` / `RESEND_FROM` | From address |
+| `CRON_SECRET` | Auth for email retry cron |
 | `OSRM_URL` | Optional Directions fallback |
-| Email/SMS provider keys | Notifications (in-app events already enqueue) |
+| `NOTIFICATIONS_SMS_ENABLED` | SMS (not implemented yet) |
 
 See also `.env.example` for the current template.

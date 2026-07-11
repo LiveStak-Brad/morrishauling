@@ -42,25 +42,57 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await parseJson<{
-      action?: "void" | "mark_paid" | "send" | "resend";
+      action?:
+        | "void"
+        | "mark_paid"
+        | "send"
+        | "resend"
+        | "regenerate_link"
+        | "revoke_link"
+        | "extend_link";
       updates?: Partial<Invoice>;
       reason?: string;
+      extendDays?: number;
     }>(request);
+
+    if (body.action === "regenerate_link") {
+      const { regenerateShareToken } = await import("@/lib/billing/share-tokens");
+      const link = await regenerateShareToken("invoice", morrisConfig.companyId, id, {
+        extendDays: body.extendDays ?? 90,
+      });
+      return apiOk(link);
+    }
+    if (body.action === "revoke_link") {
+      const { revokeShareToken } = await import("@/lib/billing/share-tokens");
+      await revokeShareToken("invoice", morrisConfig.companyId, id);
+      return apiOk({ revoked: true });
+    }
+    if (body.action === "extend_link") {
+      const { extendShareToken } = await import("@/lib/billing/share-tokens");
+      const result = await extendShareToken(
+        "invoice",
+        morrisConfig.companyId,
+        id,
+        body.extendDays ?? 90
+      );
+      return apiOk(result);
+    }
 
     if (body.action === "send" || body.action === "resend") {
       const detail = await getAdminInvoiceDetail(morrisConfig.companyId, id);
       if (!detail) return apiError("Invoice not found", 404);
-      const emailConfigured =
-        process.env.NOTIFICATIONS_EMAIL_ENABLED === "true" &&
-        Boolean(process.env.RESEND_API_KEY || process.env.SMTP_HOST);
+      const { isEmailDeliveryConfigured } = await import("@/lib/billing/utils");
+      const emailConfigured = isEmailDeliveryConfigured();
       const { createShareToken } = await import("@/lib/billing/utils");
       const { logBillingAudit } = await import("@/lib/db/billing-operations");
+      const { getAppBaseUrl } = await import("@/lib/payments/stripe-client");
       const token = createShareToken();
       const now = new Date().toISOString();
+      const customerUrl = `${getAppBaseUrl()}/i/${token.token}`;
       const deliveryStatus = emailConfigured ? "pending" : "skipped";
       const deliveryError = emailConfigured
         ? null
-        : "Email delivery is not configured. Copy the customer link or download the PDF.";
+        : "Email provider not configured. Copy the customer link.";
 
       const invoice = await updateInvoice(
         morrisConfig.companyId,
@@ -82,6 +114,7 @@ export async function PATCH(
           .update({
             share_token_hash: token.hash,
             share_token_expires_at: token.expiresAt,
+            share_token_revoked_at: null,
             delivery_status: deliveryStatus,
             delivery_error: deliveryError,
             sent_at: detail.invoice.sentAt ?? now,
@@ -91,12 +124,13 @@ export async function PATCH(
       }
 
       const { enqueueNotification } = await import("@/lib/notifications/enqueue");
-      await enqueueNotification({
+      const delivery = await enqueueNotification({
         companyId: morrisConfig.companyId,
         jobId: detail.invoice.jobId,
         customerId: detail.invoice.customerId,
         eventType: "invoice_available",
-        channel: emailConfigured ? "email" : "in_app",
+        channel: "email",
+        payload: { customerUrl, invoiceId: id },
       });
 
       await logBillingAudit({
@@ -106,15 +140,17 @@ export async function PATCH(
         action: body.action === "resend" ? "invoice_resent" : "invoice_sent",
         actorProfileId: profile.id,
         actorRole: profile.role,
-        newValue: { deliveryStatus },
+        newValue: { deliveryStatus: delivery.deliveryStatus },
       });
 
-      const base = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
       return apiOk({
         invoice,
-        customerUrl: `${base}/i/${token.token}`,
-        deliveryStatus,
-        deliveryMessage: deliveryError ?? "Invoice queued for delivery.",
+        customerUrl,
+        deliveryStatus: delivery.deliveryStatus ?? deliveryStatus,
+        deliveryMessage:
+          delivery.deliveryMessage ??
+          deliveryError ??
+          "Invoice accepted by email provider (delivery confirmation may follow).",
       });
     }
 
