@@ -21,11 +21,11 @@ const fraunces = Fraunces({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.morris-services.com"),
   title: {
-    default: "Morris Services | Your home, restored.",
+    default: "Morris Service Group LLC | Professional Missouri Home Services",
     template: "%s | Morris Services",
   },
   description:
-    "Morris Services — Junk Removal and Hauling for Warren, Lincoln & St. Charles Counties, MO. Book online today.",
+    "Morris Services — Junk Removal and Hauling for Warren County and nearby Missouri communities. Request an estimate or call (636) 751-4645.",
   manifest: "/manifest.json",
   icons: {
     icon: [{ url: "/MorrisServicesLogo.png", type: "image/png" }],
@@ -36,24 +36,27 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://www.morris-services.com",
     siteName: "Morris Services",
-    title: "Morris Services | Your home, restored.",
+    title: "Morris Service Group LLC | Morris Services",
     description:
-      "The standard for home services. Starting with Morris Junk Removal in Warren, Lincoln & St. Charles Counties, MO.",
+      "Professional local home services — Morris Junk Removal and Morris Hauling across Warren County and nearby Missouri communities.",
     images: [
       {
-        url: "/MorrisServicesLogo.png",
-        width: 1334,
-        height: 820,
+        url: "/og/og-morris-services.png",
+        width: 1200,
+        height: 630,
         alt: "Morris Services",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Morris Services | Your home, restored.",
+    title: "Morris Service Group LLC | Morris Services",
     description:
-      "The standard for home services. Starting with Morris Junk Removal in Warren, Lincoln & St. Charles Counties, MO.",
-    images: ["/MorrisServicesLogo.png"],
+      "Professional local home services — Morris Junk Removal and Morris Hauling across Warren County and nearby Missouri communities.",
+    images: ["/og/og-morris-services.png"],
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
   },
   appleWebApp: {
     capable: true,

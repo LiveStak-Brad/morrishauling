@@ -6,6 +6,7 @@ import { ArrowRight, Phone } from "lucide-react";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
+import { FacebookFollow } from "@/components/seo/FacebookFollow";
 import { ButtonLink } from "@/components/ui/button-link";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import {
@@ -95,6 +96,10 @@ export default function AboutPage() {
             <Phone className="h-5 w-5" aria-hidden />
             (636) 751-4645
           </a>
+        </section>
+
+        <section className="mt-10">
+          <FacebookFollow />
         </section>
 
         <p className="mt-10 text-sm text-muted-foreground">

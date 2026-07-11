@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCompany } from "@/lib/company-context";
@@ -23,7 +23,7 @@ const TABS: Array<{ key: JobQueueGroup | "all"; label: string }> = [
   { key: "invoiced", label: "Invoiced" },
 ];
 
-export default function AdminJobsPage() {
+function AdminJobsPageContent() {
   const { companyId } = useCompany();
   const searchParams = useSearchParams();
   const initialTab = (searchParams.get("tab") as JobQueueGroup | "all" | null) ?? "all";
@@ -126,5 +126,19 @@ export default function AdminJobsPage() {
         ))}
       </div>
     </AdminPageShell>
+  );
+}
+
+export default function AdminJobsPage() {
+  return (
+    <Suspense
+      fallback={
+        <AdminPageShell title="Jobs" description="Loading…">
+          <p className="text-sm text-muted-foreground">Loading jobs…</p>
+        </AdminPageShell>
+      }
+    >
+      <AdminJobsPageContent />
+    </Suspense>
   );
 }

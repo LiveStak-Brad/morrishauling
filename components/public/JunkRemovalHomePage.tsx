@@ -14,10 +14,21 @@ import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import {
   HAULING_PROTOCOL,
-  JUNK_REMOVAL_SERVICES,
   SERVICE_AREA,
 } from "@/lib/public-copy";
 import { ButtonLink } from "@/components/ui/button-link";
+import { FaqAccordion } from "@/components/seo/FaqAccordion";
+import { FacebookFollow } from "@/components/seo/FacebookFollow";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { MarketingImage } from "@/components/seo/MarketingImage";
+import {
+  JUNK_DIVISION_FAQS,
+  JUNK_WHAT_WE_DONT,
+  JUNK_WHAT_WE_TAKE,
+} from "@/lib/seo/faqs";
+import { servicesForDivision } from "@/lib/seo/services";
+import { faqSchema, localBusinessSchema } from "@/lib/seo/schema";
+import { trackMarketingEvent } from "@/lib/seo/analytics";
 import { cn } from "@/lib/utils";
 
 /** Flagship division home — status from /admin/divisions (DB). */
@@ -30,8 +41,11 @@ export function JunkRemovalHomePage() {
   const bookHref = divisionStatus?.bookPath ?? "/book?division=junk_removal";
   const bookLabel = divisionStatus?.bookingCtaLabel ?? "Request estimate";
 
+  const junkServices = servicesForDivision("junk_removal");
+
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-[#F7F5F2]">
+      <JsonLd data={[localBusinessSchema("junk_removal"), faqSchema(JUNK_DIVISION_FAQS)]} />
       <CompanyBreadcrumbBar />
       <PublicHeader variant="company" />
 
@@ -90,27 +104,33 @@ export function JunkRemovalHomePage() {
               href={canBook ? bookHref : "/contact"}
               size="lg"
               className="h-12 min-h-[48px] w-full rounded-full bg-brand-primary px-8 text-base font-semibold shadow-lg shadow-brand-primary/20 hover:bg-brand-primary/90 sm:w-auto"
+              onClick={() =>
+                trackMarketingEvent("estimate_start", { division: "junk_removal", label: "hero" })
+              }
             >
               {canBook ? bookLabel : "Contact us"}
               <ArrowRight className="ml-2 h-5 w-5" />
             </ButtonLink>
             <ButtonLink
-              href="/services"
+              href="/junk-removal/services"
               size="lg"
               variant="outline"
               className="h-12 min-h-[48px] w-full rounded-full border-foreground/15 bg-white/70 sm:w-auto"
             >
-              View services
+              Choose a service
             </ButtonLink>
           </div>
 
           <a
             href={`tel:${tel}`}
+            onClick={() =>
+              trackMarketingEvent("phone_cta_click", { division: "junk_removal", label: "hero" })
+            }
             className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-brand-primary opacity-0 animate-fade-in hover:underline"
             style={{ animationFillMode: "forwards", animationDelay: "0.32s" }}
           >
             <Phone className="h-4 w-4" aria-hidden />
-            {company.phone}
+            Call {company.phone}
           </a>
         </div>
       </section>
@@ -154,45 +174,80 @@ export function JunkRemovalHomePage() {
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
-                What we clear
+                Common services
               </p>
               <h2 className="mt-2 font-heading text-3xl font-medium tracking-tight">
-                Junk Removal services
+                What we remove
               </h2>
             </div>
-            <ButtonLink href="/services" variant="link" className="h-auto p-0 font-semibold text-brand-primary">
+            <ButtonLink
+              href="/junk-removal/services"
+              variant="link"
+              className="h-auto p-0 font-semibold text-brand-primary"
+            >
               View all services →
             </ButtonLink>
           </div>
+          <div className="mb-8">
+            <MarketingImage imageKey="garage-cleanout-residential" sizes="(max-width: 768px) 100vw, 960px" />
+          </div>
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {JUNK_REMOVAL_SERVICES.map((name, i) => (
-              <li
-                key={name}
-                className={cn(
-                  "flex items-center gap-3 rounded-2xl border border-black/5 bg-white px-4 py-3.5 text-sm font-medium shadow-sm opacity-0 animate-slide-up"
-                )}
-                style={{ animationDelay: `${i * 0.03}s`, animationFillMode: "forwards" }}
-              >
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-primary" aria-hidden />
-                {name}
+            {junkServices.map((svc, i) => (
+              <li key={svc.slug}>
+                <Link
+                  href={`/junk-removal/services/${svc.slug}`}
+                  className={cn(
+                    "flex items-center gap-3 rounded-2xl border border-black/5 bg-white px-4 py-3.5 text-sm font-medium shadow-sm opacity-0 animate-slide-up hover:border-brand-primary/30"
+                  )}
+                  style={{ animationDelay: `${i * 0.03}s`, animationFillMode: "forwards" }}
+                >
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-primary" aria-hidden />
+                  {svc.name}
+                </Link>
               </li>
             ))}
           </ul>
         </section>
 
+        <section className="mt-16 grid gap-8 sm:mt-20 md:grid-cols-2">
+          <div>
+            <h2 className="font-heading text-2xl font-medium tracking-tight">What we take</h2>
+            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+              {JUNK_WHAT_WE_TAKE.map((item) => (
+                <li key={item} className="flex gap-2">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" aria-hidden />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2 className="font-heading text-2xl font-medium tracking-tight">What we do not take</h2>
+            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+              {JUNK_WHAT_WE_DONT.map((item) => (
+                <li key={item}>• {item}</li>
+              ))}
+            </ul>
+            <p className="mt-4 text-sm text-muted-foreground">
+              When items are suitable, we route toward donation or recycling partners. Not every item
+              qualifies — we stay honest about facility rules.
+            </p>
+          </div>
+        </section>
+
         <section className="mt-16 grid gap-4 sm:mt-20 md:grid-cols-3">
           {[
             {
-              title: "See the price before we load",
+              title: "See the estimate before we load",
               desc: "Volume, labor, and disposal explained up front — so you decide with a clear head.",
             },
             {
-              title: "Crews that treat your home as a home",
-              desc: "Careful loading, respectful presence, and a walkthrough before we leave.",
+              title: "Scope changes need your approval",
+              desc: "If the job is larger than the photos showed, we pause and review before continuing.",
             },
             {
               title: "Local, on purpose",
-              desc: `Built for ${SERVICE_AREA} — under the Morris Services seal.`,
+              desc: `Built for ${SERVICE_AREA} — under Morris Service Group LLC.`,
             },
           ].map((item, i) => (
             <div
@@ -207,18 +262,41 @@ export function JunkRemovalHomePage() {
         </section>
 
         <section className="mt-16 sm:mt-20">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="font-heading text-3xl font-medium tracking-tight">Service area</h2>
+              <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+                Primary coverage in Warren, Lincoln, and St. Charles Counties, with extended-area
+                service nearby. Travel expectations are disclosed before you book.
+              </p>
+            </div>
+            <ButtonLink href="/junk-removal/areas" variant="outline" className="h-11 rounded-full">
+              View service areas
+            </ButtonLink>
+          </div>
+        </section>
+
+        <section className="mt-16 sm:mt-20">
+          <h2 className="font-heading text-3xl font-medium tracking-tight">Frequently asked questions</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Straight answers about pricing, photos, and what happens on the day of service.
+          </p>
+          <FaqAccordion items={JUNK_DIVISION_FAQS} className="mt-6" />
+        </section>
+
+        <section className="mt-16 sm:mt-20">
           <div className="overflow-hidden rounded-[1.75rem] morris-gradient-bg p-8 text-white sm:p-10 md:p-12">
             <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
               <div className="max-w-lg">
                 <p className="text-sm font-semibold text-white/70">Ready when you are</p>
                 <h2 className="mt-2 font-heading text-3xl font-medium tracking-tight md:text-4xl">
-                  {canBook ? "Start your clear-out online" : "Reach out when you are ready"}
+                  {canBook ? "Request your junk removal estimate" : "Reach out when you are ready"}
                 </h2>
                 <ul className="mt-5 space-y-2.5">
                   {[
                     "Upload photos and get a clear estimate",
                     "Choose morning, afternoon, or flexible",
-                    "Track progress in your customer portal",
+                    "Approve scope changes before we continue",
                   ].map((t) => (
                     <li key={t} className="flex items-start gap-2 text-sm text-white/90">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-white/70" aria-hidden />
@@ -237,6 +315,10 @@ export function JunkRemovalHomePage() {
               </ButtonLink>
             </div>
           </div>
+        </section>
+
+        <section className="mt-12">
+          <FacebookFollow />
         </section>
 
         <section className="mt-16 rounded-[1.5rem] border border-dashed border-black/10 bg-white/60 p-6 sm:mt-20 sm:flex sm:items-center sm:justify-between sm:gap-8 sm:p-8">
@@ -272,7 +354,7 @@ export function JunkRemovalHomePage() {
       </main>
 
       <PublicFooter variant="company" />
-      <StickyMobileConcierge />
+      <StickyMobileConcierge divisionId="junk_removal" />
     </div>
   );
 }

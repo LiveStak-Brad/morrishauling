@@ -81,16 +81,27 @@ export default function ServicesPage() {
           </div>
         </section>
 
+        <div className="mt-8 flex flex-wrap gap-3">
+          <ButtonLink href="/junk-removal/services" variant="outline" className="h-11 rounded-full">
+            Detailed service pages
+          </ButtonLink>
+          <ButtonLink href="/junk-removal/areas" variant="outline" className="h-11 rounded-full">
+            View service areas
+          </ButtonLink>
+        </div>
+
         <div className="mt-12 flex flex-col gap-3 rounded-[1.25rem] bg-[#0A0A0A] p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
           <div>
             <h2 className="text-lg font-semibold">Ready to clear the space?</h2>
-            <p className="mt-1 text-sm text-white/65">Book online — photos, estimate, and scheduling in one flow.</p>
+            <p className="mt-1 text-sm text-white/65">
+              Request an estimate online — photos, estimate, and scheduling in one flow.
+            </p>
           </div>
           <ButtonLink
             href="/book?division=junk_removal"
             className="h-11 shrink-0 rounded-full bg-white text-brand-primary hover:bg-white/90"
           >
-            Book now
+            Request an estimate
             <ArrowRight className="ml-2 h-4 w-4" />
           </ButtonLink>
         </div>

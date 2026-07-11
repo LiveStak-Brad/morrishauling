@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
+import { FacebookFollow } from "@/components/seo/FacebookFollow";
 import { PRELAUNCH_SERVICE_AREA } from "@/lib/public-copy";
+import { SEO_ORG } from "@/lib/seo/site";
 import { cn } from "@/lib/utils";
 
 export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | "company" }) {
   const { company } = useCompany();
   const junk = morrisServicesConfig.operatingCompanies[0];
-  const haulingDiv = morrisServicesConfig.haulingDivision;
   const isUmbrella = variant === "umbrella";
 
   return (
@@ -23,8 +24,8 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
       )}
     >
       <div className="mx-auto max-w-6xl px-4 py-10">
-        <div className="grid gap-8 md:grid-cols-3">
-          <div>
+        <div className="grid gap-8 md:grid-cols-4">
+          <div className="md:col-span-1">
             {isUmbrella ? (
               <>
                 <MorrisServicesLogo height={88} href={undefined} className="max-h-20 md:max-h-24" />
@@ -46,6 +47,7 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
               {morrisServicesConfig.footerMission}
             </p>
           </div>
+
           <div>
             <p
               className={cn(
@@ -53,54 +55,79 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                 isUmbrella ? "text-muted-foreground" : "text-white/60"
               )}
             >
-              {isUmbrella ? "Explore" : junk.name}
+              Services
             </p>
-            <nav className="mt-3 flex flex-col gap-2 text-sm">
-              {isUmbrella ? (
-                <>
-                  <Link href="/" className="text-foreground/90 hover:text-brand-primary hover:underline">
-                    Home
-                  </Link>
-                  <Link href={junk.hubPath} className="text-foreground/90 hover:text-brand-primary hover:underline">
-                    {junk.name}
-                  </Link>
-                  <Link href={haulingDiv.hubPath} className="text-foreground/90 hover:text-brand-primary hover:underline">
-                    {haulingDiv.name}
-                  </Link>
-                  <Link href="/about" className="text-foreground/90 hover:text-brand-primary hover:underline">
-                    About
-                  </Link>
-                  <Link href="/careers" className="text-foreground/90 hover:text-brand-primary hover:underline">
-                    Careers
-                  </Link>
-                  <Link href="/contact" className="text-foreground/90 hover:text-brand-primary hover:underline">
-                    Contact
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link href="/junk-removal" className="text-white/90 hover:text-white hover:underline">
-                    Home
-                  </Link>
-                  <Link href="/services" className="text-white/90 hover:text-white hover:underline">
-                    Services
-                  </Link>
-                  <Link href="/pricing" className="text-white/90 hover:text-white hover:underline">
-                    Pricing
-                  </Link>
-                  <Link href="/book" className="text-white/90 hover:text-white hover:underline">
-                    Booking info
-                  </Link>
-                  <Link href="/careers" className="text-white/90 hover:text-white hover:underline">
-                    Careers
-                  </Link>
-                  <Link href="/" className="text-white/90 hover:text-white hover:underline">
-                    ← {morrisServicesConfig.publicBrandName}
-                  </Link>
-                </>
-              )}
+            <nav className="mt-3 flex flex-col gap-2 text-sm" aria-label="Footer services">
+              <Link
+                href="/junk-removal"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Morris Junk Removal
+              </Link>
+              <Link
+                href="/junk-removal/services"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Junk removal services
+              </Link>
+              <Link
+                href="/junk-removal/areas"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Junk removal areas
+              </Link>
+              <Link
+                href="/hauling"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Morris Hauling
+              </Link>
+              <Link
+                href="/hauling/services"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Hauling services
+              </Link>
+              <Link
+                href="/hauling/areas"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Hauling areas
+              </Link>
             </nav>
           </div>
+
+          <div>
+            <p
+              className={cn(
+                "text-sm font-semibold uppercase tracking-wide",
+                isUmbrella ? "text-muted-foreground" : "text-white/60"
+              )}
+            >
+              Company
+            </p>
+            <nav className="mt-3 flex flex-col gap-2 text-sm" aria-label="Footer company">
+              <Link href="/" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
+                Home
+              </Link>
+              <Link href="/about" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
+                About
+              </Link>
+              <Link href="/pricing" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
+                Pricing
+              </Link>
+              <Link href="/book" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
+                Request an estimate
+              </Link>
+              <Link href="/contact" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
+                Contact
+              </Link>
+              <Link href="/careers" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
+                Careers
+              </Link>
+            </nav>
+          </div>
+
           <div>
             <p
               className={cn(
@@ -124,8 +151,32 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
             <p className={cn("mt-2 text-sm", isUmbrella ? "text-muted-foreground" : "text-white/70")}>
               {PRELAUNCH_SERVICE_AREA}
             </p>
+            <p className={cn("mt-1 text-xs", isUmbrella ? "text-muted-foreground" : "text-white/50")}>
+              Service-area business — no public storefront.
+            </p>
+            <a
+              href={SEO_ORG.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                "mt-4 inline-flex items-center gap-2 text-sm font-semibold hover:underline",
+                isUmbrella ? "text-[#1877F2]" : "text-white"
+              )}
+            >
+              Follow on Facebook
+            </a>
           </div>
         </div>
+
+        <div className="mt-8">
+          <FacebookFollow
+            compact
+            className={cn(
+              isUmbrella ? "" : "border-white/15 bg-white/5 text-white [&_a]:border-white/20 [&_a]:bg-white/10 [&_a]:text-white"
+            )}
+          />
+        </div>
+
         <p
           className={cn(
             "mt-8 border-t pt-6 text-center text-xs",

@@ -8,6 +8,7 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CompanyStatusBadge } from "@/components/public/CompanyStatusBadge";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
+import { FacebookFollow } from "@/components/seo/FacebookFollow";
 import { useDivisionPublicStatus } from "@/components/public/useDivisionPublicStatus";
 import { ButtonLink } from "@/components/ui/button-link";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
@@ -16,6 +17,7 @@ import {
   MORRIS_STANDARD_PILLARS,
   SERVICE_AREA,
 } from "@/lib/public-copy";
+import { trackMarketingEvent } from "@/lib/seo/analytics";
 
 export function MorrisServicesHomePage() {
   const junk = morrisServicesConfig.operatingCompanies[0];
@@ -77,17 +79,18 @@ export function MorrisServicesHomePage() {
               href="/book"
               size="lg"
               className="h-12 min-h-[48px] w-full rounded-full bg-brand-primary px-8 text-base font-semibold shadow-lg shadow-brand-primary/20 hover:bg-brand-primary/90 sm:w-auto"
+              onClick={() => trackMarketingEvent("estimate_start", { division: "parent", label: "hero" })}
             >
-              Book service
+              Request an estimate
               <ArrowRight className="ml-2 h-5 w-5" />
             </ButtonLink>
             <ButtonLink
-              href="/#standard"
+              href="/#companies"
               size="lg"
               variant="outline"
               className="h-12 min-h-[48px] w-full rounded-full border-foreground/15 bg-white/70 sm:w-auto"
             >
-              See the Standard
+              Choose a service
             </ButtonLink>
           </div>
 
@@ -304,7 +307,7 @@ export function MorrisServicesHomePage() {
                 Concierge
               </p>
               <h2 className="mt-3 font-heading text-2xl font-medium tracking-tight sm:text-3xl">
-                Ready to book or have a question?
+                Ready for an estimate or have a question?
               </h2>
               <p className="mt-2 max-w-md text-muted-foreground">
                 Call for scheduling, commercial accounts, or careers.
@@ -313,16 +316,23 @@ export function MorrisServicesHomePage() {
             <div className="flex w-full flex-col gap-3 sm:w-auto">
               <a
                 href="tel:6367514645"
+                onClick={() =>
+                  trackMarketingEvent("phone_cta_click", { division: "parent", label: "home_cta" })
+                }
                 className="inline-flex h-12 min-h-[48px] items-center justify-center gap-2 rounded-full bg-brand-primary px-6 text-base font-semibold text-white shadow-md hover:bg-brand-primary/90"
               >
                 <Phone className="h-5 w-5" aria-hidden />
-                (636) 751-4645
+                Call (636) 751-4645
               </a>
-              <ButtonLink href="/contact" variant="outline" className="h-11 rounded-full">
-                Contact options
+              <ButtonLink href="/book" variant="outline" className="h-11 rounded-full">
+                Request an estimate
               </ButtonLink>
             </div>
           </div>
+        </section>
+
+        <section className="mt-12">
+          <FacebookFollow />
         </section>
 
         <p className="mt-12 text-center text-xs text-muted-foreground">

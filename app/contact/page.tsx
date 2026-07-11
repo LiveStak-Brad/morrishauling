@@ -5,6 +5,7 @@ import { ArrowRight, Mail, Phone } from "lucide-react";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
+import { FacebookFollow } from "@/components/seo/FacebookFollow";
 import { ButtonLink } from "@/components/ui/button-link";
 import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
@@ -78,6 +79,10 @@ export default function ContactPage() {
               Careers
             </ButtonLink>
           </div>
+        </section>
+
+        <section className="mt-8">
+          <FacebookFollow />
         </section>
 
         <p className="mt-10 text-sm text-muted-foreground">
