@@ -47,16 +47,20 @@ export default function AboutPage() {
           </p>
         </article>
 
-        <section className="mt-14">
-          <h2 className="font-heading text-2xl font-medium tracking-tight">The Morris Standard</h2>
-          <div className="mt-6 space-y-6">
+        <section className="mt-12">
+          <h2 className="font-heading text-xl font-medium tracking-tight sm:text-2xl">
+            The Morris Standard
+          </h2>
+          <ul className="mt-4 divide-y divide-black/5 rounded-2xl border border-black/5 bg-white">
             {MORRIS_STANDARD_PILLARS.map((pillar) => (
-              <div key={pillar.title} className="border-l-2 border-brand-primary/30 pl-5">
-                <h3 className="font-semibold">{pillar.title}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{pillar.description}</p>
-              </div>
+              <li key={pillar.title} className="px-4 py-2.5 sm:px-5">
+                <h3 className="text-sm font-semibold leading-5 tracking-tight">{pillar.title}</h3>
+                <p className="mt-0.5 text-xs leading-snug text-muted-foreground sm:text-sm sm:leading-relaxed">
+                  {pillar.description}
+                </p>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
 
         <section className="mt-14 overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-sm">

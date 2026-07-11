@@ -225,27 +225,40 @@ export function MorrisServicesHomePage() {
           </div>
         </section>
 
-        <section id="standard" className="mt-20 scroll-mt-24 sm:mt-24">
-          <div className="rounded-[1.75rem] border border-black/5 bg-[#0A0A0A] px-6 py-10 text-white sm:px-10 sm:py-14 md:px-14">
+        <section id="standard" className="mt-16 scroll-mt-24 sm:mt-20">
+          <div className="rounded-[1.5rem] border border-black/5 bg-[#0A0A0A] px-5 py-7 text-white sm:px-8 sm:py-10 md:px-10">
             <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/50">
               <Shield className="h-3.5 w-3.5 text-brand-primary" aria-hidden />
               The Morris Standard
             </div>
-            <h2 className="mt-4 max-w-2xl font-heading text-3xl font-medium tracking-tight sm:text-4xl">
+            <h2 className="mt-2 max-w-2xl font-heading text-2xl font-medium tracking-tight sm:mt-3 sm:text-3xl md:text-4xl">
               Trust you can inspect — not slogans you have to believe.
             </h2>
-            <div className="mt-10 grid gap-8 md:grid-cols-3">
+
+            {/* Mobile: compact stacked rows */}
+            <ul className="mt-5 divide-y divide-white/10 sm:hidden">
               {MORRIS_STANDARD_PILLARS.map((pillar) => (
-                <div key={pillar.title}>
-                  <h3 className="text-lg font-semibold">{pillar.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/65">{pillar.description}</p>
-                </div>
+                <li key={pillar.title} className="py-2.5">
+                  <h3 className="text-sm font-semibold leading-5 tracking-tight">{pillar.title}</h3>
+                  <p className="mt-0.5 text-xs leading-snug text-white/65">{pillar.description}</p>
+                </li>
               ))}
-            </div>
+            </ul>
+
+            {/* Tablet/desktop: tight three-up */}
+            <ul className="mt-7 hidden gap-6 sm:grid sm:grid-cols-3">
+              {MORRIS_STANDARD_PILLARS.map((pillar) => (
+                <li key={pillar.title}>
+                  <h3 className="text-base font-semibold tracking-tight">{pillar.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-white/65">{pillar.description}</p>
+                </li>
+              ))}
+            </ul>
+
             <ButtonLink
               href="/about"
               variant="outline"
-              className="mt-10 h-11 rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+              className="mt-6 h-10 rounded-full border-white/20 bg-transparent text-sm text-white hover:bg-white/10 hover:text-white sm:mt-8 sm:h-11"
             >
               Read our story
               <ArrowRight className="ml-2 h-4 w-4" />
