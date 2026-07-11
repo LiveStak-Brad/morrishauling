@@ -35,6 +35,7 @@ const companyLinks = [
   { href: "/junk-removal/resources", label: "Resources" },
   { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" },
+  { href: "/login", label: "My Account" },
 ];
 
 const loginLinks = [
@@ -156,6 +157,19 @@ export function PublicHeader({
               ))}
             </>
           )}
+          {variant === "company" && (
+            <>
+              <span
+                className={cn(
+                  "mx-1 hidden h-4 w-px md:block",
+                  onDark ? "bg-white/25" : "bg-border"
+                )}
+              />
+              {loginLinks.map((link) => (
+                <NavLink key={link.href} {...link} pathname={pathname} onDark={onDark} />
+              ))}
+            </>
+          )}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -240,16 +254,20 @@ export function PublicHeader({
                     </Link>
                   );
                 })}
-                {variant === "umbrella" &&
-                  loginLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="rounded-xl px-4 py-3 text-sm font-medium text-white/90 hover:bg-white/10"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                {loginLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                      onDark
+                        ? "text-white/90 hover:bg-white/10"
+                        : "hover:bg-muted"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
                 <a
                   href={`tel:${company.phone}`}
                   className={cn(
