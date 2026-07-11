@@ -72,11 +72,16 @@ export const morrisServicesConfig = {
       "Contractor Deliveries",
     ],
   },
+  /**
+   * Roadmap order: lightest startup cost / easiest to operate first.
+   * Seasonal driveway clearing can live under Lawn Care when that division opens —
+   * not a standalone snow-removal company.
+   */
   futureCompanies: [
-    { name: "Morris Window Cleaning", status: "coming_soon" as const, craft: "Glass" },
-    { name: "Morris Pressure Washing", status: "coming_soon" as const, craft: "Exterior" },
-    { name: "Morris Landscaping", status: "coming_soon" as const, craft: "Grounds" },
-    { name: "Morris Gutter Cleaning", status: "coming_soon" as const, craft: "Roof line" },
-    { name: "Morris Snow Removal", status: "coming_soon" as const, craft: "Winter" },
+    { name: "Morris Cleaning", status: "coming_soon" as const, craft: "Cleaning" },
+    { name: "Morris Window Cleaning", status: "coming_soon" as const, craft: "Window Cleaning" },
+    { name: "Morris Power Washing", status: "coming_soon" as const, craft: "Power Washing" },
+    { name: "Morris Lawn Care", status: "coming_soon" as const, craft: "Lawn Care" },
+    { name: "Morris Handyman", status: "coming_soon" as const, craft: "Handyman" },
   ] satisfies FutureCompany[],
 };

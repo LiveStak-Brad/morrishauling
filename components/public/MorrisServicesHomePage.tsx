@@ -261,7 +261,8 @@ export function MorrisServicesHomePage() {
             More crafts. Same seal.
           </h2>
           <p className="mt-3 max-w-xl text-muted-foreground">
-            We open one division at a time — fully — before the next.
+            Next crafts are everyday home services — lightest to start first, one division at a
+            time, fully before the next.
           </p>
           <div className="mt-8 flex flex-wrap gap-2">
             <Link
