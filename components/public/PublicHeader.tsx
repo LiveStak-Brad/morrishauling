@@ -188,6 +188,7 @@ export function PublicHeader({
 
           <Sheet>
             <SheetTrigger
+              aria-label="Open menu"
               className={cn(
                 buttonVariants({ size: "icon", variant: "ghost" }),
                 "rounded-full",
@@ -195,7 +196,7 @@ export function PublicHeader({
                 onDark && "text-white hover:bg-white/15 hover:text-white"
               )}
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5" aria-hidden />
             </SheetTrigger>
             <SheetContent
               side="right"

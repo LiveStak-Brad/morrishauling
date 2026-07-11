@@ -13,7 +13,6 @@ import { DIVISION_SEO } from "@/lib/seo/site";
 import {
   breadcrumbSchema,
   faqSchema,
-  localBusinessSchema,
   serviceSchema,
 } from "@/lib/seo/schema";
 
@@ -37,7 +36,6 @@ export function ServiceMarketingPage({ service }: { service: MarketingService })
     <div className="flex min-h-screen flex-col bg-[#F7F5F2]">
       <JsonLd
         data={[
-          localBusinessSchema(service.division),
           serviceSchema({
             name: service.name,
             description: service.description,
@@ -148,7 +146,7 @@ export function ServiceMarketingPage({ service }: { service: MarketingService })
         </div>
       </main>
       <PublicFooter variant={service.division === "junk_removal" ? "company" : "umbrella"} />
-      <StickyMobileConcierge />
+      <StickyMobileConcierge divisionId={service.division} />
     </div>
   );
 }

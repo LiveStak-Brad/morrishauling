@@ -42,3 +42,13 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# local Lighthouse / validation artifacts
+/lighthouse-reports/
+/lighthouse-*.log
+/lighthouse-summary.json
+/psi-results.json
+/*.report.html
+/build-val.txt
+/start-err.txt
+/start-out.txt

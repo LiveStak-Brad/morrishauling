@@ -40,13 +40,14 @@ export function localBusinessSchema(division: SeoDivisionId) {
   const d = DIVISION_SEO[division];
   return {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": "HomeAndConstructionBusiness",
     "@id": `${SITE_ORIGIN}${d.path}#business`,
     name: d.name,
     image: d.logo,
     url: `${SITE_ORIGIN}${d.path}`,
     telephone: SEO_ORG.phone,
     parentOrganization: { "@id": `${SITE_ORIGIN}/#organization` },
+    // Service-area business: intentionally omit PostalAddress and streetAddress.
     areaServed: SEO_ORG.primaryCounties.map((name) => ({
       "@type": "AdministrativeArea",
       name,

@@ -1,4 +1,6 @@
-/** Stock / marketing image registry — replace with authentic Morris photos later. */
+/** Stock / marketing image registry — replace with authentic Morris photos later.
+ * Internal license/source records: `lib/seo/image-licenses.ts` (not rendered publicly).
+ */
 
 export type MarketingImage = {
   src: string;

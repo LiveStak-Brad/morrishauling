@@ -11,7 +11,7 @@ import type { ServiceArea } from "@/lib/seo/locations";
 import { areasForDivision } from "@/lib/seo/locations";
 import { servicesForDivision } from "@/lib/seo/services";
 import { DIVISION_SEO } from "@/lib/seo/site";
-import { breadcrumbSchema, faqSchema, localBusinessSchema, webPageSchema } from "@/lib/seo/schema";
+import { breadcrumbSchema, faqSchema, webPageSchema } from "@/lib/seo/schema";
 
 export function AreaMarketingPage({
   area,
@@ -31,30 +31,34 @@ export function AreaMarketingPage({
     division === "junk_removal"
       ? [
           {
-            q: `Do you serve ${area.name} for junk removal?`,
-            a: `Yes. ${blurb}`,
+            q: `What should I know about junk removal in ${area.name}?`,
+            a: `${area.localContext ?? `We serve homes and businesses throughout ${area.name} and nearby communities.`}${
+              area.travelNote ? ` ${area.travelNote}` : ""
+            } Share photos plus any stairs, gates, parking limits, or long carries so we can plan the pickup accurately.`,
           },
           {
-            q: "Is the online estimate final?",
-            a: "Online amounts are estimates based on what you show us. If the on-site scope differs, we review changes with you before continuing.",
+            q: `How is a ${area.name} junk removal estimate prepared?`,
+            a: "We review photos, the amount and type of material, and access details before scheduling. If the actual load differs from what was submitted, we explain any price change before loading begins.",
           },
           {
-            q: "Do I need to be present?",
-            a: "Someone 18+ should be available for access unless we arrange otherwise in writing.",
+            q: "How should I prepare for the crew?",
+            a: "Identify what goes and what stays, clear a safe path when possible, and tell us about stairs, locked gates, or restricted parking. Someone 18 or older should provide access unless another arrangement is confirmed in writing.",
           },
         ]
       : [
           {
-            q: `Do you haul equipment in ${area.name}?`,
-            a: `Yes when the load and schedule fit. ${blurb}`,
+            q: `What should I know about hauling in ${area.name}?`,
+            a: `${area.localContext ?? `We review hauling requests throughout ${area.name} and nearby communities.`}${
+              area.travelNote ? ` ${area.travelNote}` : ""
+            } We confirm the route, access, load specifications, and schedule before accepting the move.`,
           },
           {
-            q: "Why do you need weight and dimensions?",
-            a: "Capacity and securement depend on accurate specs. Guessing creates unsafe or impossible jobs.",
+            q: `What details are needed for a ${area.name} hauling quote?`,
+            a: "Provide exact pickup and delivery addresses, equipment or material dimensions, estimated weight, operating condition, and photos. Those details determine trailer fit, securement needs, and whether both stops are safely accessible.",
           },
           {
-            q: "What if my load needs manual review?",
-            a: "We pause confirmation until a person reviews weight, dimensions, permits, and equipment fit — then we accept or decline clearly.",
+            q: "When does a hauling request need manual review?",
+            a: "Heavy, unusual, oversized, multi-stop, or permit-sensitive loads are not auto-confirmed. We review capacity, securement, route limits, and required equipment, then clearly accept, revise, or decline the request.",
           },
         ];
 
@@ -71,7 +75,6 @@ export function AreaMarketingPage({
     <div className="flex min-h-screen flex-col bg-[#F7F5F2]">
       <JsonLd
         data={[
-          localBusinessSchema(division),
           webPageSchema({
             name: `${division === "junk_removal" ? "Junk Removal" : "Hauling"} in ${area.name}, MO`,
             description: blurb,
@@ -100,13 +103,24 @@ export function AreaMarketingPage({
         )}
         <ConversionCtaGroup divisionId={division} className="mt-8" />
 
+        {area.localContext && (
+          <section className="mt-14">
+            <h2 className="font-heading text-2xl font-medium">Local service considerations</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+              {area.localContext}
+            </p>
+          </section>
+        )}
+
         <section className="mt-14">
           <h2 className="font-heading text-2xl font-medium">Residential & commercial</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-            {division === "junk_removal"
-              ? `In ${area.name} we help homeowners, landlords, and local businesses clear furniture, appliances, garages, estates, and property debris. Upload photos so the estimate matches the real job.`
-              : `In ${area.name} we support contractors and property owners with equipment moves, material delivery, and local transport — when weight, dimensions, and access fit our capacity.`}
-          </p>
+          {area.useCases && (
+            <ul className="mt-4 max-w-3xl list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+              {area.useCases.map((useCase) => (
+                <li key={useCase}>{useCase}</li>
+              ))}
+            </ul>
+          )}
         </section>
 
         <section className="mt-14">
@@ -152,7 +166,7 @@ export function AreaMarketingPage({
         </div>
       </main>
       <PublicFooter variant={division === "junk_removal" ? "company" : "umbrella"} />
-      <StickyMobileConcierge />
+      <StickyMobileConcierge divisionId={division} />
     </div>
   );
 }
