@@ -30,10 +30,11 @@ const umbrellaLinks = [
 
 const companyLinks = [
   { href: "/junk-removal", label: "Home" },
-  { href: "/services", label: "Services" },
+  { href: "/junk-removal/services", label: "Services" },
+  { href: "/junk-removal/areas", label: "Areas" },
+  { href: "/junk-removal/resources", label: "Resources" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/careers", label: "Careers" },
-  { href: "/login", label: "My Account" },
+  { href: "/contact", label: "Contact" },
 ];
 
 const loginLinks = [

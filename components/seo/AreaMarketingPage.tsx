@@ -161,6 +161,19 @@ export function AreaMarketingPage({
           />
         )}
 
+        {division === "junk_removal" && (
+          <RelatedLinks
+            title="Helpful resources"
+            links={[
+              { href: "/junk-removal/resources", label: "Resource center" },
+              { href: "/junk-removal/responsible-disposal", label: "Responsible disposal" },
+              { href: "/junk-removal/tools/can-we-take-this", label: "Can we take this?" },
+              { href: "/pricing", label: "Pricing explained" },
+              { href: "/book?division=junk_removal", label: "Request estimate" },
+            ]}
+          />
+        )}
+
         <div className="mt-14">
           <FacebookFollow />
         </div>

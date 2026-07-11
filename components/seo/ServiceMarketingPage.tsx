@@ -168,6 +168,20 @@ export function ServiceMarketingPage({ service }: { service: MarketingService })
             }))}
         />
 
+        {service.division === "junk_removal" && (
+          <RelatedLinks
+            title="Learn more"
+            links={[
+              { href: "/junk-removal/resources", label: "Resource center" },
+              { href: "/junk-removal/responsible-disposal", label: "Responsible disposal" },
+              { href: "/junk-removal/items", label: "What we can take" },
+              { href: "/pricing", label: "How pricing works" },
+              { href: "/junk-removal/areas", label: "Service areas" },
+              { href: "/book?division=junk_removal", label: "Request estimate" },
+            ]}
+          />
+        )}
+
         <div className="mt-14">
           <FacebookFollow />
         </div>

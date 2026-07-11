@@ -77,8 +77,14 @@ export function HaulingHomePage() {
             className="mt-5 max-w-3xl font-heading text-4xl font-medium leading-[1.1] tracking-tight text-foreground opacity-0 animate-slide-up sm:mt-6 sm:text-5xl md:text-6xl"
             style={{ animationFillMode: "forwards", animationDelay: "0.12s" }}
           >
-            Equipment &amp; material transport — not junk removal.
+            Hauling Services in Warren County, Missouri
           </h1>
+          <p
+            className="mt-3 max-w-2xl font-heading text-xl font-medium text-foreground/80 opacity-0 animate-slide-up sm:text-2xl"
+            style={{ animationFillMode: "forwards", animationDelay: "0.14s" }}
+          >
+            Equipment &amp; vehicle transport — not junk removal.
+          </p>
           <p
             className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground opacity-0 animate-slide-up sm:text-lg"
             style={{ animationFillMode: "forwards", animationDelay: "0.18s" }}

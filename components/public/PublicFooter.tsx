@@ -83,6 +83,18 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                 Responsible disposal
               </Link>
               <Link
+                href="/junk-removal/resources"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Resource center
+              </Link>
+              <Link
+                href="/junk-removal/items"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                What we can take
+              </Link>
+              <Link
                 href="/hauling"
                 className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
               >
@@ -118,6 +130,9 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
               </Link>
               <Link href="/about" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
                 About
+              </Link>
+              <Link href="/service-area" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
+                Service area
               </Link>
               <Link href="/pricing" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
                 Pricing

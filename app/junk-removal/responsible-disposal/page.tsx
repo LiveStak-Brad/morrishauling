@@ -90,6 +90,23 @@ export default function ResponsibleDisposalPage() {
 
         <section className="mt-14">
           <h2 className="font-heading text-2xl font-medium">How materials are evaluated</h2>
+          <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { step: "01", title: "Evaluate", body: "Condition, contamination, and material type." },
+              { step: "02", title: "Sort", body: "Donation, reuse, and recycling candidates when practical." },
+              { step: "03", title: "Route", body: "Specialty items to appropriate facilities when available." },
+              { step: "04", title: "Dispose", body: "Remaining material to suitable licensed options." },
+            ].map((item) => (
+              <li
+                key={item.step}
+                className="rounded-2xl border border-black/5 bg-white p-5 shadow-sm"
+              >
+                <span className="font-mono text-xs font-semibold text-brand-primary">{item.step}</span>
+                <h3 className="mt-2 font-semibold">{item.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{item.body}</p>
+              </li>
+            ))}
+          </ol>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2">
             {HOW_MATERIALS_ARE_EVALUATED.map((item) => (
               <li

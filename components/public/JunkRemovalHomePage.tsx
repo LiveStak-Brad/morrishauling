@@ -85,15 +85,20 @@ export function JunkRemovalHomePage() {
             className="mt-5 max-w-3xl font-heading text-4xl font-medium leading-[1.1] tracking-tight text-foreground opacity-0 animate-slide-up sm:mt-6 sm:text-5xl md:text-6xl"
             style={{ animationFillMode: "forwards", animationDelay: "0.12s" }}
           >
-            Clear the space.
-            <br />
-            Keep the peace.
+            Junk Removal in Warren County, Missouri
           </h1>
+          <p
+            className="mt-3 max-w-2xl font-heading text-xl font-medium text-foreground/80 opacity-0 animate-slide-up sm:text-2xl"
+            style={{ animationFillMode: "forwards", animationDelay: "0.14s" }}
+          >
+            Clear the space. Keep the peace.
+          </p>
           <p
             className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground opacity-0 animate-slide-up sm:text-lg"
             style={{ animationFillMode: "forwards", animationDelay: "0.18s" }}
           >
-            Professional junk removal and property cleanouts for {SERVICE_AREA}.
+            Residential and commercial junk removal, cleanouts, and responsible material handling
+            across {SERVICE_AREA}.
           </p>
 
           <div
@@ -264,6 +269,36 @@ export function JunkRemovalHomePage() {
           >
             Read about responsible disposal & recycling →
           </a>
+        </section>
+
+        <section className="mt-16 sm:mt-20">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
+            Resource center
+          </p>
+          <h2 className="mt-2 font-heading text-3xl font-medium tracking-tight">
+            Guides, items, and tools
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+            Educational resources for pricing, preparation, what we can take, and how materials are
+            handled — built to answer real questions before you book.
+          </p>
+          <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { href: "/junk-removal/resources", label: "Resource center" },
+              { href: "/junk-removal/items", label: "What can we take?" },
+              { href: "/junk-removal/guides", label: "Guides & checklists" },
+              { href: "/junk-removal/tools", label: "Estimating tools" },
+            ].map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="flex h-full items-center rounded-2xl border border-black/5 bg-white px-4 py-3.5 text-sm font-medium shadow-sm hover:border-brand-primary/30"
+                >
+                  {link.label} →
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section className="mt-16 grid gap-4 sm:mt-20 md:grid-cols-3">

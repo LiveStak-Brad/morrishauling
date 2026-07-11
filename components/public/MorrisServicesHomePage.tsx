@@ -133,10 +133,12 @@ export function MorrisServicesHomePage() {
               Operating now
             </p>
             <h2 className="font-heading text-3xl font-medium tracking-tight sm:text-4xl">
-              Junk Removal & Hauling
+              One parent company. Focused operating divisions.
             </h2>
             <p className="max-w-2xl text-muted-foreground">
-              Two divisions. One Morris account. Book the craft you need.
+              Morris Service Group LLC is the parent. Morris Junk Removal owns junk removal
+              searches. Morris Hauling owns equipment and material transport. Future crafts will
+              join the same family — without competing for the same keywords.
             </p>
           </div>
 

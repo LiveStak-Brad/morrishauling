@@ -2,6 +2,9 @@ import type { MetadataRoute } from "next";
 import { SITE_ORIGIN } from "@/lib/seo/site";
 import { areasForDivision } from "@/lib/seo/locations";
 import { servicesForDivision } from "@/lib/seo/services";
+import { allGuideSlugs } from "@/lib/seo/guides";
+import { allItemSlugs } from "@/lib/seo/items";
+import { allTopicSlugs } from "@/lib/seo/topics";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -18,6 +21,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_ORIGIN}/careers/jobs`, lastModified: now, changeFrequency: "weekly", priority: 0.55 },
     { url: `${SITE_ORIGIN}/junk-removal/services`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${SITE_ORIGIN}/junk-removal/responsible-disposal`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_ORIGIN}/junk-removal/resources`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
+    { url: `${SITE_ORIGIN}/junk-removal/guides`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${SITE_ORIGIN}/junk-removal/items`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${SITE_ORIGIN}/junk-removal/topics`, lastModified: now, changeFrequency: "weekly", priority: 0.75 },
+    { url: `${SITE_ORIGIN}/junk-removal/tools`, lastModified: now, changeFrequency: "monthly", priority: 0.75 },
+    { url: `${SITE_ORIGIN}/junk-removal/tools/load-size-estimator`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_ORIGIN}/junk-removal/tools/can-we-take-this`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_ORIGIN}/junk-removal/tools/service-area-checker`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_ORIGIN}/junk-removal/commercial`, lastModified: now, changeFrequency: "monthly", priority: 0.75 },
+    { url: `${SITE_ORIGIN}/junk-removal/seasonal`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_ORIGIN}/service-area`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_ORIGIN}/hauling/services`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${SITE_ORIGIN}/junk-removal/areas`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_ORIGIN}/hauling/areas`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
@@ -47,6 +61,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
+  const guides = allGuideSlugs().map((slug) => ({
+    url: `${SITE_ORIGIN}/junk-removal/guides/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.72,
+  }));
+  const items = allItemSlugs().map((slug) => ({
+    url: `${SITE_ORIGIN}/junk-removal/items/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.72,
+  }));
+  const topics = allTopicSlugs().map((slug) => ({
+    url: `${SITE_ORIGIN}/junk-removal/topics/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.74,
+  }));
 
-  return [...staticRoutes, ...junkServices, ...haulingServices, ...junkAreas, ...haulingAreas];
+  return [
+    ...staticRoutes,
+    ...junkServices,
+    ...haulingServices,
+    ...junkAreas,
+    ...haulingAreas,
+    ...guides,
+    ...items,
+    ...topics,
+  ];
 }
