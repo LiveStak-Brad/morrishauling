@@ -14,6 +14,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { useEffectivePricing } from "@/hooks/useEffectivePricing";
 import { BOOKING_CATEGORIES, getBookingCategory } from "@/lib/booking-categories";
 import { AccessDetailsForm } from "@/components/estimate/AccessDetailsForm";
+import { MaterialHandlingQuestions } from "@/components/estimate/MaterialHandlingQuestions";
 import { DisclaimerAccept } from "@/components/estimate/DisclaimerAccept";
 import { PaymentOptionPicker } from "@/components/payments/PaymentOptionPicker";
 import { BookingCategoryCard } from "@/components/morris/BookingCategoryCard";
@@ -56,6 +57,7 @@ const defaultAccess: AccessDetails = {
   tightAccess: false,
   heavyItems: false,
   specialDisposal: false,
+  materialHandling: {},
 };
 
 const PRIORITY_OPTIONS: { id: JunkPriorityLevel; label: string; desc: string }[] = [
@@ -696,10 +698,30 @@ export function BookingWizard({ demoMode = false }: { demoMode?: boolean }) {
 
     if (label === "Access") {
       return (
-        <PremiumCard className="p-6">
-          <h2 className="text-xl font-bold">Access details</h2>
-          <div className="mt-5"><AccessDetailsForm value={access} onChange={setAccess} /></div>
-        </PremiumCard>
+        <div className="space-y-4">
+          <PremiumCard className="p-6">
+            <h2 className="text-xl font-bold">Access details</h2>
+            <div className="mt-5">
+              <AccessDetailsForm value={access} onChange={setAccess} />
+            </div>
+          </PremiumCard>
+          <PremiumCard className="p-6">
+            <MaterialHandlingQuestions
+              value={access.materialHandling ?? {}}
+              junkCategory={junkType}
+              onChange={(materialHandling) => {
+                const specialty =
+                  materialHandling.specialtyItemsIncluded === true ||
+                  materialHandling.electronicsIncluded === true;
+                setAccess({
+                  ...access,
+                  materialHandling,
+                  specialDisposal: specialty || access.specialDisposal,
+                });
+              }}
+            />
+          </PremiumCard>
+        </div>
       );
     }
 

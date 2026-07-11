@@ -16,6 +16,8 @@ export type MarketingService = {
   related: string[];
   faqs: Array<{ q: string; a: string }>;
   imageKey: string;
+  /** Honest, material-specific responsible disposal note (junk services) */
+  responsibleDisposal?: string;
 };
 
 export const JUNK_SERVICES: MarketingService[] = [
@@ -35,6 +37,8 @@ export const JUNK_SERVICES: MarketingService[] = [
     process: ["Request an estimate with photos", "Approve the estimate", "We arrive in your window and remove the listed items"],
     related: ["mattress-removal", "appliance-removal", "garage-cleanouts"],
     imageKey: "furniture-removal",
+    responsibleDisposal:
+      "Usable furniture may be considered for donation where accepted; damaged, stained, or contaminated furniture may require disposal. Final handling depends on condition and available receivers.",
     faqs: [
       {
         q: "Do you remove a single couch or mattress?",
@@ -62,6 +66,8 @@ export const JUNK_SERVICES: MarketingService[] = [
     process: ["Upload photos", "Approve estimate", "Have appliances ready on arrival"],
     related: ["furniture-removal", "garage-cleanouts", "commercial-cleanouts"],
     imageKey: "junk-removal-truck",
+    responsibleDisposal:
+      "Appliances may require metal recycling, refrigerant handling, or specialty disposal depending on type and condition. Identify freon appliances and whether units are empty when you request an estimate.",
     faqs: [
       {
         q: "Do you unhook appliances?",
@@ -85,6 +91,8 @@ export const JUNK_SERVICES: MarketingService[] = [
     process: ["Request estimate", "Approve", "We remove on the scheduled visit"],
     related: ["furniture-removal", "estate-cleanouts"],
     imageKey: "furniture-removal",
+    responsibleDisposal:
+      "Mattresses and box springs are often facility-restricted. Some locations accept them for recycling or specialty disposal; heavily soiled pieces may have fewer options.",
     faqs: [
       {
         q: "Can you take mattresses with other junk?",
@@ -108,6 +116,8 @@ export const JUNK_SERVICES: MarketingService[] = [
     process: ["Send photos", "Approve estimate", "Clear a path; we load and haul"],
     related: ["basement-attic-cleanouts", "estate-cleanouts", "furniture-removal"],
     imageKey: "junk-removal-truck",
+    responsibleDisposal:
+      "Garage loads often mix scrap metal, cardboard, usable goods, and general junk. We sort for donation or recycling when practical; mixed or contaminated piles may limit what can be diverted.",
     faqs: [
       {
         q: "Do you take everything in the garage?",
@@ -131,6 +141,8 @@ export const JUNK_SERVICES: MarketingService[] = [
     process: ["Walkthrough via photos or on-site notes", "Written estimate", "Scheduled clear-out"],
     related: ["garage-cleanouts", "basement-attic-cleanouts", "furniture-removal"],
     imageKey: "junk-removal-truck",
+    responsibleDisposal:
+      "Estate jobs can include donation-ready household goods alongside items that need disposal. We evaluate condition on site and route materials based on what local partners and facilities will accept.",
     faqs: [
       {
         q: "Can you work in phases?",
@@ -154,6 +166,8 @@ export const JUNK_SERVICES: MarketingService[] = [
     process: ["Photo estimate", "Approve", "Clear paths before arrival"],
     related: ["garage-cleanouts", "estate-cleanouts"],
     imageKey: "junk-removal-truck",
+    responsibleDisposal:
+      "Basement and attic items may include salvageable goods plus moldy, pest-exposed, or water-damaged material that cannot be donated. Tell us about moisture or pest history when requesting an estimate.",
     faqs: [
       {
         q: "Do stairs change the price?",
@@ -177,6 +191,8 @@ export const JUNK_SERVICES: MarketingService[] = [
     process: ["Request estimate", "Approve scope", "We complete and document as agreed"],
     related: ["construction-debris-removal", "storage-unit-cleanouts"],
     imageKey: "junk-removal-truck",
+    responsibleDisposal:
+      "Commercial cleanouts may include office furniture, fixtures, cardboard, and mixed debris. Usable office furniture may be donation candidates; mixed demolition-style debris often needs different handling.",
     faqs: [
       {
         q: "Can you work after hours?",
@@ -200,6 +216,8 @@ export const JUNK_SERVICES: MarketingService[] = [
     process: ["Photos + access notes", "Estimate", "Scheduled clear-out"],
     related: ["estate-cleanouts", "garage-cleanouts"],
     imageKey: "junk-removal-truck",
+    responsibleDisposal:
+      "Storage units vary widely — some hold reusable goods, others hold damaged or mixed waste. We sort when practical; abandoned or contaminated contents may require disposal.",
     faqs: [
       {
         q: "Do you sweep the unit?",
@@ -223,6 +241,8 @@ export const JUNK_SERVICES: MarketingService[] = [
     process: ["Describe materials with photos", "Approve estimate", "We load and dispose properly"],
     related: ["commercial-cleanouts", "hot-tub-shed-removal"],
     imageKey: "junk-removal-truck",
+    responsibleDisposal:
+      "Clean wood, metal, concrete, cardboard, and other separated materials may have recycling options. Mixed debris may need different handling. Separating materials before pickup improves routing options.",
     faqs: [
       {
         q: "Do you take drywall and lumber?",
@@ -246,6 +266,8 @@ export const JUNK_SERVICES: MarketingService[] = [
     process: ["Photos and measurements", "Estimate with review notes", "Scheduled removal"],
     related: ["construction-debris-removal", "garage-cleanouts"],
     imageKey: "junk-removal-truck",
+    responsibleDisposal:
+      "Hot tubs and sheds often involve mixed materials (plastic, wood, metal, foam). Components may be separated for scrap or disposal when practical; intact donation is uncommon.",
     faqs: [
       {
         q: "Do you demolish sheds?",

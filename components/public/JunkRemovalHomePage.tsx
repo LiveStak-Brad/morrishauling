@@ -233,10 +233,37 @@ export function JunkRemovalHomePage() {
               ))}
             </ul>
             <p className="mt-4 text-sm text-muted-foreground">
-              When items are suitable, we route toward donation or recycling partners. Not every item
-              qualifies — we stay honest about facility rules.
+              When items are suitable, we look for practical donation or recycling options. Not every
+              item qualifies — we stay honest about facility rules.{" "}
+              <a
+                href="/junk-removal/responsible-disposal"
+                className="font-semibold text-brand-primary hover:underline"
+              >
+                Responsible disposal details
+              </a>
             </p>
           </div>
+        </section>
+
+        <section className="mt-16 sm:mt-20">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
+            Responsible material handling
+          </p>
+          <h2 className="mt-2 font-heading text-3xl font-medium tracking-tight">
+            We Do More Than Haul It Away
+          </h2>
+          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            We look for practical opportunities to donate usable items, recycle recoverable
+            materials, and route specialty items to appropriate facilities. When reuse or recycling
+            is not available, we use suitable disposal options based on the material and local
+            requirements.
+          </p>
+          <a
+            href="/junk-removal/responsible-disposal"
+            className="mt-4 inline-flex text-sm font-semibold text-brand-primary hover:underline"
+          >
+            Read about responsible disposal & recycling →
+          </a>
         </section>
 
         <section className="mt-16 grid gap-4 sm:mt-20 md:grid-cols-3">

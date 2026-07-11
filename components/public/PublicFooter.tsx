@@ -77,6 +77,12 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                 Junk removal areas
               </Link>
               <Link
+                href="/junk-removal/responsible-disposal"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Responsible disposal
+              </Link>
+              <Link
                 href="/hauling"
                 className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
               >

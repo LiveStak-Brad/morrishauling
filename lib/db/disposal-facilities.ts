@@ -225,6 +225,7 @@ export async function recordJobDisposal(
     markJobCompleted?: boolean;
     noDisposalCostReason?: string;
     actorProfileId?: string;
+    materialHandlingOutcomes?: import("@/lib/disposal/material-handling-outcomes").MaterialHandlingOutcomeLine[];
   }
 ) {
   if (
@@ -271,6 +272,7 @@ export async function recordJobDisposal(
     actual_profit_margin: profit?.profitMargin ?? null,
     no_disposal_cost_reason: input.noDisposalCostReason ?? null,
     disposal_review_status: "pending",
+    material_handling_outcomes: input.materialHandlingOutcomes ?? [],
     updated_at: now,
   };
 

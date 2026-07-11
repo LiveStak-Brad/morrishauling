@@ -78,6 +78,7 @@ export async function PATCH(
       truckOperatingCost?: number;
       markJobCompleted?: boolean;
       noDisposalCostReason?: string;
+      materialHandlingOutcomes?: import("@/lib/disposal/material-handling-outcomes").MaterialHandlingOutcomeLine[];
     }>(request);
 
     if (!body.actualSiteId || body.actualCost == null) {

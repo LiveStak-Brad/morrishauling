@@ -121,6 +121,23 @@ export function ServiceMarketingPage({ service }: { service: MarketingService })
           </ul>
         </section>
 
+        {service.responsibleDisposal && (
+          <section className="mt-14 rounded-2xl border border-black/5 bg-white p-6 shadow-sm">
+            <h2 className="font-heading text-2xl font-medium">Responsible disposal</h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              {service.responsibleDisposal}
+            </p>
+            <p className="mt-3 text-sm text-muted-foreground">
+              <a
+                href="/junk-removal/responsible-disposal"
+                className="font-semibold text-brand-primary hover:underline"
+              >
+                Learn how we handle donation, recycling, and disposal →
+              </a>
+            </p>
+          </section>
+        )}
+
         <section className="mt-14">
           <h2 className="font-heading text-2xl font-medium">How it works</h2>
           <ol className="mt-4 grid gap-3 sm:grid-cols-3">

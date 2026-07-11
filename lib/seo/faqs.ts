@@ -27,7 +27,11 @@ export const JUNK_DIVISION_FAQS = [
   },
   {
     q: "Do you donate or recycle?",
-    a: "When items are suitable and facilities or partners accept them, we route responsibly. Not every item can be donated.",
+    a: "Morris Junk Removal prioritizes recycling, donation, reuse, and appropriate disposal whenever practical and available. Final handling depends on item condition, contamination, local facility availability, and applicable rules — we do not recycle everything or guarantee diversion rates.",
+  },
+  {
+    q: "Where can I learn more about responsible disposal?",
+    a: "See our Responsible Disposal & Recycling page for what may be donated, recycled, or disposed, and how you can help by identifying materials in your estimate request.",
   },
   {
     q: "Do I need to be present?",

@@ -341,6 +341,9 @@ export function rowToJunkRemovalDetails(row: Record<string, unknown>): import("@
     noDisposalCostReason: (row.no_disposal_cost_reason as string) ?? undefined,
     disposalReviewStatus: (row.disposal_review_status as import("@/lib/disposal/disposal-requirements").DisposalReviewStatus) ?? undefined,
     disposalReviewNotes: (row.disposal_review_notes as string) ?? undefined,
+    materialHandlingOutcomes: Array.isArray(row.material_handling_outcomes)
+      ? (row.material_handling_outcomes as import("@/lib/disposal/material-handling-outcomes").MaterialHandlingOutcomeLine[])
+      : undefined,
     selectedScheduleSlotId: (row.selected_schedule_slot_id as string) ?? undefined,
     scheduledWindowLabel: (row.scheduled_window_label as string) ?? undefined,
     flexibleDiscountAmount:

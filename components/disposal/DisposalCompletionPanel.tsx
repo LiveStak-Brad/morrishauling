@@ -18,6 +18,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { NO_DISPOSAL_COST_REASONS } from "@/lib/disposal/disposal-requirements";
+import {
+  MATERIAL_HANDLING_OUTCOMES,
+  type MaterialHandlingOutcomeLine,
+} from "@/lib/disposal/material-handling-outcomes";
 import type {
   DisposalRecommendationResult,
   DisposalSiteScore,
@@ -67,6 +71,9 @@ export function DisposalCompletionPanel({
   const [uploadingReceipt, setUploadingReceipt] = useState(false);
   const [uploadingTicket, setUploadingTicket] = useState(false);
   const [alreadyCompleted, setAlreadyCompleted] = useState(false);
+  const [outcomeLines, setOutcomeLines] = useState<MaterialHandlingOutcomeLine[]>([
+    { label: "", outcome: "landfill_disposal" },
+  ]);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -161,6 +168,7 @@ export function DisposalCompletionPanel({
           laborCost: activeScore.costs.laborCost + activeScore.costs.waitCost + activeScore.costs.unloadLaborCost,
           truckOperatingCost: activeScore.costs.truckOperatingCost,
           markJobCompleted,
+          materialHandlingOutcomes: outcomeLines.filter((l) => l.label.trim()),
         }),
       });
       const d = await res.json();
@@ -429,6 +437,62 @@ export function DisposalCompletionPanel({
                 }}
               />
             </label>
+          </div>
+        </div>
+
+        <div>
+          <Label className="text-xs">Material handling outcomes (optional)</Label>
+          <p className="mb-2 text-[11px] text-muted-foreground">
+            Record only what actually happened — customers see these lines when present.
+          </p>
+          <div className="space-y-2">
+            {outcomeLines.map((line, idx) => (
+              <div key={idx} className="flex flex-col gap-2 sm:flex-row">
+                <Input
+                  placeholder="e.g. Scrap metal"
+                  value={line.label}
+                  className={mobileFirst ? "h-12 text-base" : ""}
+                  onChange={(e) => {
+                    const next = [...outcomeLines];
+                    next[idx] = { ...next[idx], label: e.target.value };
+                    setOutcomeLines(next);
+                  }}
+                />
+                <Select
+                  value={line.outcome}
+                  onValueChange={(v) => {
+                    const next = [...outcomeLines];
+                    next[idx] = {
+                      ...next[idx],
+                      outcome: v as MaterialHandlingOutcomeLine["outcome"],
+                    };
+                    setOutcomeLines(next);
+                  }}
+                >
+                  <SelectTrigger className={mobileFirst ? "h-12" : ""}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MATERIAL_HANDLING_OUTCOMES.map((o) => (
+                      <SelectItem key={o.id} value={o.id}>
+                        {o.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="rounded-xl"
+              onClick={() =>
+                setOutcomeLines([...outcomeLines, { label: "", outcome: "recycled" }])
+              }
+            >
+              Add material line
+            </Button>
           </div>
         </div>
 

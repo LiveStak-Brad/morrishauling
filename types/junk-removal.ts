@@ -131,6 +131,8 @@ export interface JunkRemovalDetails {
   noDisposalCostReason?: string;
   disposalReviewStatus?: import("@/lib/disposal/disposal-requirements").DisposalReviewStatus;
   disposalReviewNotes?: string;
+  /** Staff-recorded only — never auto-fabricated */
+  materialHandlingOutcomes?: import("@/lib/disposal/material-handling-outcomes").MaterialHandlingOutcomeLine[];
   selectedScheduleSlotId?: string;
   scheduledWindowLabel?: string;
   flexibleDiscountAmount?: number;

@@ -56,6 +56,18 @@ export interface AccessDetails {
   heavyItems: boolean;
   specialDisposal: boolean;
   notes?: string;
+  /** Optional customer answers to help plan donation/recycling/specialty routing */
+  materialHandling?: MaterialHandlingAnswers;
+}
+
+/** Customer estimate answers — optional, not required to book */
+export interface MaterialHandlingAnswers {
+  reusableItems?: boolean;
+  electronicsIncluded?: boolean;
+  appliancesIncluded?: boolean;
+  specialtyItemsIncluded?: boolean;
+  constructionSeparated?: boolean;
+  yardWasteSeparated?: boolean;
 }
 
 export interface JunkItem {

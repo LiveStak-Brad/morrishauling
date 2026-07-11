@@ -68,7 +68,7 @@ export function buildJunkRemovalLineLabel(input: {
 export const CUSTOMER_DISPOSAL_HEADING = "Responsible Disposal & Recycling";
 
 export const CUSTOMER_DISPOSAL_PROCESS =
-  "Whenever possible, items are sorted for donation, recycling, or responsible disposal in accordance with local regulations. Our crews transport materials to the most appropriate licensed recycling or disposal facilities based on the items collected.";
+  "Whenever possible, we sort items for donation, reuse, or recycling before sending remaining material to an appropriate disposal facility. Final handling depends on item condition, contamination, local facility availability, and applicable rules.";
 
 /**
  * @deprecated Do not show facility names to customers. Prefer CUSTOMER_DISPOSAL_HEADING.

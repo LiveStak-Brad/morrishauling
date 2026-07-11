@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_ORIGIN}/careers`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_ORIGIN}/careers/jobs`, lastModified: now, changeFrequency: "weekly", priority: 0.55 },
     { url: `${SITE_ORIGIN}/junk-removal/services`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
+    { url: `${SITE_ORIGIN}/junk-removal/responsible-disposal`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_ORIGIN}/hauling/services`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${SITE_ORIGIN}/junk-removal/areas`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_ORIGIN}/hauling/areas`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },

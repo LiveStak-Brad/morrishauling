@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { JunkRemovalEstimateResult } from "@/lib/estimate/junk-removal-engine";
 import {
   CUSTOMER_DISPOSAL_HEADING,
@@ -263,6 +264,12 @@ export function JunkEstimateReview({
             </dd>
           </div>
         </dl>
+        <Link
+          href="/junk-removal/responsible-disposal"
+          className="mt-3 inline-block text-sm font-semibold text-brand-primary hover:underline"
+        >
+          Learn more about responsible disposal →
+        </Link>
         {estimate.route.disposalUncertain && (
           <StatusChip
             label="Disposal details confirmed after review"

@@ -16,6 +16,7 @@ import type { HaulingEstimateResult } from "@/lib/estimate/hauling-transport-eng
 import { junkRemovalEngine } from "@/lib/estimate/junk-removal-engine";
 import { JunkEstimateReview, JunkStaffRouteCard } from "@/components/junk/JunkEstimateReview";
 import { JunkInternalProfitCard } from "@/components/junk/JunkInternalProfitCard";
+import { MaterialHandlingSummary } from "@/components/junk/MaterialHandlingSummary";
 
 function jobToEstimateResult(job: Job): HaulingEstimateResult | null {
   const hd = job.haulingDetails;
@@ -267,7 +268,9 @@ export function CustomerJunkJobDetail({ job }: { job: Job }) {
   );
 
   return (
-    <JunkEstimateReview
+    <div className="space-y-4">
+      <MaterialHandlingSummary job={job} />
+      <JunkEstimateReview
       mode={jrd.estimateMode}
       estimate={estimate}
       selectedItems={jrd.selectedItems}
@@ -281,6 +284,7 @@ export function CustomerJunkJobDetail({ job }: { job: Job }) {
         label: p.caption,
       }))}
     />
+    </div>
   );
 }
 
