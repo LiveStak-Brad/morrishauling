@@ -13,11 +13,11 @@ import { useDivisionPublicStatus } from "@/components/public/useDivisionPublicSt
 import { ButtonLink } from "@/components/ui/button-link";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import {
-  HAULING_PROTOCOL,
   MORRIS_STANDARD_PILLARS,
   SERVICE_AREA,
 } from "@/lib/public-copy";
 import { trackMarketingEvent } from "@/lib/seo/analytics";
+import { MorrisProtocolSteps } from "@/components/public/MorrisProtocolSteps";
 
 export function MorrisServicesHomePage() {
   const junk = morrisServicesConfig.operatingCompanies[0];
@@ -105,29 +105,14 @@ export function MorrisServicesHomePage() {
       </section>
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-14 sm:pt-16 md:pb-20 md:pt-20">
-        <section id="how-it-works" className="scroll-mt-24">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
-            How Morris works
-          </p>
-          <h2 className="mt-3 max-w-2xl font-heading text-3xl font-medium tracking-tight sm:text-4xl">
-            A calm protocol for every craft we add.
-          </h2>
-          <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {HAULING_PROTOCOL.map((item, i) => (
-              <li
-                key={item.step}
-                className="rounded-2xl border border-black/5 bg-white p-5 shadow-sm opacity-0 animate-slide-up"
-                style={{ animationDelay: `${0.05 * i}s`, animationFillMode: "forwards" }}
-              >
-                <span className="font-mono text-xs font-semibold text-brand-primary">{item.step}</span>
-                <h3 className="mt-3 text-base font-semibold tracking-tight">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
+        <MorrisProtocolSteps
+          id="how-it-works"
+          className="scroll-mt-24"
+          eyebrow="How Morris works"
+          heading="A calm protocol for every craft we add."
+        />
 
-        <section id="companies" className="mt-20 scroll-mt-24 sm:mt-24">
+        <section id="companies" className="mt-16 scroll-mt-24 sm:mt-20">
           <div className="mb-8 flex flex-col gap-2 sm:mb-10">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
               Operating now

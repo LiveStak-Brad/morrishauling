@@ -13,7 +13,6 @@ import { useDivisionPublicStatus } from "@/components/public/useDivisionPublicSt
 import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import {
-  HAULING_PROTOCOL,
   SERVICE_AREA,
 } from "@/lib/public-copy";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -21,6 +20,7 @@ import { FaqAccordion } from "@/components/seo/FaqAccordion";
 import { FacebookFollow } from "@/components/seo/FacebookFollow";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { MarketingImage } from "@/components/seo/MarketingImage";
+import { MorrisProtocolSteps } from "@/components/public/MorrisProtocolSteps";
 import {
   JUNK_DIVISION_FAQS,
   JUNK_WHAT_WE_DONT,
@@ -153,27 +153,11 @@ export function JunkRemovalHomePage() {
           </a>
         </section>
 
-        <section className="mt-16 sm:mt-20">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
-            The Morris Clear-Out
-          </p>
-          <h2 className="mt-3 max-w-2xl font-heading text-3xl font-medium tracking-tight sm:text-4xl">
-            From clutter to calm — in five deliberate steps.
-          </h2>
-          <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {HAULING_PROTOCOL.map((item, i) => (
-              <li
-                key={item.step}
-                className="rounded-2xl border border-black/5 bg-white p-5 shadow-sm opacity-0 animate-slide-up"
-                style={{ animationDelay: `${0.05 * i}s`, animationFillMode: "forwards" }}
-              >
-                <span className="font-mono text-xs font-semibold text-brand-primary">{item.step}</span>
-                <h3 className="mt-3 text-base font-semibold tracking-tight">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
+        <MorrisProtocolSteps
+          className="mt-16 sm:mt-20"
+          eyebrow="The Morris Clear-Out"
+          heading="From clutter to calm — in five deliberate steps."
+        />
 
         <section className="mt-16 sm:mt-20">
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
