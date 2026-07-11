@@ -34,7 +34,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Hazardous materials are not accepted", "Items must be accessible on the scheduled visit"],
     process: ["Request an estimate with photos", "Approve the estimate", "We arrive in your window and remove the listed items"],
     related: ["mattress-removal", "appliance-removal", "garage-cleanouts"],
-    imageKey: "junk-removal-truck",
+    imageKey: "furniture-removal",
     faqs: [
       {
         q: "Do you remove a single couch or mattress?",
@@ -84,7 +84,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Heavily soiled items may have facility restrictions"],
     process: ["Request estimate", "Approve", "We remove on the scheduled visit"],
     related: ["furniture-removal", "estate-cleanouts"],
-    imageKey: "junk-removal-truck",
+    imageKey: "furniture-removal",
     faqs: [
       {
         q: "Can you take mattresses with other junk?",
