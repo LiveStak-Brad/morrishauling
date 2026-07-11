@@ -127,7 +127,7 @@ export async function mutateCreatePayment(
   actorProfileId?: string
 ) {
   if (!useSupabaseData()) {
-    const { mockPaymentProvider } = await import("@/lib/payment-provider");
+    const { mockPaymentProvider } = await import("@/lib/payment-provider-mock");
     const { morrisConfig } = await import("@/lib/morris-config");
     const result = await mockPaymentProvider.processPayment(req, morrisConfig);
     toast.success(`Payment received — $${req.amount}`);
