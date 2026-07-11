@@ -107,7 +107,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Paint, chemicals, and other household hazardous waste may be excluded"],
     process: ["Send photos", "Approve estimate", "Clear a path; we load and haul"],
     related: ["basement-attic-cleanouts", "estate-cleanouts", "furniture-removal"],
-    imageKey: "garage-cleanout-residential",
+    imageKey: "dumpster-furniture-curbside",
     faqs: [
       {
         q: "Do you take everything in the garage?",

@@ -11,12 +11,20 @@ export type MarketingImage = {
 };
 
 export const MARKETING_IMAGES: Record<string, MarketingImage> = {
-  "garage-cleanout-residential": {
-    src: "/marketing/garage-cleanout-residential.jpg",
-    alt: "Residential garage with storage items ready for a cleanout",
+  "dumpster-furniture-curbside": {
+    src: "/marketing/dumpster-furniture-curbside.jpg",
+    alt: "Roll-off dumpster filled with debris beside a sofa left at the curb for removal",
     width: 1600,
     height: 1067,
-    credit: "Unsplash — representative service atmosphere, not a Morris job",
+    credit: "Pexels — representative junk removal scene, not a Morris job or equipment",
+    representative: true,
+  },
+  "dump-trailer-loaded-junk": {
+    src: "/marketing/dump-trailer-loaded-junk.jpg",
+    alt: "Open trailer loaded with furniture and household items ready for haul-away",
+    width: 1600,
+    height: 1067,
+    credit: "Unsplash (Nico Knaack) — representative junk load, not a Morris trailer or job",
     representative: true,
   },
   "midwest-home-exterior": {
