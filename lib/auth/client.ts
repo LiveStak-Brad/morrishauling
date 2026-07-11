@@ -65,8 +65,9 @@ export function redirectPathForRole(role: Role): string {
   return ROLE_HOME_ROUTES[role];
 }
 
-/** Post-login redirect; staff portal sends customers to /customer even if they used Staff Login. */
+/** Post-login redirect based on account role (customers, crew, managers, owners). */
 export function redirectPathAfterLogin(role: Role, portal?: string | null): string {
+  // Legacy staff portal links still work, but customers who land there go to /customer.
   if (portal === "staff" && role === "customer") return "/customer";
   if (portal === "staff") {
     if (role === "admin" || role === "hr" || role === "office_admin") return "/admin";

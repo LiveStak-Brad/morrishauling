@@ -35,12 +35,6 @@ const companyLinks = [
   { href: "/junk-removal/resources", label: "Resources" },
   { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" },
-  { href: "/login", label: "My Account" },
-];
-
-const loginLinks = [
-  { href: "/login?portal=customer", label: "Customer Login" },
-  { href: "/login?portal=staff", label: "Staff Login" },
 ];
 
 function NavLink({
@@ -149,27 +143,6 @@ export function PublicHeader({
           {mainLinks.map((link) => (
             <NavLink key={link.href} {...link} pathname={pathname} onDark={onDark} />
           ))}
-          {variant === "umbrella" && (
-            <>
-              <span className="mx-1 hidden h-4 w-px bg-white/25 lg:block" />
-              {loginLinks.map((link) => (
-                <NavLink key={link.href} {...link} pathname={pathname} onDark />
-              ))}
-            </>
-          )}
-          {variant === "company" && (
-            <>
-              <span
-                className={cn(
-                  "mx-1 hidden h-4 w-px md:block",
-                  onDark ? "bg-white/25" : "bg-border"
-                )}
-              />
-              {loginLinks.map((link) => (
-                <NavLink key={link.href} {...link} pathname={pathname} onDark={onDark} />
-              ))}
-            </>
-          )}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -186,6 +159,20 @@ export function PublicHeader({
             <Phone className={cn("mr-1.5 h-4 w-4", onDark ? "text-white" : "text-brand-primary")} />
             <span className="font-semibold">{company.phone}</span>
           </a>
+
+          <ButtonLink
+            href="/login"
+            size="sm"
+            variant="outline"
+            className={cn(
+              "hidden rounded-full sm:inline-flex",
+              onDark
+                ? "border-white/35 bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
+                : "border-border hover:bg-muted"
+            )}
+          >
+            Login
+          </ButtonLink>
 
           {variant === "company" && (
             <ButtonLink
@@ -254,20 +241,15 @@ export function PublicHeader({
                     </Link>
                   );
                 })}
-                {loginLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      "rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-                      onDark
-                        ? "text-white/90 hover:bg-white/10"
-                        : "hover:bg-muted"
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                <Link
+                  href="/login"
+                  className={cn(
+                    "rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                    onDark ? "text-white/90 hover:bg-white/10" : "hover:bg-muted"
+                  )}
+                >
+                  Login
+                </Link>
                 <a
                   href={`tel:${company.phone}`}
                   className={cn(

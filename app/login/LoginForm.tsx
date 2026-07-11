@@ -12,24 +12,14 @@ import { Loader2 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import type { Role } from "@/types";
 
-const PORTAL_COPY: Record<string, { title: string; subtitle: string }> = {
-  customer: {
-    title: "Customer login",
-    subtitle: "Access your Morris Home — jobs, estimates, and invoices.",
-  },
-  staff: {
-    title: "Staff login",
-    subtitle: "Crew, dispatch, HR, managers, and owners sign in here.",
-  },
-};
-
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
+  // Unified login: default customer experience; role still decides destination after auth.
   const portalParam = searchParams.get("portal") ?? "customer";
-  const portal = portalParam === "employee" || portalParam === "admin" ? "staff" : portalParam;
-  const copy = PORTAL_COPY[portal] ?? PORTAL_COPY.customer;
+  const portal =
+    portalParam === "employee" || portalParam === "admin" ? "staff" : portalParam;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,10 +35,12 @@ export function LoginForm() {
       const meRes = await fetch("/api/auth/me", { credentials: "include" });
       const me = await meRes.json();
       const role = (me.profile?.role ?? "customer") as Role;
+      // Always route by account role: customers → customer portal,
+      // employees → employee, owners/managers → admin/planner as assigned.
       const path =
         redirect && redirect.startsWith("/")
           ? redirect
-          : redirectPathAfterLogin(role, portal);
+          : redirectPathAfterLogin(role, portal === "staff" ? "staff" : null);
       toast.success("Welcome back!");
       router.push(path);
       router.refresh();
@@ -61,27 +53,14 @@ export function LoginForm() {
 
   return (
     <AuthShell
-      title={copy.title}
-      subtitle={copy.subtitle}
+      title="Sign in"
+      subtitle="One login for customers, crew, managers, and owners. You’ll land in the right workspace for your account."
       footer={
         <>
-          <div className="mb-3 flex flex-wrap justify-center gap-2 text-xs">
-            <Link href="/login?portal=customer" className="text-brand-primary hover:underline">
-              Customer Login
-            </Link>
-            <span className="text-muted-foreground">·</span>
-            <Link href="/login?portal=staff" className="text-brand-primary hover:underline">
-              Staff Login
-            </Link>
-          </div>
-          {portal === "customer" && (
-            <>
-              <span className="text-muted-foreground">New customer? </span>
-              <Link href="/register" className="font-semibold text-brand-primary hover:underline">
-                Create an account
-              </Link>
-            </>
-          )}
+          <span className="text-muted-foreground">New customer? </span>
+          <Link href="/register" className="font-semibold text-brand-primary hover:underline">
+            Create an account
+          </Link>
         </>
       }
     >
