@@ -70,6 +70,14 @@ export const MARKETING_IMAGES: Record<string, MarketingImage> = {
     credit: "Company-provided gooseneck trailer photo (public/gooseneckhaulingphoto.jpg)",
     representative: false,
   },
+  "junk-removal-truck": {
+    src: "/junk.jpg",
+    alt: "Pickup truck bed loaded with household junk during a residential removal job",
+    width: 900,
+    height: 1200,
+    credit: "Company-provided junk removal photo (public/junk.jpg)",
+    representative: false,
+  },
   "clean-living-room": {
     src: "/marketing/clean-living-room.jpg",
     alt: "Bright living room interior after clutter is cleared",

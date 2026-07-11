@@ -71,6 +71,13 @@ export const MARKETING_IMAGE_LICENSES: readonly MarketingImageLicense[] = [
     note: "Company-provided gooseneck trailer photo used on Morris Hauling marketing pages.",
   },
   {
+    key: "junk-removal-truck",
+    localPath: "/junk.jpg",
+    sourceUrl: null,
+    license: "Company-provided",
+    note: "Company-provided junk removal truck-load photo used on Morris Junk Removal marketing pages.",
+  },
+  {
     key: "clean-living-room",
     localPath: "/marketing/clean-living-room.jpg",
     sourceUrl: null,

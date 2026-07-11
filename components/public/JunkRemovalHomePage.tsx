@@ -188,8 +188,12 @@ export function JunkRemovalHomePage() {
               View all services →
             </ButtonLink>
           </div>
-          <div className="mb-8">
-            <MarketingImage imageKey="dumpster-furniture-curbside" sizes="(max-width: 768px) 100vw, 960px" />
+          <div className="mb-8 flex justify-center">
+            <MarketingImage
+              imageKey="junk-removal-truck"
+              className="w-full max-w-sm sm:max-w-md md:max-w-lg"
+              sizes="(max-width: 640px) 85vw, (max-width: 768px) 448px, 512px"
+            />
           </div>
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {junkServices.map((svc, i) => (

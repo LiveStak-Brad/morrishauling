@@ -67,7 +67,8 @@ export function ServiceMarketingPage({ service }: { service: MarketingService })
               imageKey={service.imageKey}
               priority
               className={
-                service.imageKey === "gooseneck-hauling"
+                service.imageKey === "gooseneck-hauling" ||
+                service.imageKey === "junk-removal-truck"
                   ? "mx-auto w-full max-w-sm lg:max-w-none"
                   : undefined
               }

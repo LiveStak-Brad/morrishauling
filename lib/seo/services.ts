@@ -34,7 +34,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Hazardous materials are not accepted", "Items must be accessible on the scheduled visit"],
     process: ["Request an estimate with photos", "Approve the estimate", "We arrive in your window and remove the listed items"],
     related: ["mattress-removal", "appliance-removal", "garage-cleanouts"],
-    imageKey: "clean-living-room",
+    imageKey: "junk-removal-truck",
     faqs: [
       {
         q: "Do you remove a single couch or mattress?",
@@ -61,7 +61,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Freon recovery rules may apply to some units — we follow facility requirements", "Units should be empty and ready to move"],
     process: ["Upload photos", "Approve estimate", "Have appliances ready on arrival"],
     related: ["furniture-removal", "garage-cleanouts", "commercial-cleanouts"],
-    imageKey: "appliance-kitchen-ready",
+    imageKey: "junk-removal-truck",
     faqs: [
       {
         q: "Do you unhook appliances?",
@@ -84,7 +84,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Heavily soiled items may have facility restrictions"],
     process: ["Request estimate", "Approve", "We remove on the scheduled visit"],
     related: ["furniture-removal", "estate-cleanouts"],
-    imageKey: "organized-moving-boxes",
+    imageKey: "junk-removal-truck",
     faqs: [
       {
         q: "Can you take mattresses with other junk?",
@@ -107,7 +107,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Paint, chemicals, and other household hazardous waste may be excluded"],
     process: ["Send photos", "Approve estimate", "Clear a path; we load and haul"],
     related: ["basement-attic-cleanouts", "estate-cleanouts", "furniture-removal"],
-    imageKey: "dumpster-furniture-curbside",
+    imageKey: "junk-removal-truck",
     faqs: [
       {
         q: "Do you take everything in the garage?",
@@ -130,7 +130,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["We do not appraise antiques", "Hazardous materials follow facility rules"],
     process: ["Walkthrough via photos or on-site notes", "Written estimate", "Scheduled clear-out"],
     related: ["garage-cleanouts", "basement-attic-cleanouts", "furniture-removal"],
-    imageKey: "midwest-home-exterior",
+    imageKey: "junk-removal-truck",
     faqs: [
       {
         q: "Can you work in phases?",
@@ -153,7 +153,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Unsafe structures or collapsed storage may need owner remediation first"],
     process: ["Photo estimate", "Approve", "Clear paths before arrival"],
     related: ["garage-cleanouts", "estate-cleanouts"],
-    imageKey: "organized-moving-boxes",
+    imageKey: "junk-removal-truck",
     faqs: [
       {
         q: "Do stairs change the price?",
@@ -176,7 +176,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Industrial hazardous waste is out of scope"],
     process: ["Request estimate", "Approve scope", "We complete and document as agreed"],
     related: ["construction-debris-removal", "storage-unit-cleanouts"],
-    imageKey: "construction-materials-site",
+    imageKey: "junk-removal-truck",
     faqs: [
       {
         q: "Can you work after hours?",
@@ -199,7 +199,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Facility rules always apply"],
     process: ["Photos + access notes", "Estimate", "Scheduled clear-out"],
     related: ["estate-cleanouts", "garage-cleanouts"],
-    imageKey: "organized-moving-boxes",
+    imageKey: "junk-removal-truck",
     faqs: [
       {
         q: "Do you sweep the unit?",
@@ -222,7 +222,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Some materials require specific facilities", "Hazardous construction waste may be excluded"],
     process: ["Describe materials with photos", "Approve estimate", "We load and dispose properly"],
     related: ["commercial-cleanouts", "hot-tub-shed-removal"],
-    imageKey: "construction-materials-site",
+    imageKey: "junk-removal-truck",
     faqs: [
       {
         q: "Do you take drywall and lumber?",
@@ -245,7 +245,7 @@ export const JUNK_SERVICES: MarketingService[] = [
     restrictions: ["Large structures may need specialty equipment we do not provide", "Manual review for heavy units"],
     process: ["Photos and measurements", "Estimate with review notes", "Scheduled removal"],
     related: ["construction-debris-removal", "garage-cleanouts"],
-    imageKey: "midwest-home-exterior",
+    imageKey: "junk-removal-truck",
     faqs: [
       {
         q: "Do you demolish sheds?",
