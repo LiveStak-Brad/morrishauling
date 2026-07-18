@@ -72,10 +72,10 @@ export function JunkRemovalHomePage() {
             style={{ animationFillMode: "forwards", animationDelay: "0.05s" }}
           >
             <CompanyLogo
-              height={280}
+              height={360}
               priority
               href={undefined}
-              className="mx-auto w-full max-h-44 sm:max-h-56 md:max-h-64"
+              className="mx-auto w-full max-h-48 sm:max-h-60 md:max-h-72"
             />
           </div>
 
@@ -391,7 +391,7 @@ export function JunkRemovalHomePage() {
 
         <section className="mt-16 rounded-[1.5rem] border border-dashed border-black/10 bg-white/60 p-6 sm:mt-20 sm:flex sm:items-center sm:justify-between sm:gap-8 sm:p-8">
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-6">
-            <HaulingLogo height={100} className="max-h-20" href="/hauling" />
+            <HaulingLogo height={128} className="max-h-28" href="/hauling" />
             <div className="text-center sm:text-left">
               <p className="text-xs font-semibold uppercase tracking-widest text-brand-primary">
                 Sister division
@@ -409,7 +409,7 @@ export function JunkRemovalHomePage() {
         </section>
 
         <section className="py-12 text-center">
-          <CompanyLogo height={140} className="mx-auto max-h-28 sm:max-h-32" href="/junk-removal" />
+          <CompanyLogo height={180} className="mx-auto max-h-36 sm:max-h-40" href="/junk-removal" />
           <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             A {morrisServicesConfig.publicBrandName} Company
           </p>

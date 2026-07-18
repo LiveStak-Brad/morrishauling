@@ -51,10 +51,10 @@ export function MorrisServicesHomePage() {
             style={{ animationFillMode: "forwards", animationDelay: "0.05s" }}
           >
             <MorrisServicesLogo
-              height={220}
+              height={360}
               href={undefined}
               priority
-              className="mx-auto w-full max-h-36 sm:max-h-44 md:max-h-52"
+              className="mx-auto w-full max-h-48 sm:max-h-56 md:max-h-64"
             />
           </div>
 
@@ -131,11 +131,11 @@ export function MorrisServicesHomePage() {
             <div className="grid lg:grid-cols-12">
               <div className="flex flex-col items-center justify-center bg-gradient-to-br from-brand-primary/8 via-white to-[#F7F5F2] p-8 text-center lg:col-span-5 lg:p-12">
                 <MorrisServicesLogo
-                  height={280}
+                  height={360}
                   priority
                   href={junk.hubPath}
                   alt={junk.name}
-                  className="max-h-52 sm:max-h-60 md:max-h-64"
+                  className="max-h-56 sm:max-h-64 md:max-h-72"
                 />
                 <CompanyStatusBadge
                   divisionStatus={junkStatus?.launchStatus ?? "setup"}
@@ -183,10 +183,10 @@ export function MorrisServicesHomePage() {
           <div className="overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-sm sm:flex sm:items-center sm:justify-between">
             <div className="flex flex-col items-center gap-4 p-6 sm:flex-row sm:items-center sm:gap-6 sm:p-8">
               <MorrisServicesLogo
-                height={140}
+                height={180}
                 href={hauling.hubPath}
                 alt={hauling.name}
-                className="max-h-28 sm:max-h-32"
+                className="max-h-36 sm:max-h-40"
               />
               <div className="text-center sm:text-left">
                 <CompanyStatusBadge

@@ -60,10 +60,10 @@ export function HaulingHomePage() {
             style={{ animationFillMode: "forwards", animationDelay: "0.05s" }}
           >
             <HaulingLogo
-              height={280}
+              height={360}
               priority
               href={undefined}
-              className="mx-auto w-full max-h-44 sm:max-h-56 md:max-h-64"
+              className="mx-auto w-full max-h-48 sm:max-h-60 md:max-h-72"
             />
           </div>
 
@@ -258,7 +258,7 @@ export function HaulingHomePage() {
         <section className="mt-8 rounded-[1.5rem] border border-black/5 bg-white p-6 shadow-sm sm:p-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <CompanyLogo height={72} className="max-h-14" href="/junk-removal" />
+              <CompanyLogo height={96} className="max-h-24" href="/junk-removal" />
               <div>
                 <h2 className="text-lg font-semibold tracking-tight">Need junk removed?</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -274,7 +274,7 @@ export function HaulingHomePage() {
         </section>
 
         <section className="py-12 text-center">
-          <HaulingLogo height={140} className="mx-auto max-h-28 sm:max-h-32" href="/hauling" />
+          <HaulingLogo height={180} className="mx-auto max-h-36 sm:max-h-40" href="/hauling" />
           <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             A {morrisServicesConfig.publicBrandName} Company
           </p>

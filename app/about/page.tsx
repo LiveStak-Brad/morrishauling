@@ -66,10 +66,10 @@ export default function AboutPage() {
         <section className="mt-14 overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-sm">
           <div className="flex flex-col items-center bg-gradient-to-br from-brand-primary/8 via-white to-[#F7F5F2] px-6 py-10 text-center">
             <MorrisServicesLogo
-              height={220}
+              height={280}
               href={junk.hubPath}
               alt={junk.name}
-              className="max-h-52 sm:max-h-56"
+              className="max-h-60 sm:max-h-64"
             />
             <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
               Flagship craft

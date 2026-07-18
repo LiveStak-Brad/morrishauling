@@ -14,14 +14,16 @@ interface HaulingLogoProps {
   width?: number;
   priority?: boolean;
   href?: string;
+  withShadow?: boolean;
 }
 
 export function HaulingLogo({
   className,
-  height = 64,
+  height = 72,
   width,
   priority = false,
   href,
+  withShadow = true,
 }: HaulingLogoProps) {
   return (
     <MorrisServicesLogo
@@ -30,6 +32,7 @@ export function HaulingLogo({
       width={width}
       priority={priority}
       href={href}
+      withShadow={withShadow}
       alt="Morris Hauling"
     />
   );

@@ -16,15 +16,17 @@ interface CompanyLogoProps {
   href?: string;
   onDark?: boolean;
   withBackdrop?: boolean;
+  withShadow?: boolean;
 }
 
 export function CompanyLogo({
   className,
-  height = 64,
+  height = 72,
   width,
   priority = false,
   href,
   onDark = false,
+  withShadow = true,
 }: CompanyLogoProps) {
   return (
     <MorrisServicesLogo
@@ -34,6 +36,7 @@ export function CompanyLogo({
       priority={priority}
       href={href}
       onDark={onDark}
+      withShadow={withShadow}
       alt="Morris Junk Removal"
     />
   );

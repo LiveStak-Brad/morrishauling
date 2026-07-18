@@ -126,14 +126,14 @@ export function PublicHeader({
       <div
         className={cn(
           "mx-auto flex max-w-6xl items-center justify-between gap-2 px-4",
-          "h-[4.5rem] md:h-20"
+          "h-[5.25rem] md:h-[5.75rem]"
         )}
       >
         <MorrisServicesLogo
-          height={64}
+          height={88}
           priority
           href="/"
-          className="max-h-12 sm:max-h-14 md:max-h-16"
+          className="max-h-[4.25rem] sm:max-h-[4.75rem] md:max-h-[5.25rem]"
         />
 
         <nav
@@ -216,7 +216,7 @@ export function PublicHeader({
                     ? morrisServicesConfig.publicBrandName
                     : company.companyName}
                 </SheetTitle>
-                <MorrisServicesLogo height={56} href="/" className="max-h-14" />
+                <MorrisServicesLogo height={72} href="/" className="max-h-[4.5rem]" />
               </SheetHeader>
               <nav className="mt-8 flex flex-col gap-1">
                 {mainLinks.map((link) => {

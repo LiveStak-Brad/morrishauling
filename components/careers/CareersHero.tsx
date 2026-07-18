@@ -13,7 +13,7 @@ export function CareersHero() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(155,27,48,0.18),transparent_50%)]" />
       <div className="relative mx-auto max-w-6xl px-4 py-16 sm:py-24">
         <div className="flex flex-col items-center gap-7 text-center">
-          <CompanyLogo height={110} onDark priority href="/junk-removal" className="max-h-24" />
+          <CompanyLogo height={140} onDark priority href="/junk-removal" className="max-h-32" />
           <div className="max-w-3xl space-y-5">
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-red-300/90">
               Join the crew
