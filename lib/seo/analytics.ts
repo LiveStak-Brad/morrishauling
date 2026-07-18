@@ -11,12 +11,16 @@ export type MarketingEventName =
   | "service_page_cta"
   | "location_page_cta"
   | "booking_abandon"
-  | "facebook_follow_click";
+  | "facebook_follow_click"
+  | "social_click"
+  | "social_follow";
 
 export type MarketingEventPayload = {
   division?: "junk_removal" | "hauling" | "parent";
   path?: string;
   label?: string;
+  platform?: string;
+  surface?: string;
   /** Never include addresses, totals, photos, or PII */
 };
 
@@ -41,6 +45,8 @@ export function trackMarketingEvent(
     division: payload.division,
     path: payload.path ?? window.location.pathname,
     label: payload.label,
+    platform: payload.platform,
+    surface: payload.surface,
   };
   for (const listener of listeners) {
     try {

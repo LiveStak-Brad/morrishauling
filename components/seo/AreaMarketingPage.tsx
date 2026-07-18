@@ -5,7 +5,8 @@ import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge
 import { MarketingBreadcrumbs } from "@/components/seo/MarketingBreadcrumbs";
 import { FaqAccordion } from "@/components/seo/FaqAccordion";
 import { ConversionCtaGroup, RelatedLinks } from "@/components/seo/ConversionCta";
-import { FacebookFollow } from "@/components/seo/FacebookFollow";
+import { RelatedAuthorityLinks } from "@/components/authority/RelatedAuthorityLinks";
+import { AuthoritySpotlightClient } from "@/components/authority/AuthoritySpotlightClient";
 import { JsonLd } from "@/components/seo/JsonLd";
 import type { ServiceArea } from "@/lib/seo/locations";
 import { areasForDivision } from "@/lib/seo/locations";
@@ -162,21 +163,24 @@ export function AreaMarketingPage({
         )}
 
         {division === "junk_removal" && (
-          <RelatedLinks
-            title="Helpful resources"
-            links={[
-              { href: "/junk-removal/resources", label: "Resource center" },
-              { href: "/junk-removal/responsible-disposal", label: "Responsible disposal" },
-              { href: "/junk-removal/tools/can-we-take-this", label: "Can we take this?" },
-              { href: "/pricing", label: "Pricing explained" },
-              { href: "/book?division=junk_removal", label: "Request estimate" },
-            ]}
-          />
+          <>
+            <AuthoritySpotlightClient
+              surface="featured_job"
+              href="/junk-removal/latest"
+              className="mt-12"
+            />
+            <RelatedAuthorityLinks
+              areaSlug={area.slug}
+              excludePath={`${d.path}/areas/${area.slug}`}
+              prefer={[
+                { href: "/junk-removal/community", label: "Community" },
+                { href: "/junk-removal/gallery", label: "Before & after gallery" },
+                { href: "/junk-removal/videos", label: "Videos" },
+              ]}
+            />
+          </>
         )}
 
-        <div className="mt-14">
-          <FacebookFollow />
-        </div>
       </main>
       <PublicFooter variant={division === "junk_removal" ? "company" : "umbrella"} />
       <StickyMobileConcierge divisionId={division} />

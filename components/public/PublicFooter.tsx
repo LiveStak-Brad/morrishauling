@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
-import { FacebookFollow } from "@/components/seo/FacebookFollow";
+import { SocialFooterBlock } from "@/components/social/SocialFooterBlock";
 import { PRELAUNCH_SERVICE_AREA } from "@/lib/public-copy";
-import { SEO_ORG } from "@/lib/seo/site";
+import { WARRENTON_JUNK_SOCIAL, socialPlatformById } from "@/lib/social/config";
 import { cn } from "@/lib/utils";
 
 export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | "company" }) {
@@ -87,6 +87,30 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                 className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
               >
                 Resource center
+              </Link>
+              <Link
+                href="/junk-removal/latest"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Latest jobs
+              </Link>
+              <Link
+                href="/junk-removal/videos"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Videos
+              </Link>
+              <Link
+                href="/junk-removal/gallery"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Before &amp; after gallery
+              </Link>
+              <Link
+                href="/junk-removal/community"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Community
               </Link>
               <Link
                 href="/junk-removal/items"
@@ -176,26 +200,21 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
               Service-area business — no public storefront.
             </p>
             <a
-              href={SEO_ORG.facebook}
+              href={socialPlatformById("facebook")?.profileUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
                 "mt-4 inline-flex items-center gap-2 text-sm font-semibold hover:underline",
-                isUmbrella ? "text-[#1877F2]" : "text-white"
+                isUmbrella ? "text-brand-primary" : "text-white"
               )}
             >
-              Follow on Facebook
+              Follow {WARRENTON_JUNK_SOCIAL.handle}
             </a>
           </div>
         </div>
 
         <div className="mt-8">
-          <FacebookFollow
-            compact
-            className={cn(
-              isUmbrella ? "" : "border-white/15 bg-white/5 text-white [&_a]:border-white/20 [&_a]:bg-white/10 [&_a]:text-white"
-            )}
-          />
+          <SocialFooterBlock onDark={!isUmbrella} />
         </div>
 
         <p

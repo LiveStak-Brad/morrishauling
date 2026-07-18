@@ -21,6 +21,8 @@ import {
   MapPin,
   Settings,
   Palette,
+  Share2,
+  Newspaper,
   ClipboardCheck,
   ScrollText,
   LayoutDashboard,
@@ -73,6 +75,8 @@ export const ADMIN_NAV = [
   { href: "/admin/settings", label: "Settings", icon: Settings },
   { href: "/admin/terms", label: "Terms", icon: ScrollText },
   { href: "/admin/branding", label: "Branding", icon: Palette },
+  { href: "/admin/social", label: "Social", icon: Share2 },
+  { href: "/admin/authority", label: "Authority content", icon: Newspaper },
 ];
 
 export { HR_NAV };

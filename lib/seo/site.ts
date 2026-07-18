@@ -1,5 +1,7 @@
 /** Canonical public site SEO constants — truthful only. */
 
+import { socialPlatformById, socialSameAsUrls } from "@/lib/social/config";
+
 export const SITE_ORIGIN = "https://www.morris-services.com";
 
 export const SEO_ORG = {
@@ -10,7 +12,9 @@ export const SEO_ORG = {
   phone: "(636) 751-4645",
   phoneTel: "+16367514645",
   email: "hello@morris-services.com",
-  facebook: "https://facebook.com/morrisservicegroup",
+  /** Prefer lib/social/config for new code — derived from SocialConfig */
+  facebook: socialPlatformById("facebook")!.profileUrl,
+  sameAs: socialSameAsUrls(),
   serviceAreaLabel: "Warren, Lincoln, St. Charles, Franklin & Jefferson Counties, Missouri",
   primaryCounties: [
     "Warren County",

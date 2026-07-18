@@ -8,7 +8,8 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { CompanyStatusBadge } from "@/components/public/CompanyStatusBadge";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
-import { FacebookFollow } from "@/components/seo/FacebookFollow";
+import { SocialHomeSection } from "@/components/social/SocialHomeSection";
+import { LatestFromWarrentonJunk } from "@/components/social/LatestFromWarrentonJunk";
 import { useDivisionPublicStatus } from "@/components/public/useDivisionPublicStatus";
 import { ButtonLink } from "@/components/ui/button-link";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
@@ -332,9 +333,8 @@ export function MorrisServicesHomePage() {
           </div>
         </section>
 
-        <section className="mt-12">
-          <FacebookFollow />
-        </section>
+        <SocialHomeSection className="mt-16 sm:mt-20" />
+        <LatestFromWarrentonJunk className="mt-12" />
 
         <p className="mt-12 text-center text-xs text-muted-foreground">
           {morrisServicesConfig.parentLegalName} ·{" "}

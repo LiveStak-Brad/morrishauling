@@ -1,5 +1,6 @@
 import type { CompanyConfig } from "@/types";
 import { COMMON_JUNK_ITEMS } from "@/lib/common-junk-items";
+import { socialPlatformById } from "@/lib/social/config";
 
 export const MORRIS_COMPANY_ID = "morris-hauling" as const;
 
@@ -451,8 +452,8 @@ export const morrisConfig = {
   companyTerms: COMPANY_TERMS,
   financingDisclaimer: FINANCING_DISCLAIMER,
   socialLinks: {
-    facebook: "",
-    instagram: "",
+    facebook: socialPlatformById("facebook")!.profileUrl,
+    instagram: socialPlatformById("instagram")!.profileUrl,
     google: "",
   },
 } satisfies CompanyConfig & {

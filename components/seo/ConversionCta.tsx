@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Phone } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
+import { SocialFollowStrip } from "@/components/social/SocialFollowStrip";
 import { SEO_ORG } from "@/lib/seo/site";
 import { trackMarketingEvent } from "@/lib/seo/analytics";
 import { useDivisionPublicStatus } from "@/components/public/useDivisionPublicStatus";
@@ -13,10 +14,13 @@ export function ConversionCtaGroup({
   divisionId,
   className,
   estimateHref,
+  showSocial = true,
 }: {
   divisionId: DivisionId;
   className?: string;
   estimateHref?: string;
+  /** Secondary @WarrentonJunk CTA under primary estimate/call actions */
+  showSocial?: boolean;
 }) {
   const { status } = useDivisionPublicStatus(divisionId);
   const canRequest =
@@ -31,35 +35,38 @@ export function ConversionCtaGroup({
     (divisionId === "hauling" ? "Request hauling estimate" : "Request an estimate");
 
   return (
-    <div className={cn("flex flex-col gap-3 sm:flex-row sm:flex-wrap", className)}>
-      {canRequest ? (
-        <ButtonLink
-          href={href}
-          className="h-12 min-h-[48px] rounded-full px-8"
+    <div className={cn("flex flex-col gap-4", className)}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        {canRequest ? (
+          <ButtonLink
+            href={href}
+            className="h-12 min-h-[48px] rounded-full px-8"
+            onClick={() =>
+              trackMarketingEvent("estimate_start", {
+                division: divisionId,
+                label,
+              })
+            }
+          >
+            {label}
+          </ButtonLink>
+        ) : (
+          <ButtonLink href="/contact" className="h-12 min-h-[48px] rounded-full px-8">
+            Contact us
+          </ButtonLink>
+        )}
+        <a
+          href={`tel:${SEO_ORG.phoneTel}`}
           onClick={() =>
-            trackMarketingEvent("estimate_start", {
-              division: divisionId,
-              label,
-            })
+            trackMarketingEvent("phone_cta_click", { division: divisionId, label: "call" })
           }
+          className="inline-flex h-12 min-h-[48px] items-center justify-center gap-2 rounded-full border border-foreground/15 bg-white px-8 text-sm font-semibold text-foreground hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
         >
-          {label}
-        </ButtonLink>
-      ) : (
-        <ButtonLink href="/contact" className="h-12 min-h-[48px] rounded-full px-8">
-          Contact us
-        </ButtonLink>
-      )}
-      <a
-        href={`tel:${SEO_ORG.phoneTel}`}
-        onClick={() =>
-          trackMarketingEvent("phone_cta_click", { division: divisionId, label: "call" })
-        }
-        className="inline-flex h-12 min-h-[48px] items-center justify-center gap-2 rounded-full border border-foreground/15 bg-white px-8 text-sm font-semibold text-foreground hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-      >
-        <Phone className="h-4 w-4" aria-hidden />
-        Call {SEO_ORG.phone}
-      </a>
+          <Phone className="h-4 w-4" aria-hidden />
+          Call {SEO_ORG.phone}
+        </a>
+      </div>
+      {showSocial ? <SocialFollowStrip compact /> : null}
     </div>
   );
 }

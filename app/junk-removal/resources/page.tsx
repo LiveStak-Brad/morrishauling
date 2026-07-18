@@ -24,6 +24,26 @@ export const metadata: Metadata = buildPageMetadata({
 
 const HUBS = [
   {
+    href: "/junk-removal/latest",
+    label: "Latest jobs",
+    body: "Recent local cleanouts and haul-aways — proof we are active every week.",
+  },
+  {
+    href: "/junk-removal/videos",
+    label: "Videos",
+    body: "YouTube, Shorts, TikToks, Reels, and before-and-after transformations.",
+  },
+  {
+    href: "/junk-removal/gallery",
+    label: "Before & after gallery",
+    body: "Searchable project photos by city, service, and property type.",
+  },
+  {
+    href: "/junk-removal/community",
+    label: "Community",
+    body: "Cookouts, cleanups, charity drives, and local partnerships.",
+  },
+  {
     href: "/junk-removal/guides",
     label: "Guides",
     body: "Pricing, preparation, recycling, cleanout checklists, and what we can take.",
@@ -103,9 +123,10 @@ export default function JunkResourcesHubPage() {
           links={[
             { href: "/junk-removal/services", label: "All junk removal services" },
             { href: "/junk-removal/areas", label: "Service areas" },
+            { href: "/junk-removal/gallery", label: "Before & after gallery" },
+            { href: "/junk-removal/videos", label: "Watch real jobs" },
             { href: "/pricing", label: "Pricing explained" },
             { href: "/book?division=junk_removal", label: "Request an estimate" },
-            { href: "/contact", label: "Contact" },
           ]}
         />
       </main>

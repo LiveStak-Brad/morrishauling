@@ -17,6 +17,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { SocialMobileNavSection, SocialNavDropdown } from "@/components/social/SocialNavMenu";
 
 const umbrellaLinks = [
   { href: "/", label: "Home" },
@@ -32,6 +33,7 @@ const companyLinks = [
   { href: "/junk-removal", label: "Home" },
   { href: "/junk-removal/services", label: "Services" },
   { href: "/junk-removal/areas", label: "Areas" },
+  { href: "/junk-removal/videos", label: "Videos" },
   { href: "/junk-removal/resources", label: "Resources" },
   { href: "/pricing", label: "Pricing" },
   { href: "/contact", label: "Contact" },
@@ -143,6 +145,7 @@ export function PublicHeader({
           {mainLinks.map((link) => (
             <NavLink key={link.href} {...link} pathname={pathname} onDark={onDark} />
           ))}
+          <SocialNavDropdown onDark={onDark} />
         </nav>
 
         <div className="flex items-center gap-2">
@@ -267,6 +270,7 @@ export function PublicHeader({
                     {bookingCta}
                   </ButtonLink>
                 )}
+                <SocialMobileNavSection onDark={onDark} />
               </nav>
             </SheetContent>
           </Sheet>

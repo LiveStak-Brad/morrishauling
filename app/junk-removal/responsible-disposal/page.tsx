@@ -6,7 +6,6 @@ import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge
 import { MarketingBreadcrumbs } from "@/components/seo/MarketingBreadcrumbs";
 import { FaqAccordion } from "@/components/seo/FaqAccordion";
 import { ConversionCtaGroup, RelatedLinks } from "@/components/seo/ConversionCta";
-import { FacebookFollow } from "@/components/seo/FacebookFollow";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, faqSchema, serviceSchema, webPageSchema } from "@/lib/seo/schema";
@@ -200,9 +199,6 @@ export default function ResponsibleDisposalPage() {
           }))}
         />
 
-        <div className="mt-14">
-          <FacebookFollow />
-        </div>
       </main>
       <PublicFooter variant="company" />
       <StickyMobileConcierge divisionId="junk_removal" />

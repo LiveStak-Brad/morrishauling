@@ -17,10 +17,14 @@ import {
 } from "@/lib/public-copy";
 import { ButtonLink } from "@/components/ui/button-link";
 import { FaqAccordion } from "@/components/seo/FaqAccordion";
-import { FacebookFollow } from "@/components/seo/FacebookFollow";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { MarketingImage } from "@/components/seo/MarketingImage";
 import { MorrisProtocolSteps } from "@/components/public/MorrisProtocolSteps";
+import { SocialHomeSection } from "@/components/social/SocialHomeSection";
+import { LatestFromWarrentonJunk } from "@/components/social/LatestFromWarrentonJunk";
+import { SocialFollowStrip } from "@/components/social/SocialFollowStrip";
+import { AuthoritySpotlightGridClient } from "@/components/authority/AuthoritySpotlightClient";
+import { RelatedAuthorityLinks } from "@/components/authority/RelatedAuthorityLinks";
 import {
   JUNK_DIVISION_FAQS,
   JUNK_WHAT_WE_DONT,
@@ -311,6 +315,21 @@ export function JunkRemovalHomePage() {
           ))}
         </section>
 
+        <AuthoritySpotlightGridClient
+          className="mt-16 sm:mt-20"
+          surfaces={[
+            "featured_job",
+            "before_after",
+            "latest_video",
+            "tip_of_week",
+            "customer_review",
+            "google_review",
+          ]}
+        />
+
+        <SocialHomeSection className="mt-16 sm:mt-20" />
+        <LatestFromWarrentonJunk className="mt-12" />
+
         <section className="mt-16 sm:mt-20">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -367,9 +386,8 @@ export function JunkRemovalHomePage() {
           </div>
         </section>
 
-        <section className="mt-12">
-          <FacebookFollow />
-        </section>
+        <SocialFollowStrip className="mt-12" compact />
+        <RelatedAuthorityLinks excludePath="/junk-removal" title="Explore more" />
 
         <section className="mt-16 rounded-[1.5rem] border border-dashed border-black/10 bg-white/60 p-6 sm:mt-20 sm:flex sm:items-center sm:justify-between sm:gap-8 sm:p-8">
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-6">

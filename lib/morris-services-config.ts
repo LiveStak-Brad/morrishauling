@@ -74,8 +74,9 @@ export const morrisServicesConfig = {
   },
   /**
    * Roadmap order: lightest startup cost / easiest to operate first.
-   * Seasonal driveway clearing can live under Lawn Care when that division opens —
-   * not a standalone snow-removal company.
+   * Authority content (lib/authority) is division-tagged so these crafts can reuse
+   * gallery/videos/community without redesign. Social stays @WarrentonJunk.
+   * Seasonal driveway clearing can live under Lawn Care when that division opens.
    */
   futureCompanies: [
     { name: "Morris Cleaning", status: "coming_soon" as const, craft: "Cleaning" },

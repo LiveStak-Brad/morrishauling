@@ -10,6 +10,9 @@ import { useCompany } from "@/lib/company-context";
 import { useEffectivePricing } from "@/hooks/useEffectivePricing";
 import { PRICING_NOTE, SERVICE_AREA } from "@/lib/public-copy";
 import { cn } from "@/lib/utils";
+import { SocialFollowStrip } from "@/components/social/SocialFollowStrip";
+import { RelatedAuthorityLinks } from "@/components/authority/RelatedAuthorityLinks";
+import { AuthoritySpotlightClient } from "@/components/authority/AuthoritySpotlightClient";
 
 const EXAMPLE_JOBS = [
   {
@@ -164,6 +167,14 @@ export default function PricingPage() {
             Book service
           </ButtonLink>
         </div>
+
+        <AuthoritySpotlightClient
+          surface="tip_of_week"
+          href="/junk-removal/resources"
+          className="mt-10"
+        />
+        <SocialFollowStrip className="mt-10" compact />
+        <RelatedAuthorityLinks excludePath="/pricing" />
       </main>
       <PublicFooter variant="company" />
       <StickyMobileConcierge />

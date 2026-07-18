@@ -5,7 +5,9 @@ import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge
 import { MarketingBreadcrumbs } from "@/components/seo/MarketingBreadcrumbs";
 import { FaqAccordion } from "@/components/seo/FaqAccordion";
 import { ConversionCtaGroup, RelatedLinks } from "@/components/seo/ConversionCta";
-import { FacebookFollow } from "@/components/seo/FacebookFollow";
+import { LatestFromWarrentonJunk } from "@/components/social/LatestFromWarrentonJunk";
+import { RelatedAuthorityLinks } from "@/components/authority/RelatedAuthorityLinks";
+import { AuthoritySpotlightClient } from "@/components/authority/AuthoritySpotlightClient";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema, faqSchema, webPageSchema } from "@/lib/seo/schema";
 import { getService } from "@/lib/seo/services";
@@ -124,7 +126,18 @@ export function AuthorityArticleLayout({
           </section>
         )}
 
-        <RelatedLinks title="Related resources" links={related.slice(0, 10)} />
+        <RelatedLinks title="Related resources" links={related.slice(0, 6)} />
+        <RelatedAuthorityLinks
+          excludePath={path}
+          prefer={related.slice(0, 3)}
+          title="Also worth a look"
+        />
+
+        <AuthoritySpotlightClient
+          surface="tip_of_week"
+          href="/junk-removal/resources"
+          className="mt-12"
+        />
 
         <p className="mt-10 text-sm text-muted-foreground">
           Looking for something else? Browse the{" "}
@@ -134,9 +147,7 @@ export function AuthorityArticleLayout({
           .
         </p>
 
-        <div className="mt-14">
-          <FacebookFollow />
-        </div>
+        <LatestFromWarrentonJunk className="mt-14" />
       </main>
       <PublicFooter variant="company" />
       <StickyMobileConcierge divisionId="junk_removal" />

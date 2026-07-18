@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/lib/toast";
 import type { DivisionId } from "@/lib/divisions";
+import { BookingSocialUpsell } from "@/components/social/BookingSocialUpsell";
+import { trackMarketingEvent } from "@/lib/seo/analytics";
 
 /**
  * Guest estimate request — no account required.
@@ -58,6 +60,7 @@ export function GuestEstimateRequestForm({
       };
       setResult(payload);
       toast.success(payload.message || "Request submitted");
+      trackMarketingEvent("estimate_complete", { division: divisionId, label: "guest_request" });
       onComplete?.(payload);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Request failed");
@@ -69,7 +72,10 @@ export function GuestEstimateRequestForm({
   if (result) {
     return (
       <div className="space-y-4 rounded-xl border border-border bg-card p-5">
-        <h3 className="text-lg font-semibold">Request received</h3>
+        <h3 className="text-lg font-semibold">Thank you!</h3>
+        <p className="text-sm text-muted-foreground">
+          Your estimate request has been received.
+        </p>
         <p className="text-sm text-muted-foreground">
           {result.deliveryStatus === "provider_accepted" || result.deliveryStatus === "resent"
             ? "We emailed you a confirmation. You can also save this secure link:"
@@ -93,6 +99,7 @@ export function GuestEstimateRequestForm({
         <p className="text-xs text-muted-foreground">
           Create an account later with the same email to claim your job history.
         </p>
+        <BookingSocialUpsell />
       </div>
     );
   }

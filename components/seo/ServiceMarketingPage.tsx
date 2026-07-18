@@ -5,7 +5,8 @@ import { MarketingBreadcrumbs } from "@/components/seo/MarketingBreadcrumbs";
 import { MarketingImage } from "@/components/seo/MarketingImage";
 import { FaqAccordion } from "@/components/seo/FaqAccordion";
 import { ConversionCtaGroup, RelatedLinks } from "@/components/seo/ConversionCta";
-import { FacebookFollow } from "@/components/seo/FacebookFollow";
+import { RelatedAuthorityLinks } from "@/components/authority/RelatedAuthorityLinks";
+import { AuthoritySpotlightClient } from "@/components/authority/AuthoritySpotlightClient";
 import { JsonLd } from "@/components/seo/JsonLd";
 import type { MarketingService } from "@/lib/seo/services";
 import { getService, servicesForDivision } from "@/lib/seo/services";
@@ -169,22 +170,24 @@ export function ServiceMarketingPage({ service }: { service: MarketingService })
         />
 
         {service.division === "junk_removal" && (
-          <RelatedLinks
-            title="Learn more"
-            links={[
-              { href: "/junk-removal/resources", label: "Resource center" },
-              { href: "/junk-removal/responsible-disposal", label: "Responsible disposal" },
-              { href: "/junk-removal/items", label: "What we can take" },
-              { href: "/pricing", label: "How pricing works" },
-              { href: "/junk-removal/areas", label: "Service areas" },
-              { href: "/book?division=junk_removal", label: "Request estimate" },
-            ]}
-          />
+          <>
+            <AuthoritySpotlightClient
+              surface="before_after"
+              href="/junk-removal/gallery"
+              className="mt-12"
+            />
+            <RelatedAuthorityLinks
+              serviceSlug={service.slug}
+              excludePath={`${division.path}/services/${service.slug}`}
+              prefer={[
+                { href: "/junk-removal/gallery", label: "Before & after gallery" },
+                { href: "/junk-removal/videos", label: "Watch real jobs" },
+                { href: "/junk-removal/latest", label: "Latest jobs" },
+              ]}
+            />
+          </>
         )}
 
-        <div className="mt-14">
-          <FacebookFollow />
-        </div>
       </main>
       <PublicFooter variant={service.division === "junk_removal" ? "company" : "umbrella"} />
       <StickyMobileConcierge divisionId={service.division} />

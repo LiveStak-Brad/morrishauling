@@ -1,4 +1,5 @@
 import { SEO_ORG, DIVISION_SEO, SITE_ORIGIN, type SeoDivisionId } from "@/lib/seo/site";
+import { WARRENTON_JUNK_SOCIAL, socialSameAsUrls } from "@/lib/social/config";
 
 export function jsonLdScript(data: Record<string, unknown> | Array<Record<string, unknown>>) {
   return {
@@ -12,12 +13,16 @@ export function organizationSchema() {
     "@type": "Organization",
     "@id": `${SITE_ORIGIN}/#organization`,
     name: SEO_ORG.legalName,
-    alternateName: SEO_ORG.brandName,
+    alternateName: [
+      SEO_ORG.brandName,
+      WARRENTON_JUNK_SOCIAL.brandShort,
+      WARRENTON_JUNK_SOCIAL.displayName,
+    ],
     url: SITE_ORIGIN,
     logo: SEO_ORG.logo,
     telephone: SEO_ORG.phone,
     email: SEO_ORG.email,
-    sameAs: [SEO_ORG.facebook],
+    sameAs: socialSameAsUrls(),
     areaServed: SEO_ORG.primaryCounties.map((name) => ({
       "@type": "AdministrativeArea",
       name,
@@ -38,21 +43,29 @@ export function websiteSchema() {
 
 export function localBusinessSchema(division: SeoDivisionId) {
   const d = DIVISION_SEO[division];
+  const isJunk = division === "junk_removal";
   return {
     "@context": "https://schema.org",
     "@type": "HomeAndConstructionBusiness",
     "@id": `${SITE_ORIGIN}${d.path}#business`,
-    name: d.name,
+    name: isJunk ? WARRENTON_JUNK_SOCIAL.brandShort : d.name,
+    alternateName: isJunk
+      ? [d.name, WARRENTON_JUNK_SOCIAL.displayName, WARRENTON_JUNK_SOCIAL.handle]
+      : [d.name],
     image: d.logo,
     url: `${SITE_ORIGIN}${d.path}`,
     telephone: SEO_ORG.phone,
     parentOrganization: { "@id": `${SITE_ORIGIN}/#organization` },
     // Service-area business: intentionally omit PostalAddress and streetAddress.
-    areaServed: SEO_ORG.primaryCounties.map((name) => ({
-      "@type": "AdministrativeArea",
-      name,
-    })),
+    areaServed: [
+      { "@type": "City", name: "Warrenton", containedInPlace: { "@type": "State", name: "Missouri" } },
+      ...SEO_ORG.primaryCounties.map((name) => ({
+        "@type": "AdministrativeArea",
+        name,
+      })),
+    ],
     description: d.description,
+    sameAs: isJunk ? socialSameAsUrls() : undefined,
   };
 }
 

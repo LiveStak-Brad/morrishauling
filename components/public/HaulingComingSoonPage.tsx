@@ -12,7 +12,7 @@ import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge
 import { useDivisionPublicStatus } from "@/components/public/useDivisionPublicStatus";
 import { ButtonLink } from "@/components/ui/button-link";
 import { FaqAccordion } from "@/components/seo/FaqAccordion";
-import { FacebookFollow } from "@/components/seo/FacebookFollow";
+import { SocialFollowStrip } from "@/components/social/SocialFollowStrip";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { MarketingImage } from "@/components/seo/MarketingImage";
 import { useCompany } from "@/lib/company-context";
@@ -253,9 +253,7 @@ export function HaulingHomePage() {
           </div>
         </section>
 
-        <section className="mt-12">
-          <FacebookFollow />
-        </section>
+        <SocialFollowStrip className="mt-12" compact />
 
         <section className="mt-8 rounded-[1.5rem] border border-black/5 bg-white p-6 shadow-sm sm:p-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
