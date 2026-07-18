@@ -28,8 +28,8 @@ export const metadata: Metadata = {
     "Morris Services — Junk Removal and Hauling for Warren County and nearby Missouri communities. Request an estimate or call (636) 751-4645.",
   manifest: "/manifest.json",
   icons: {
-    icon: [{ url: "/MorrisServicesLogo.png", type: "image/png" }],
-    apple: [{ url: "/MorrisServicesLogo.png", type: "image/png" }],
+    icon: [{ url: "/MorrisServicesLogo.png?v=6", type: "image/png" }],
+    apple: [{ url: "/MorrisServicesLogo.png?v=6", type: "image/png" }],
   },
   openGraph: {
     type: "website",

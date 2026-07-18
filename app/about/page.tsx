@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, Phone } from "lucide-react";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
 import { FacebookFollow } from "@/components/seo/FacebookFollow";
+import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
 import { ButtonLink } from "@/components/ui/button-link";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import {
@@ -65,14 +65,11 @@ export default function AboutPage() {
 
         <section className="mt-14 overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-sm">
           <div className="flex flex-col items-center bg-gradient-to-br from-brand-primary/8 via-white to-[#F7F5F2] px-6 py-10 text-center">
-            <Image
-              src="/logo.png?v=4"
+            <MorrisServicesLogo
+              height={220}
+              href={junk.hubPath}
               alt={junk.name}
-              width={1146}
-              height={758}
-              unoptimized
-              className="h-auto w-full max-w-[14rem] object-contain sm:max-w-[16rem]"
-              sizes="256px"
+              className="max-h-52 sm:max-h-56"
             />
             <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
               Flagship craft

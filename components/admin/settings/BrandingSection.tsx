@@ -42,7 +42,7 @@ export function BrandingSection({ initial }: { initial: unknown }) {
           <div className="flex-1 space-y-3">
             <div>
               <Label>Logo URL or path</Label>
-              <Input className="mt-1" value={branding.logo} onChange={(e) => set("logo", e.target.value)} placeholder="/logo.png" />
+              <Input className="mt-1" value={branding.logo} onChange={(e) => set("logo", e.target.value)} placeholder="/MorrisServicesLogo.png" />
             </div>
             <div>
               <Label>Hero banner (desktop)</Label>

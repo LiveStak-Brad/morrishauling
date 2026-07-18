@@ -11,7 +11,7 @@ function money(n: number) {
 }
 
 async function tryEmbedLogo(doc: PDFDocument) {
-  const candidates = ["logo.png", "logos/morris.png"];
+  const candidates = ["MorrisServicesLogo.png", "logo.png", "logos/morris.png"];
   for (const name of candidates) {
     try {
       const filePath = path.join(process.cwd(), "public", name);

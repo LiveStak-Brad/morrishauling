@@ -43,7 +43,7 @@ const PRICING_MODIFIERS = [
 export const morrisConfig = {
   companyId: MORRIS_COMPANY_ID,
   companyName: "Morris Junk Removal",
-  logo: "/logo.png?v=4",
+  logo: "/MorrisServicesLogo.png?v=6",
   heroBanner: "",
   /** Optional portrait hero for phones; leave empty when using logo-first marketing */
   heroBannerMobile: "",

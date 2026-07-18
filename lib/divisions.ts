@@ -70,7 +70,7 @@ export function getDivisionConfigs(): Record<DivisionId, DivisionConfig> {
       serviceType: "junk_removal",
       hubPath: "/junk-removal",
       bookPath: "/book?division=junk_removal",
-      logo: "/logo.png?v=4",
+      logo: "/MorrisServicesLogo.png?v=6",
       launchStatus: parseLaunchStatus(
         process.env.DIVISION_JUNK_LAUNCH_STATUS ?? process.env.NEXT_PUBLIC_DIVISION_JUNK_LAUNCH_STATUS,
         DEFAULT_JUNK_STATUS
@@ -84,7 +84,7 @@ export function getDivisionConfigs(): Record<DivisionId, DivisionConfig> {
       serviceType: "hauling_transport",
       hubPath: "/hauling",
       bookPath: "/book?division=hauling",
-      logo: "/haulinglogo.png?v=1",
+      logo: "/MorrisServicesLogo.png?v=6",
       launchStatus: parseLaunchStatus(
         process.env.DIVISION_HAULING_LAUNCH_STATUS ?? process.env.NEXT_PUBLIC_DIVISION_HAULING_LAUNCH_STATUS,
         DEFAULT_HAULING_STATUS

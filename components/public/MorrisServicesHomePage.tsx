@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MapPin, Phone, Shield } from "lucide-react";
 import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
@@ -131,15 +130,12 @@ export function MorrisServicesHomePage() {
           <div className="overflow-hidden rounded-[1.75rem] border border-black/5 bg-white shadow-[0_24px_80px_-40px_rgba(10,10,10,0.35)]">
             <div className="grid lg:grid-cols-12">
               <div className="flex flex-col items-center justify-center bg-gradient-to-br from-brand-primary/8 via-white to-[#F7F5F2] p-8 text-center lg:col-span-5 lg:p-12">
-                <Image
-                  src="/logo.png?v=4"
-                  alt={junk.name}
-                  width={1146}
-                  height={758}
+                <MorrisServicesLogo
+                  height={280}
                   priority
-                  unoptimized
-                  className="h-auto w-full max-w-[16rem] object-contain sm:max-w-[18rem] md:max-w-[20rem]"
-                  sizes="320px"
+                  href={junk.hubPath}
+                  alt={junk.name}
+                  className="max-h-52 sm:max-h-60 md:max-h-64"
                 />
                 <CompanyStatusBadge
                   divisionStatus={junkStatus?.launchStatus ?? "setup"}
@@ -186,14 +182,11 @@ export function MorrisServicesHomePage() {
         <section className="mt-10">
           <div className="overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-sm sm:flex sm:items-center sm:justify-between">
             <div className="flex flex-col items-center gap-4 p-6 sm:flex-row sm:items-center sm:gap-6 sm:p-8">
-              <Image
-                src="/haulinglogo.png?v=1"
+              <MorrisServicesLogo
+                height={140}
+                href={hauling.hubPath}
                 alt={hauling.name}
-                width={1139}
-                height={754}
-                unoptimized
-                className="h-auto w-full max-w-[9rem] object-contain sm:max-w-[10rem]"
-                sizes="160px"
+                className="max-h-28 sm:max-h-32"
               />
               <div className="text-center sm:text-left">
                 <CompanyStatusBadge

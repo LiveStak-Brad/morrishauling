@@ -8,7 +8,7 @@ export const SEO_ORG = {
   legalName: "Morris Service Group LLC",
   brandName: "Morris Services",
   url: SITE_ORIGIN,
-  logo: `${SITE_ORIGIN}/MorrisServicesLogo.png`,
+  logo: `${SITE_ORIGIN}/MorrisServicesLogo.png?v=6`,
   phone: "(636) 751-4645",
   phoneTel: "+16367514645",
   email: "hello@morris-services.com",
@@ -32,7 +32,7 @@ export const DIVISION_SEO = {
     shortName: "Junk Removal",
     path: "/junk-removal",
     bookPath: "/book?division=junk_removal",
-    logo: `${SITE_ORIGIN}/logo.png`,
+    logo: `${SITE_ORIGIN}/MorrisServicesLogo.png?v=6`,
     ogImage: "/og/og-junk-removal.png",
     tagline: "Clear the space. Keep the peace.",
     description:
@@ -44,7 +44,7 @@ export const DIVISION_SEO = {
     shortName: "Hauling",
     path: "/hauling",
     bookPath: "/book?division=hauling",
-    logo: `${SITE_ORIGIN}/haulinglogo.png`,
+    logo: `${SITE_ORIGIN}/MorrisServicesLogo.png?v=6`,
     ogImage: "/og/og-hauling.png",
     tagline: "Equipment, materials, and scheduled transport.",
     description:

@@ -20,7 +20,7 @@ export type FutureCompany = {
 export const morrisServicesConfig = {
   parentLegalName: "Morris Service Group LLC",
   publicBrandName: "Morris Services",
-  logo: "/MorrisServicesLogo.png?v=5",
+  logo: "/MorrisServicesLogo.png?v=6",
   publicWebsite: "https://morris-services.com",
   /** Primary emotional promise */
   promise: "Your home, restored.",
@@ -36,7 +36,7 @@ export const morrisServicesConfig = {
       name: "Morris Junk Removal",
       status: "open" as const,
       tagline: "Clear the space. Keep the peace.",
-      logo: "/logo.png?v=4",
+      logo: "/MorrisServicesLogo.png?v=6",
       services: [
         "Residential Junk Removal",
         "Commercial Junk Removal",
@@ -59,7 +59,7 @@ export const morrisServicesConfig = {
     status: "open" as const,
     craft: "Transport",
     hubPath: "/hauling",
-    logo: "/haulinglogo.png?v=1",
+    logo: "/MorrisServicesLogo.png?v=6",
     tagline: "Equipment, materials, and scheduled transport.",
     services: [
       "Equipment Hauling",
