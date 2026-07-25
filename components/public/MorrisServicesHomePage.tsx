@@ -48,14 +48,14 @@ export function MorrisServicesHomePage() {
           </p>
 
           <div
-            className="mt-6 w-full max-w-2xl animate-slide-up opacity-0 sm:mt-8"
+            className="mt-6 w-full max-w-[280px] animate-slide-up opacity-0 sm:mt-8 sm:max-w-md md:max-w-lg"
             style={{ animationFillMode: "forwards", animationDelay: "0.05s" }}
           >
             <MorrisServicesLogo
               height={360}
               href={undefined}
               priority
-              className="mx-auto w-full max-h-48 sm:max-h-56 md:max-h-64"
+              className="mx-auto w-full max-h-[180px] sm:max-h-56 md:max-h-64"
             />
           </div>
 
@@ -148,7 +148,7 @@ export function MorrisServicesHomePage() {
                   priority
                   href={junk.hubPath}
                   alt={junk.name}
-                  className="max-h-56 sm:max-h-64 md:max-h-72"
+                  className="w-full max-w-[200px] max-h-[160px] sm:max-w-[280px] sm:max-h-[220px] md:max-w-xs md:max-h-64 lg:max-h-72"
                 />
                 <CompanyStatusBadge
                   divisionStatus={junkStatus?.launchStatus ?? "setup"}
@@ -199,7 +199,7 @@ export function MorrisServicesHomePage() {
                 height={180}
                 href={hauling.hubPath}
                 alt={hauling.name}
-                className="max-h-36 sm:max-h-40"
+                className="w-auto max-w-[120px] max-h-[120px] sm:max-w-none sm:max-h-40"
               />
               <div className="text-center sm:text-left">
                 <CompanyStatusBadge
