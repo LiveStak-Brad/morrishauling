@@ -148,7 +148,7 @@ export function MorrisServicesHomePage() {
                   priority
                   href={junk.hubPath}
                   alt={junk.name}
-                  className="w-full max-w-[240px] max-h-[200px] sm:max-w-xs sm:max-h-64 md:max-h-72"
+                  className="w-full max-w-[200px] max-h-[160px] sm:max-w-[280px] sm:max-h-[220px] md:max-w-xs md:max-h-64 lg:max-h-72"
                 />
                 <CompanyStatusBadge
                   divisionStatus={junkStatus?.launchStatus ?? "setup"}
