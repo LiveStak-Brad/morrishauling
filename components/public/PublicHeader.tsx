@@ -3,10 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Menu, Phone, Sparkles } from "lucide-react";
+import { ChevronDown, Menu, Phone } from "lucide-react";
 import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
-import { isPublicPrelaunch } from "@/lib/public-site";
 import {
   PUBLIC_NAV_GROUPS,
   SCRAP_FRIDAYS_NAV,
@@ -34,19 +33,6 @@ import {
 } from "@/components/ui/sheet";
 import { SocialMobileNavSection, SocialNavDropdown } from "@/components/social/SocialNavMenu";
 
-function NewBadge({ onDark }: { onDark?: boolean }) {
-  return (
-    <span
-      className={cn(
-        "ml-1.5 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide",
-        onDark ? "bg-brand-primary text-white" : "bg-brand-primary/15 text-brand-primary"
-      )}
-    >
-      New
-    </span>
-  );
-}
-
 function DesktopNavLink({
   link,
   pathname,
@@ -61,7 +47,7 @@ function DesktopNavLink({
     <Link
       href={link.href}
       className={cn(
-        "inline-flex min-h-10 items-center rounded-full px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2",
+        "inline-flex h-9 items-center rounded-full px-2.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2",
         onDark
           ? active
             ? "bg-brand-primary text-white shadow-sm"
@@ -72,7 +58,6 @@ function DesktopNavLink({
       )}
     >
       {link.label}
-      {link.badge ? <NewBadge onDark={onDark || active} /> : null}
     </Link>
   );
 }
@@ -91,7 +76,7 @@ function DesktopNavDropdown({
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          "inline-flex min-h-10 items-center gap-1 rounded-full px-3 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2",
+          "inline-flex h-9 items-center rounded-full px-2.5 text-[13px] font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2",
           onDark
             ? active
               ? "bg-white/15 text-white"
@@ -102,9 +87,8 @@ function DesktopNavDropdown({
         )}
       >
         {group.label}
-        <ChevronDown className="h-3.5 w-3.5 opacity-70" aria-hidden />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" sideOffset={10} className="min-w-[15.5rem] p-1.5">
+      <DropdownMenuContent align="start" sideOffset={8} className="min-w-[14.5rem] p-1.5">
         {group.items.map((item) => (
           <DropdownMenuItem
             key={`${group.id}-${item.href}-${item.label}`}
@@ -115,10 +99,7 @@ function DesktopNavDropdown({
               navLinkIsActive(pathname, item.href) && "bg-accent"
             )}
           >
-            <span className="inline-flex items-center">
-              {item.label}
-              {item.badge ? <NewBadge /> : null}
-            </span>
+            {item.label}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
@@ -151,7 +132,7 @@ function MobileAccordionGroup({
       >
         {group.label}
         <ChevronDown
-          className={cn("h-4 w-4 opacity-70 transition-transform", open && "rotate-180")}
+          className={cn("h-4 w-4 opacity-60 transition-transform", open && "rotate-180")}
           aria-hidden
         />
       </button>
@@ -178,7 +159,6 @@ function MobileAccordionGroup({
                 )}
               >
                 {item.label}
-                {item.badge ? <NewBadge onDark={active || onDark} /> : null}
               </Link>
             );
           })}
@@ -204,7 +184,6 @@ export function PublicHeader({
   const floatDesktop = floating === "desktop";
   const floatAll = floating === true;
   const onDark = floatAll || transparent || floatDesktop;
-  const bookingCta = isPublicPrelaunch() ? "Book service" : "Book service";
   const homeHref = variant === "company" ? "/junk-removal" : "/";
 
   return (
@@ -225,25 +204,17 @@ export function PublicHeader({
                 : "morris-glass border-b border-white/40"
       )}
     >
-      <div
-        className={cn(
-          "mx-auto flex max-w-7xl items-center gap-3 px-4 lg:gap-5",
-          "h-[4.75rem] md:h-[5.25rem]"
-        )}
-      >
+      <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center gap-2 px-4 md:h-[4.75rem] lg:gap-3">
         <MorrisServicesLogo
-          height={72}
+          height={64}
           priority
           href={homeHref}
-          className="max-h-[3.75rem] shrink-0 sm:max-h-[4.25rem] md:max-h-[4.5rem]"
+          className="max-h-[3.5rem] shrink-0 sm:max-h-[3.75rem] md:max-h-[4rem]"
         />
 
         <nav
           aria-label="Primary"
-          className={cn(
-            "hidden min-w-0 flex-1 items-center justify-center gap-0.5",
-            "lg:flex"
-          )}
+          className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 lg:flex"
         >
           <DesktopNavLink
             link={{ href: homeHref, label: "Home" }}
@@ -262,19 +233,20 @@ export function PublicHeader({
           <SocialNavDropdown onDark={onDark} />
         </nav>
 
-        <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-1.5">
           <a
             href={`tel:${company.phone}`}
+            aria-label={`Call ${company.phone}`}
             className={cn(
               buttonVariants({ size: "sm", variant: "outline" }),
-              "hidden min-h-10 rounded-full sm:inline-flex",
+              "hidden h-9 rounded-full px-3 sm:inline-flex",
               onDark
                 ? "border-white/35 bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
                 : "border-brand-primary/20 hover:bg-brand-primary/5"
             )}
           >
-            <Phone className={cn("mr-1.5 h-4 w-4", onDark ? "text-white" : "text-brand-primary")} />
-            <span className="font-semibold">{company.phone}</span>
+            <Phone className={cn("mr-1.5 h-3.5 w-3.5", onDark ? "text-white" : "text-brand-primary")} />
+            <span className="text-[13px] font-semibold">Call</span>
           </a>
 
           <ButtonLink
@@ -282,7 +254,7 @@ export function PublicHeader({
             size="sm"
             variant="outline"
             className={cn(
-              "hidden min-h-10 rounded-full md:inline-flex",
+              "hidden h-9 rounded-full px-3 text-[13px] md:inline-flex",
               onDark
                 ? "border-white/35 bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
                 : "border-border hover:bg-muted"
@@ -295,12 +267,11 @@ export function PublicHeader({
             href="/book"
             size="sm"
             className={cn(
-              "hidden min-h-10 rounded-full bg-brand-primary shadow-md hover:bg-brand-primary/90 sm:inline-flex",
+              "hidden h-9 rounded-full bg-brand-primary px-3.5 text-[13px] shadow-md hover:bg-brand-primary/90 sm:inline-flex",
               onDark && "bg-brand-primary hover:bg-brand-primary/90"
             )}
           >
-            <Sparkles className="mr-1.5 h-4 w-4" />
-            {bookingCta}
+            Schedule
           </ButtonLink>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -333,13 +304,18 @@ export function PublicHeader({
               <div className="mt-4 grid grid-cols-2 gap-2 px-1">
                 <a
                   href={`tel:${company.phone}`}
+                  aria-label={`Call ${company.phone}`}
                   className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-primary px-3 text-sm font-semibold text-white"
                 >
                   <Phone className="h-4 w-4" />
                   Call
                 </a>
-                <ButtonLink href="/book" className="min-h-12 w-full rounded-xl" onClick={() => setMobileOpen(false)}>
-                  {bookingCta}
+                <ButtonLink
+                  href="/book"
+                  className="min-h-12 w-full rounded-xl"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Schedule
                 </ButtonLink>
               </div>
 
@@ -371,9 +347,6 @@ export function PublicHeader({
                   )}
                 >
                   {SCRAP_FRIDAYS_NAV.label}
-                  <NewBadge
-                    onDark={navLinkIsActive(pathname, SCRAP_FRIDAYS_NAV.href) || onDark}
-                  />
                 </Link>
 
                 {PUBLIC_NAV_GROUPS.map((group) => (

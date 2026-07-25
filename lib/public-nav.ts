@@ -1,7 +1,6 @@
 export type PublicNavLink = {
   href: string;
   label: string;
-  badge?: string;
   highlight?: boolean;
   external?: boolean;
 };
@@ -15,8 +14,7 @@ export type PublicNavGroup = {
 /** Top-level Free Scrap Fridays — high-visibility marketing funnel. */
 export const SCRAP_FRIDAYS_NAV: PublicNavLink = {
   href: "/free-scrap-fridays",
-  label: "Free Scrap Fridays",
-  badge: "NEW",
+  label: "Scrap Pickup",
 };
 
 export const PUBLIC_NAV_GROUPS: PublicNavGroup[] = [
@@ -28,8 +26,7 @@ export const PUBLIC_NAV_GROUPS: PublicNavGroup[] = [
       { href: "/hauling", label: "Hauling" },
       {
         href: "/free-scrap-fridays",
-        label: "Free Scrap Fridays",
-        badge: "NEW",
+        label: "Scrap Pickup",
         highlight: true,
       },
       { href: "/services", label: "All Services" },
@@ -74,7 +71,7 @@ export const PUBLIC_NAV_GROUPS: PublicNavGroup[] = [
     items: [
       { href: "/junk-removal/videos", label: "Videos" },
       { href: "/junk-removal/gallery", label: "Before & After" },
-      { href: "/junk-removal/latest", label: "Follow Our Jobs" },
+      { href: "/junk-removal/latest", label: "Our Jobs" },
       { href: "/junk-removal/community", label: "Community" },
     ],
   },

@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import { SocialIcon } from "@/components/social/SocialIcons";
 import {
   DropdownMenu,
@@ -19,14 +18,13 @@ export function SocialNavDropdown({ onDark }: { onDark?: boolean }) {
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          "inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand-primary",
+          "inline-flex h-9 items-center rounded-full px-2.5 text-[13px] font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand-primary",
           onDark
             ? "text-white/90 hover:bg-white/10 hover:text-white"
-            : "hover:bg-muted"
+            : "text-foreground/85 hover:bg-muted hover:text-foreground"
         )}
       >
-        Follow our jobs
-        <ChevronDown className="h-3.5 w-3.5 opacity-70" aria-hidden />
+        Social
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="min-w-[12rem]">
         {platforms.map((platform) => (
