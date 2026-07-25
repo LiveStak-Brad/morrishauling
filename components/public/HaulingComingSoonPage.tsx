@@ -150,6 +150,7 @@ export function HaulingHomePage() {
           <div className="mt-8 flex justify-center">
             <MarketingImage
               imageKey="gooseneck-hauling"
+              priority
               className="w-full max-w-md sm:max-w-lg md:max-w-xl"
               sizes="(max-width: 640px) 90vw, (max-width: 768px) 512px, 576px"
             />

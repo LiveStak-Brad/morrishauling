@@ -5,6 +5,7 @@ import { servicesForDivision } from "@/lib/seo/services";
 import { allGuideSlugs } from "@/lib/seo/guides";
 import { allItemSlugs } from "@/lib/seo/items";
 import { allTopicSlugs } from "@/lib/seo/topics";
+import { allDemolitionSlugs } from "@/lib/seo/demolition";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -20,6 +21,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_ORIGIN}/careers`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_ORIGIN}/careers/jobs`, lastModified: now, changeFrequency: "weekly", priority: 0.55 },
     { url: `${SITE_ORIGIN}/junk-removal/services`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
+    { url: `${SITE_ORIGIN}/junk-removal/demolition`, lastModified: now, changeFrequency: "weekly", priority: 0.88 },
+    { url: `${SITE_ORIGIN}/junk-removal/faq`, lastModified: now, changeFrequency: "monthly", priority: 0.75 },
     { url: `${SITE_ORIGIN}/junk-removal/responsible-disposal`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_ORIGIN}/free-scrap-fridays`, lastModified: now, changeFrequency: "weekly", priority: 0.88 },
     { url: `${SITE_ORIGIN}/junk-removal/resources`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
@@ -84,6 +87,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "monthly" as const,
     priority: 0.74,
   }));
+  const demolition = allDemolitionSlugs().map((slug) => ({
+    url: `${SITE_ORIGIN}/junk-removal/demolition/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }));
 
   return [
     ...staticRoutes,
@@ -94,5 +103,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...guides,
     ...items,
     ...topics,
+    ...demolition,
   ];
 }

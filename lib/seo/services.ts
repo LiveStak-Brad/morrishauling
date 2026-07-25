@@ -230,16 +230,16 @@ export const JUNK_SERVICES: MarketingService[] = [
     division: "junk_removal",
     name: "Construction Debris Removal",
     shortName: "Construction Debris",
-    title: "Construction Debris Removal | Morris Junk Removal",
+    title: "Construction Debris Removal Near Warrenton | Morris Junk Removal",
     description:
-      "Construction and remodel debris removal for small jobs and property cleanups in our Missouri service area.",
-    whoFor: ["Home remodelers", "Handymen", "Property managers"],
+      "Construction cleanup and remodel debris haul-away near Warrenton and Warren County — drywall, lumber, and job-site piles without a long-term dumpster rental.",
+    whoFor: ["Home remodelers", "Handymen", "Property managers", "DIY renovators"],
     included: ["Removal of listed debris", "Haul-away to appropriate facilities"],
     needed: ["Photos", "Material types", "Site access"],
     pricingFactors: ["Volume and weight", "Material type", "Load access"],
     restrictions: ["Some materials require specific facilities", "Hazardous construction waste may be excluded"],
     process: ["Describe materials with photos", "Approve estimate", "We load and dispose properly"],
-    related: ["commercial-cleanouts", "hot-tub-shed-removal"],
+    related: ["commercial-cleanouts", "hot-tub-shed-removal", "garage-cleanouts"],
     imageKey: "junk-removal-truck",
     responsibleDisposal:
       "Clean wood, metal, concrete, cardboard, and other separated materials may have recycling options. Mixed debris may need different handling. Separating materials before pickup improves routing options.",
@@ -247,6 +247,14 @@ export const JUNK_SERVICES: MarketingService[] = [
       {
         q: "Do you take drywall and lumber?",
         a: "Often yes, when facilities accept them. Tell us the material mix so we route correctly.",
+      },
+      {
+        q: "Is this a dumpster alternative for remodel cleanup?",
+        a: "Yes when you want debris gone in one visit instead of renting a container. See our dumpster vs junk removal guide if you are comparing options.",
+      },
+      {
+        q: "Do you handle shed or deck tear-down debris?",
+        a: "Light structure tear-down and debris haul-away may be scoped on our demolition pages. Heavy excavation or specialty equipment is not assumed.",
       },
     ],
   },
@@ -271,7 +279,11 @@ export const JUNK_SERVICES: MarketingService[] = [
     faqs: [
       {
         q: "Do you demolish sheds?",
-        a: "Light shed tear-down may be available when scoped. Structural demolition beyond our capacity is declined rather than forced.",
+        a: "Light shed tear-down may be available when scoped. For dedicated shed, deck, and structure scoping, see our demolition pages. Structural work beyond our capacity is declined rather than forced.",
+      },
+      {
+        q: "Where can I learn about shed demolition options?",
+        a: "Visit our shed demolition page for honest details on what Morris evaluates, equipment we use, and when larger projects need more planning.",
       },
     ],
   },

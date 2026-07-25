@@ -22,6 +22,10 @@ export type ServiceArea = {
   useCases?: string[];
   /** Place-specific context about access, corridors, and local property types */
   localContext?: string;
+  /** Fully unique FAQ for local SEO (not a template shell) */
+  uniqueFaq?: { q: string; a: string };
+  /** Branded hero image key from lib/seo/image-manifest */
+  heroImageKey?: string;
   /** Publish for junk, hauling, or both */
   divisions: Array<"junk_removal" | "hauling">;
 };
@@ -52,6 +56,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     name: "Warrenton",
     kind: "city",
     county: "Warren County",
+    heroImageKey: "area-warrenton",
     nearby: ["Truesdale", "Wright City", "Foristell", "Innsbrook"],
     junkBlurb:
       "Need junk removed in Warrenton? We clear garages, basements, furniture, appliances, and full property cleanouts for homeowners, landlords, and local businesses — with photo-based estimates before we schedule.",
@@ -72,6 +77,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     name: "Wright City",
     kind: "city",
     county: "Warren County",
+    heroImageKey: "area-wright-city",
     nearby: ["Warrenton", "Foristell", "Wentzville", "Truesdale"],
     junkBlurb:
       "Wright City residents and property managers call us for garage cleanouts, mattress and couch removal, and estate clearances along the I-70 corridor — without surprise add-ons when the scope matches your photos.",
@@ -92,6 +98,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     name: "Wentzville",
     kind: "city",
     county: "St. Charles County",
+    heroImageKey: "area-wentzville",
     nearby: ["O’Fallon", "Lake Saint Louis", "Foristell", "Wright City"],
     junkBlurb:
       "Wentzville homeowners and commercial properties use Morris Junk Removal for furniture haul-away, appliance pickup, and whole-home cleanouts. Upload photos for a clear estimate before we arrive.",
@@ -113,6 +120,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     name: "Troy",
     kind: "city",
     county: "Lincoln County",
+    heroImageKey: "area-troy",
     nearby: ["Moscow Mills", "Foley", "Elsberry", "Warrenton"],
     junkBlurb:
       "Troy and Lincoln County properties — residential, rental, and commercial — get junk removal for furniture, appliances, and property cleanouts with honest pricing based on volume and access.",
@@ -173,6 +181,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     name: "O’Fallon",
     kind: "city",
     county: "St. Charles County",
+    heroImageKey: "area-ofallon",
     nearby: ["St. Peters", "Wentzville", "Lake Saint Louis", "St. Charles"],
     junkBlurb:
       "O’Fallon junk removal for furniture, mattresses, appliances, garage cleanouts, and landlord turnovers. Tell us about stairs, long carries, and what stays — we price from your photos and notes.",
@@ -213,6 +222,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     name: "Washington",
     kind: "city",
     county: "Franklin County",
+    heroImageKey: "area-washington",
     nearby: ["Union", "Pacific", "New Haven", "St. Clair"],
     junkBlurb:
       "Washington, MO junk removal for riverside homes, downtown properties, and commercial cleanouts. Extended-area travel may apply outside our core Warren County radius — we disclose that before you book.",
@@ -442,6 +452,7 @@ export const SERVICE_AREAS: ServiceArea[] = [
     name: "Foristell",
     kind: "city",
     county: "St. Charles County",
+    heroImageKey: "area-foristell",
     nearby: ["Wright City", "Wentzville", "Warrenton", "Flint Hill"],
     junkBlurb:
       "Foristell sits on the Warren–St. Charles line — convenient for junk removal, garage cleanouts, and estate clearances with short travel from our Warrenton base.",
@@ -497,6 +508,177 @@ export const SERVICE_AREAS: ServiceArea[] = [
     ],
     localContext:
       "High Ridge is centered around the Highway 30 corridor, with residential roads spreading across hilly terrain toward House Springs and Byrnes Mill. Narrow approaches, steep or curved driveways, and limited trailer turnaround space make access notes especially important for this extended service area.",
+    divisions: ["junk_removal", "hauling"],
+  },
+  {
+    slug: "truesdale",
+    name: "Truesdale",
+    kind: "city",
+    county: "Warren County",
+    nearby: ["Warrenton", "Wright City", "Pendleton", "Jonesburg"],
+    junkBlurb:
+      "Truesdale junk removal for homes and small businesses minutes from Warrenton. Garage cleanouts, furniture haul-away, and estate debris with photo estimates before we roll.",
+    haulingBlurb:
+      "Truesdale equipment and material hauling benefits from short runs to our Warren County base — share load size and gate access for a clear plan.",
+    useCases: [
+      "Garage and shed cleanouts on compact town lots",
+      "Furniture and appliance removal after move-outs",
+      "Mower and light equipment transport into Warrenton shops",
+      "Construction debris from small residential projects",
+    ],
+    localContext:
+      "Truesdale sits beside Warrenton with a mix of older residential streets and properties close to the rail and highway corridors. Short travel distance helps scheduling, while narrow drives and on-street parking still need a heads-up before the trailer arrives.",
+    uniqueFaq: {
+      q: "How quickly can you serve Truesdale from Warrenton?",
+      a: "Truesdale is adjacent to our home base, so many jobs fit standard local windows once photos are approved. Same-week scheduling is common when capacity allows — we never promise a day we cannot staff.",
+    },
+    divisions: ["junk_removal", "hauling"],
+  },
+  {
+    slug: "marthasville",
+    name: "Marthasville",
+    kind: "city",
+    county: "Warren County",
+    nearby: ["Warrenton", "Washington", "Dutzow", "Treloar"],
+    junkBlurb:
+      "Marthasville junk removal for river-road homes, farms, and in-town properties. We clear garages, barns contents, and household debris with honest access planning.",
+    haulingBlurb:
+      "Marthasville hauling for compact equipment and materials along the Highway 94 corridor when routes and ground conditions allow.",
+    useCases: [
+      "Estate and farm outbuilding cleanouts",
+      "Basement and garage junk near the Missouri River hills",
+      "Mower and tractor implement moves on rural drives",
+      "Debris removal after storm or remodel work",
+    ],
+    localContext:
+      "Marthasville combines a small historic downtown with wooded hills and farm lanes toward Washington and the Katy Trail. Steep drives, soft shoulders after rain, and longer rural approaches matter for dump-trailer jobs.",
+    uniqueFaq: {
+      q: "Can you reach acreage properties outside Marthasville?",
+      a: "Yes when driveways and gates allow trailer access. Tell us about creek crossings, low limbs, and soft ground so we can plan the right day and equipment approach.",
+    },
+    divisions: ["junk_removal", "hauling"],
+  },
+  {
+    slug: "jonesburg",
+    name: "Jonesburg",
+    kind: "city",
+    county: "Montgomery County",
+    nearby: ["Warrenton", "High Hill", "New Florence", "Truesdale"],
+    junkBlurb:
+      "Jonesburg junk removal for I-70 corridor homes and acreage just west of Warren County. Photo estimates include travel notes before you book.",
+    haulingBlurb:
+      "Jonesburg equipment hauling when the route fits our western schedule — dimensions and weight estimates required up front.",
+    travelNote: "Just west of our Warren County base; travel is typically modest but confirmed per job.",
+    useCases: [
+      "Garage and property cleanouts on larger lots",
+      "Furniture removal from older in-town homes",
+      "Farm equipment short-hauls toward Warrenton",
+      "Construction debris from residential builds",
+    ],
+    localContext:
+      "Jonesburg sits on the I-70 corridor in Montgomery County with quick access back toward Warrenton. Rural properties and town lots both appear in our requests, so driveway width and trailer turnaround remain key details.",
+    uniqueFaq: {
+      q: "Is Jonesburg inside your normal service area?",
+      a: "Yes — it is a short corridor run west of Warrenton. We still confirm travel and capacity on each estimate so pricing stays transparent.",
+    },
+    divisions: ["junk_removal", "hauling"],
+  },
+  {
+    slug: "innsbrook",
+    name: "Innsbrook",
+    kind: "city",
+    county: "Warren County",
+    nearby: ["Warrenton", "Wright City", "Foristell", "Truesdale"],
+    junkBlurb:
+      "Innsbrook junk removal for resort and lake-community homes. We plan around gates, private roads, and seasonal access for cleanouts and bulky-item haul-away.",
+    haulingBlurb:
+      "Innsbrook material and equipment moves when private-road rules and trailer access are cleared in advance.",
+    useCases: [
+      "Vacation-home and seasonal cleanouts",
+      "Furniture and appliance removal from lake properties",
+      "Deck and patio debris haul-away after upgrades",
+      "Light equipment transport with gate access notes",
+    ],
+    localContext:
+      "Innsbrook’s lakes, wooded lots, and gated community roads create a different access profile than downtown Warrenton. HOA rules, narrow lanes, and seasonal occupancy should be mentioned when you request an estimate.",
+    uniqueFaq: {
+      q: "Do you work inside Innsbrook’s gated areas?",
+      a: "When you arrange guest or vendor access and roads support our trailers, yes. Share gate instructions and any HOA work-hour rules with your estimate request.",
+    },
+    divisions: ["junk_removal", "hauling"],
+  },
+  {
+    slug: "hawk-point",
+    name: "Hawk Point",
+    kind: "city",
+    county: "Lincoln County",
+    nearby: ["Troy", "Moscow Mills", "Silex", "Warrenton"],
+    junkBlurb:
+      "Hawk Point junk removal for Lincoln County homes and acreage. Garage, estate, and outbuilding debris with clear travel and access notes from our Warren County crew.",
+    haulingBlurb:
+      "Hawk Point hauling for mowers, compact equipment, and materials on routes that connect through Troy and toward Warrenton.",
+    travelNote: "Lincoln County service — travel confirmed on each estimate.",
+    useCases: [
+      "Rural garage and barn-contents cleanouts",
+      "Whole-home cleanouts after moves or estates",
+      "Compact tractor and mower transport",
+      "Building-material drops for acreage projects",
+    ],
+    localContext:
+      "Hawk Point is a quieter Lincoln County community with farm roads and larger parcels. Soft ground, farm gates, and longer approaches from Highway 47 corridors are common planning factors.",
+    uniqueFaq: {
+      q: "Do you serve farms around Hawk Point?",
+      a: "Yes when access is suitable. We ask about gate width, lane conditions, and whether a dump trailer can turn around on site.",
+    },
+    divisions: ["junk_removal", "hauling"],
+  },
+  {
+    slug: "pendleton",
+    name: "Pendleton",
+    kind: "city",
+    county: "Warren County",
+    nearby: ["Warrenton", "Truesdale", "Jonesburg", "Wright City"],
+    junkBlurb:
+      "Pendleton junk removal for small-town and rural Warren County properties. Fast coordination from nearby Warrenton for cleanouts and bulky junk.",
+    haulingBlurb:
+      "Pendleton local hauling for light equipment and materials with short positioning from our home base.",
+    useCases: [
+      "Residential junk and furniture removal",
+      "Garage and shed cleanouts",
+      "Yard and storm debris when accepted",
+      "Short equipment moves into Warrenton",
+    ],
+    localContext:
+      "Pendleton is a small Warren County community with quick links toward Warrenton and the I-70 corridor. Properties are often a mix of village lots and nearby acreage, so access notes still matter even on short hauls.",
+    uniqueFaq: {
+      q: "Are Pendleton jobs priced like Warrenton?",
+      a: "Most Pendleton jobs are local-base pricing when the load matches your photos. Unusual access or volume is called out before you approve.",
+    },
+    divisions: ["junk_removal", "hauling"],
+  },
+  {
+    slug: "st-peters",
+    name: "St. Peters",
+    kind: "city",
+    county: "St. Charles County",
+    nearby: ["O’Fallon", "St. Charles", "Cottleville", "Wentzville"],
+    junkBlurb:
+      "St. Peters junk removal for busy St. Charles County neighborhoods — garage cleanouts, furniture, appliances, and rental turnovers with photo-based estimates.",
+    haulingBlurb:
+      "St. Peters equipment and material hauling on select schedules serving the Highway 370 and I-70 corridors.",
+    travelNote: "Within our primary eastern radius; confirm schedule capacity on each request.",
+    useCases: [
+      "Subdivision garage and basement cleanouts",
+      "Apartment and townhome bulky-item removal",
+      "Office and light commercial cleanouts",
+      "Contractor material delivery when timing aligns",
+    ],
+    localContext:
+      "St. Peters is a dense St. Charles County suburb with cul-de-sacs, HOA rules, and commercial strips along major corridors. Parking permission, dumpster-alternative junk removal, and tight driveway turns are common estimate details.",
+    uniqueFaq: {
+      q: "Can you replace a dumpster for a St. Peters cleanout?",
+      a: "Often yes. Full-service junk removal removes the debris and the labor so you may not need a roll-off. We compare volume in your photos and explain the better fit.",
+    },
     divisions: ["junk_removal", "hauling"],
   },
 ];

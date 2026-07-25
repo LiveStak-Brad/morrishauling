@@ -125,3 +125,23 @@ export function webPageSchema(input: { name: string; description: string; path: 
     isPartOf: { "@id": `${SITE_ORIGIN}/#website` },
   };
 }
+
+export function imageObjectSchema(input: {
+  url: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+  name?: string;
+}) {
+  const url = input.url.startsWith("http") ? input.url : `${SITE_ORIGIN}${input.url}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    contentUrl: url,
+    url,
+    name: input.name,
+    caption: input.caption,
+    width: input.width,
+    height: input.height,
+  };
+}

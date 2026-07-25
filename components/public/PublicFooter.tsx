@@ -77,6 +77,12 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                 Junk removal services
               </Link>
               <Link
+                href="/junk-removal/demolition"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Demolition &amp; structure removal
+              </Link>
+              <Link
                 href="/junk-removal/areas"
                 className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
               >
@@ -93,6 +99,12 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                 className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
               >
                 Resource center
+              </Link>
+              <Link
+                href="/junk-removal/faq"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                FAQs
               </Link>
               <Link
                 href="/junk-removal/latest"

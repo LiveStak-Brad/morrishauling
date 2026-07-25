@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AuthorityContentCard } from "@/components/authority/AuthorityContentCard";
+import { ProjectGalleryCard } from "@/components/authority/ProjectGalleryCard";
 import {
   PROPERTY_TYPES,
   PROPERTY_TYPE_LABELS,
@@ -124,7 +124,7 @@ export function GalleryFilterClient({ stories }: { stories: AuthorityStory[] }) 
         <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((story) => (
             <li key={story.id}>
-              <AuthorityContentCard story={story} />
+              <ProjectGalleryCard story={story} />
             </li>
           ))}
         </ul>

@@ -4,6 +4,7 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
 import { MarketingBreadcrumbs } from "@/components/seo/MarketingBreadcrumbs";
+import { MarketingImage } from "@/components/seo/MarketingImage";
 import { ConversionCtaGroup, RelatedLinks } from "@/components/seo/ConversionCta";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildPageMetadata } from "@/lib/seo/metadata";
@@ -58,6 +59,13 @@ export default function ServiceAreaPage() {
           {SEO_ORG.serviceAreaLabel}. We schedule by appointment based on estimates — not walk-in
           storefront hours.
         </p>
+        <div className="mt-8">
+          <MarketingImage
+            imageKey="service-area-hero"
+            priority
+            sizes="(max-width: 1024px) 100vw, 960px"
+          />
+        </div>
 
         <section className="mt-10 rounded-2xl border border-black/5 bg-white p-6 shadow-sm sm:p-8">
           <h2 className="font-heading text-2xl font-medium">Contact</h2>

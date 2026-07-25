@@ -5,7 +5,7 @@ import { MORRIS_COMPANY_ID } from "@/lib/morris-config";
 import { isBookingSubmissionAllowed, isPrelaunch } from "@/lib/public-site";
 import { enforceRateLimit } from "@/lib/api/rate-limit";
 
-export type PublicDivisionStatus = {
+type PublicDivisionStatus = {
   id: DivisionId;
   name: string;
   launchStatus: DivisionLaunchStatus;
@@ -37,7 +37,7 @@ function labelsFor(status: DivisionLaunchStatus): { statusLabel: string; booking
   }
 }
 
-export async function resolvePublicDivisionStatus(id: DivisionId): Promise<PublicDivisionStatus> {
+async function resolvePublicDivisionStatus(id: DivisionId): Promise<PublicDivisionStatus> {
   const config = getDivision(id);
   // DB is source of truth; env defaults only when DB row missing
   const dbStatus = await getDivisionLaunchStatus(MORRIS_COMPANY_ID, id);

@@ -184,6 +184,7 @@ export function JunkRemovalHomePage() {
           <div className="mb-8 flex justify-center">
             <MarketingImage
               imageKey="junk-removal-truck"
+              priority
               className="w-full max-w-sm sm:max-w-md md:max-w-lg"
               sizes="(max-width: 640px) 85vw, (max-width: 768px) 448px, 512px"
             />
@@ -257,6 +258,31 @@ export function JunkRemovalHomePage() {
           >
             Read about responsible disposal & recycling →
           </a>
+        </section>
+
+        <section className="mt-16 sm:mt-20">
+          <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-sm sm:flex sm:items-center sm:justify-between sm:gap-8 sm:p-8">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
+                Structure removal
+              </p>
+              <h2 className="mt-2 font-heading text-2xl font-medium tracking-tight">
+                Demolition &amp; structure removal
+              </h2>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                Sheds, decks, fences, and haul-away after tear-downs — scoped honestly for what our
+                crew and trailers can handle near Warrenton and Warren County.
+              </p>
+            </div>
+            <ButtonLink
+              href="/junk-removal/demolition"
+              variant="outline"
+              className="mt-4 h-11 w-full rounded-full sm:mt-0 sm:w-auto"
+            >
+              Demolition hub
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </ButtonLink>
+          </div>
         </section>
 
         <section className="mt-16 sm:mt-20">

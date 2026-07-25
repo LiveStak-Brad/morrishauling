@@ -7,6 +7,7 @@ import { ScrapFridayWizard } from "@/components/scrap-fridays/ScrapFridayWizard"
 import { RelatedAuthorityLinks } from "@/components/authority/RelatedAuthorityLinks";
 import { SocialFollowStrip } from "@/components/social/SocialFollowStrip";
 import { FaqAccordion } from "@/components/seo/FaqAccordion";
+import { MarketingImage } from "@/components/seo/MarketingImage";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, faqSchema, webPageSchema } from "@/lib/seo/schema";
@@ -141,6 +142,10 @@ export default function FreeScrapFridaysPage() {
           >
             Request a junk-removal estimate
           </Link>
+        </div>
+
+        <div className="mt-10">
+          <MarketingImage imageKey="fsf-hero" priority sizes="(max-width: 1024px) 100vw, 960px" />
         </div>
 
         <section className="mt-14 grid gap-4 sm:grid-cols-3">

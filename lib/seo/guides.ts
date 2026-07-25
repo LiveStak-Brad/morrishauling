@@ -98,13 +98,24 @@ export const AUTHORITY_GUIDES: AuthorityGuide[] = [
           "If a dumpster is clearly the better tool for your project, we will say so rather than force a bad fit.",
         ],
       },
+      {
+        heading: "Shed, deck, and structure debris",
+        body: [
+          "Light structure tear-down and debris haul-away may fit junk removal better than a long-term dumpster — especially when you want the pile gone the same day.",
+          "For honest scoping on sheds, decks, fences, and similar projects, see our demolition pages. We evaluate project-by-project and do not oversell heavy excavation we do not perform.",
+        ],
+      },
     ],
     relatedServices: ["construction-debris-removal", "garage-cleanouts", "estate-cleanouts"],
-    relatedGuides: ["how-junk-removal-pricing-works", "construction-cleanup-guide"],
+    relatedGuides: ["how-junk-removal-pricing-works", "construction-cleanup-guide", "same-day-junk-removal"],
     faqs: [
       {
         q: "Do you rent dumpsters?",
         a: "No. We provide junk removal and cleanout service. If you need a rented container for a multi-day remodel, a dumpster company is usually the right vendor.",
+      },
+      {
+        q: "Is junk removal a good dumpster alternative for shed or deck tear-down?",
+        a: "Often yes when the debris can be loaded and hauled in one visit. Review our demolition service pages for what we evaluate and when larger projects need extra planning or equipment.",
       },
     ],
   },
@@ -678,6 +689,118 @@ export const AUTHORITY_GUIDES: AuthorityGuide[] = [
       {
         q: "Do you take yard waste?",
         a: "Often yes when facilities accept it and it is not mixed with household trash. Use the item directory for details.",
+      },
+    ],
+  },
+  {
+    slug: "same-day-junk-removal",
+    title: "Same-Day Junk Removal Near Warrenton MO | Honest Capacity Guide",
+    h1: "Same-Day Junk Removal — What We Can Promise",
+    description:
+      "When same-day junk removal is realistic near Warrenton and Warren County — and when next-day is the honest answer. Capacity, photos, and access rules from Morris Service Group LLC.",
+    keywords: ["same day junk removal", "same-day junk removal Warrenton", "emergency junk removal Missouri"],
+    summary:
+      "Same-day service depends on crew, trailer, and route capacity — not a marketing slogan. Here is how we decide.",
+    sections: [
+      {
+        heading: "When same-day may be possible",
+        body: [
+          "Smaller loads with clear photos, easy driveway access, and an open crew window in Warren County or nearby.",
+          "Emergency cleanups after storms or failed appliances when we can safely fit the stop without breaking other customer commitments.",
+        ],
+      },
+      {
+        heading: "When we will say next-day instead",
+        body: [
+          "Full trailers, multi-person estate loads, demolition debris, or routes already committed.",
+          "Missing photos or unclear access — we would rather reschedule than surprise you on price or time.",
+        ],
+      },
+      {
+        heading: "How to request urgent service",
+        body: [
+          "Upload photos, note stairs/gates, and call if the situation is time-sensitive.",
+          "Ask for the earliest window we can honestly staff — we confirm in writing before we roll.",
+        ],
+      },
+    ],
+    relatedServices: ["furniture-removal", "appliance-removal", "garage-cleanouts"],
+    relatedGuides: ["photo-estimate-tips", "prepare-for-junk-removal", "dumpster-vs-junk-removal"],
+    relatedItems: ["couch-sofa", "refrigerator"],
+    faqs: [
+      {
+        q: "Do you guarantee same-day junk removal?",
+        a: "No blanket guarantee. We offer same-day only when capacity and access allow, and we tell you clearly if the next available window is better.",
+      },
+    ],
+  },
+  {
+    slug: "brush-and-yard-debris-removal",
+    title: "Brush & Yard Debris Removal | Warren County MO",
+    h1: "Brush and Yard Debris Removal",
+    description:
+      "Brush piles, storm limbs, and yard debris haul-away near Warrenton. What Morris can take, how to separate loads, and when facilities limit green waste.",
+    keywords: ["brush removal", "yard debris removal", "storm debris Warrenton"],
+    summary:
+      "Yard debris is common after storms and spring cleanups. Separation and facility rules determine whether we can haul it with household junk.",
+    sections: [
+      {
+        heading: "What usually qualifies",
+        body: [
+          "Brush piles, limbs, leaves in bags when accepted, and storm debris free of household trash.",
+          "Fence panels and landscape timbers may be hauled as construction-style debris when noted in photos.",
+        ],
+      },
+      {
+        heading: "Prep that helps pricing",
+        body: [
+          "Keep yard waste separate from furniture and household junk when you can.",
+          "Flag soft ground, septic fields, and long carries from the backyard.",
+        ],
+      },
+    ],
+    relatedServices: ["construction-debris-removal", "garage-cleanouts"],
+    relatedGuides: ["spring-cleaning-guide", "dumpster-vs-junk-removal"],
+    relatedItems: ["yard-debris"],
+    faqs: [
+      {
+        q: "Do you chip brush on site?",
+        a: "No. We load and haul. Chipping or grinding is a different service.",
+      },
+    ],
+  },
+  {
+    slug: "foreclosure-and-eviction-cleanup",
+    title: "Foreclosure & Eviction Cleanup | Missouri Property Cleanouts",
+    h1: "Foreclosure and Eviction Cleanup",
+    description:
+      "Property cleanup after foreclosure or eviction near Warrenton — junk, furniture, and debris haul-away with photo estimates for landlords and asset managers.",
+    keywords: ["foreclosure cleanup", "eviction cleanup", "property cleanout Missouri"],
+    summary:
+      "Turnover cleanouts need clear scope, access authority, and responsible disposal. We focus on what must leave the property.",
+    sections: [
+      {
+        heading: "Typical scopes",
+        body: [
+          "Furniture, trash bags, appliances, garage overflow, and yard debris left after a vacancy.",
+          "Whole-home cleanouts when the property must be market-ready for sale or re-rent.",
+        ],
+      },
+      {
+        heading: "What we need from property managers",
+        body: [
+          "Proof you are authorized to clear the property, lockbox/gate codes, and photos of each area.",
+          "Notes on items that must stay (appliances conveying with the sale, etc.).",
+        ],
+      },
+    ],
+    relatedServices: ["estate-cleanouts", "garage-cleanouts", "commercial-cleanouts"],
+    relatedGuides: ["landlord-turnover-checklist", "estate-cleanout-checklist"],
+    relatedItems: ["couch-sofa", "mattress"],
+    faqs: [
+      {
+        q: "Can you meet realtor deadlines?",
+        a: "Share the hard date early. We schedule to capacity and confirm the window in writing — we do not overpromise same-day estate loads.",
       },
     ],
   },

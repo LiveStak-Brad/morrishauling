@@ -23,6 +23,7 @@ export const PUBLIC_NAV_GROUPS: PublicNavGroup[] = [
     label: "Services",
     items: [
       { href: "/junk-removal", label: "Junk Removal" },
+      { href: "/junk-removal/demolition", label: "Demolition" },
       { href: "/hauling", label: "Hauling" },
       {
         href: "/free-scrap-fridays",
@@ -51,6 +52,7 @@ export const PUBLIC_NAV_GROUPS: PublicNavGroup[] = [
       { href: "/junk-removal/resources", label: "Resource Center" },
       { href: "/pricing", label: "Pricing" },
       { href: "/junk-removal/guides", label: "Guides" },
+      { href: "/junk-removal/faq", label: "FAQs" },
       {
         href: "/junk-removal/tools/load-size-estimator",
         label: "Load Size Estimator",

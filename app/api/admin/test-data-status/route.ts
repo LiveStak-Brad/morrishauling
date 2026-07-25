@@ -17,7 +17,7 @@ import {
 import { getOperationsDepthSnapshot, getOperationalTrailers } from "@/lib/db/operations-depth";
 import { getHrEmployees } from "@/lib/db/hr/employees";
 
-export const ADMIN_MODULE_LINKS: Record<string, string> = {
+const ADMIN_MODULE_LINKS: Record<string, string> = {
   jobs: "/admin/jobs",
   invoices: "/admin/invoices",
   payments: "/admin/payments",

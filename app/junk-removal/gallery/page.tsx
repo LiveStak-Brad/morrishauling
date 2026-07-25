@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
@@ -59,17 +60,50 @@ export default async function JunkGalleryPage() {
           Before &amp; After Gallery
         </h1>
         <p className="mt-4 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-          Filter real projects by city, service, property type, and items removed. Every featured
-          project supports our social brand {WARRENTON_JUNK_SOCIAL.handle} and{" "}
-          {WARRENTON_JUNK_SOCIAL.operator}.
+          Filter real projects by city, service, property type, and items removed. Completed jobs
+          publish here when ops adds permissioned before-and-after photos to authority stories — no
+          placeholder projects. Every featured project supports our social brand{" "}
+          {WARRENTON_JUNK_SOCIAL.handle} and {WARRENTON_JUNK_SOCIAL.operator}.
         </p>
         <ConversionCtaGroup divisionId="junk_removal" className="mt-8" />
 
         {stories.length === 0 ? (
-          <p className="mt-12 rounded-2xl border border-dashed border-black/10 bg-white/70 p-8 text-sm text-muted-foreground">
-            Gallery projects will appear here as we publish permissioned before-and-after photos
-            from local jobs.
-          </p>
+          <div className="mt-12 rounded-2xl border border-dashed border-black/10 bg-white/80 p-8 sm:p-10">
+            <h2 className="font-heading text-xl font-medium text-foreground">
+              Completed projects publish here
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              When a job finishes, our team can attach before-and-after photos to an authority story
+              and surface it on this gallery — only with customer permission. Until then, browse
+              latest jobs and videos, or request an estimate for your own project.
+            </p>
+            <ul className="mt-6 flex flex-wrap gap-3 text-sm font-semibold">
+              <Link
+                href="/book?division=junk_removal"
+                className="rounded-full bg-brand-primary px-5 py-2.5 text-white hover:bg-brand-primary/90"
+              >
+                Request an estimate
+              </Link>
+              <Link
+                href="/junk-removal/latest"
+                className="rounded-full border border-black/10 bg-white px-5 py-2.5 text-brand-primary hover:border-brand-primary/40"
+              >
+                Latest jobs
+              </Link>
+              <Link
+                href="/junk-removal/videos"
+                className="rounded-full border border-black/10 bg-white px-5 py-2.5 text-brand-primary hover:border-brand-primary/40"
+              >
+                Job videos
+              </Link>
+              <Link
+                href="/junk-removal/faq"
+                className="rounded-full border border-black/10 bg-white px-5 py-2.5 text-brand-primary hover:border-brand-primary/40"
+              >
+                FAQs
+              </Link>
+            </ul>
+          </div>
         ) : (
           <GalleryFilterClient stories={stories} />
         )}

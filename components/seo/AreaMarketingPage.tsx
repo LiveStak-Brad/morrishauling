@@ -3,6 +3,7 @@ import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
 import { MarketingBreadcrumbs } from "@/components/seo/MarketingBreadcrumbs";
+import { MarketingImage } from "@/components/seo/MarketingImage";
 import { FaqAccordion } from "@/components/seo/FaqAccordion";
 import { ConversionCtaGroup, RelatedLinks } from "@/components/seo/ConversionCta";
 import { RelatedAuthorityLinks } from "@/components/authority/RelatedAuthorityLinks";
@@ -28,7 +29,7 @@ export function AreaMarketingPage({
     .filter((a) => a.slug !== area.slug && (a.county === area.county || area.nearby.includes(a.name)))
     .slice(0, 6);
 
-  const faqs =
+  const baseFaqs =
     division === "junk_removal"
       ? [
           {
@@ -62,6 +63,9 @@ export function AreaMarketingPage({
             a: "Heavy, unusual, oversized, multi-stop, or permit-sensitive loads are not auto-confirmed. We review capacity, securement, route limits, and required equipment, then clearly accept, revise, or decline the request.",
           },
         ];
+  const faqs = area.uniqueFaq
+    ? [area.uniqueFaq, ...baseFaqs.filter((f) => f.q !== area.uniqueFaq!.q)].slice(0, 4)
+    : baseFaqs;
 
   const crumbs = [
     { name: "Morris Services", href: "/" },
@@ -93,16 +97,29 @@ export function AreaMarketingPage({
         <p className="mt-6 text-xs font-semibold uppercase tracking-[0.16em] text-brand-primary">
           {area.kind === "county" ? "County service area" : "City service area"} · {area.county}
         </p>
-        <h1 className="mt-2 font-heading text-4xl font-medium tracking-tight sm:text-5xl">
-          {division === "junk_removal" ? "Junk Removal" : "Hauling"} in {area.name}, MO
-        </h1>
-        <p className="mt-4 max-w-3xl text-lg leading-relaxed text-muted-foreground">{blurb}</p>
-        {area.travelNote && (
-          <p className="mt-3 max-w-3xl rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-sm text-amber-950">
-            {area.travelNote}
-          </p>
-        )}
-        <ConversionCtaGroup divisionId={division} className="mt-8" />
+        <div className="mt-6 grid gap-8 lg:grid-cols-5 lg:items-start">
+          <div className="lg:col-span-3">
+            <h1 className="font-heading text-4xl font-medium tracking-tight sm:text-5xl">
+              {division === "junk_removal" ? "Junk Removal" : "Hauling"} in {area.name}, MO
+            </h1>
+            <p className="mt-4 max-w-3xl text-lg leading-relaxed text-muted-foreground">{blurb}</p>
+            {area.travelNote && (
+              <p className="mt-3 max-w-3xl rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-sm text-amber-950">
+                {area.travelNote}
+              </p>
+            )}
+            <ConversionCtaGroup divisionId={division} className="mt-8" />
+          </div>
+          {area.heroImageKey && division === "junk_removal" ? (
+            <div className="lg:col-span-2">
+              <MarketingImage
+                imageKey={area.heroImageKey}
+                priority
+                sizes="(max-width: 1024px) 90vw, 420px"
+              />
+            </div>
+          ) : null}
+        </div>
 
         {area.localContext && (
           <section className="mt-14">

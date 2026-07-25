@@ -18,6 +18,7 @@ import {
 } from "@/lib/public-copy";
 import { trackMarketingEvent } from "@/lib/seo/analytics";
 import { MorrisProtocolSteps } from "@/components/public/MorrisProtocolSteps";
+import { MarketingImage } from "@/components/seo/MarketingImage";
 
 export function MorrisServicesHomePage() {
   const junk = morrisServicesConfig.operatingCompanies[0];
@@ -101,6 +102,18 @@ export function MorrisServicesHomePage() {
             <MapPin className="h-4 w-4 text-brand-primary" aria-hidden />
             {SERVICE_AREA}
           </p>
+
+          <div
+            className="mt-10 w-full max-w-4xl opacity-0 animate-slide-up"
+            style={{ animationFillMode: "forwards", animationDelay: "0.4s" }}
+          >
+            <MarketingImage
+              imageKey="furniture-removal"
+              priority
+              className="w-full"
+              sizes="(max-width: 1024px) 100vw, 896px"
+            />
+          </div>
         </div>
       </section>
 

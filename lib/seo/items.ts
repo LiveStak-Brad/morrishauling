@@ -512,7 +512,35 @@ export const AUTHORITY_ITEMS: AuthorityItem[] = [
     faqs: [
       {
         q: "Do you demolish sheds?",
-        a: "Debris haul-away is our core offer. Demolition must be scoped separately if offered at all.",
+        a: "Light shed tear-down may be scoped on our shed demolition page. Debris haul-away is always part of the conversation — we do not oversell heavy structural work.",
+      },
+    ],
+  },
+  {
+    slug: "scrap-metal",
+    name: "Scrap Metal",
+    title: "Scrap Metal Pickup Near Warrenton | Free Scrap Fridays",
+    description:
+      "Scrap metal and free scrap pickup near Warrenton — how Free Scrap Fridays works alongside appliance and metal recycling through Morris Junk Removal.",
+    keywords: ["scrap metal pickup", "free scrap pickup", "metal recycling Warrenton"],
+    acceptance: "usually",
+    canRemove: "Yes for many ferrous and non-ferrous metals when clean enough for scrap yards.",
+    specialHandling: "Mixed loads with household trash may need sorting. Appliances may qualify for Free Scrap Fridays when rules are met.",
+    recycling: "Metal is routed toward scrap when practical.",
+    donation: "Rare for scrap metal; focus is recycling.",
+    manualReview: "When mixed with hazardous materials or unclear ownership.",
+    pricingFactors: ["Weight", "Contamination", "Whether Free Scrap Fridays rules apply"],
+    relatedServices: ["appliance-removal", "hot-tub-shed-removal"],
+    relatedGuides: ["how-recycling-works", "what-happens-to-your-junk"],
+    relatedItems: ["refrigerator", "washer-dryer", "lawn-mower"],
+    faqs: [
+      {
+        q: "Is scrap pickup free?",
+        a: "Free Scrap Fridays covers qualifying scrap under program rules. Other metal loads may be part of a paid junk removal estimate — ask when you send photos.",
+      },
+      {
+        q: "Where do I learn Free Scrap Fridays rules?",
+        a: "See the Free Scrap Fridays page for eligible items, service area, and how to request pickup.",
       },
     ],
   },

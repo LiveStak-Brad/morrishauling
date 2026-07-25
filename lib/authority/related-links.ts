@@ -3,11 +3,18 @@ import { servicesForDivision } from "@/lib/seo/services";
 
 export type RelatedLink = { href: string; label: string };
 
+const DEMOLITION_PREFERRED_SERVICE_SLUGS = new Set([
+  "construction-debris-removal",
+  "hot-tub-shed-removal",
+]);
+
 const AUTHORITY_HUBS: RelatedLink[] = [
   { href: "/junk-removal/latest", label: "Latest junk removal jobs" },
   { href: "/junk-removal/videos", label: "Watch real job videos" },
   { href: "/junk-removal/gallery", label: "Before & after gallery" },
   { href: "/junk-removal/community", label: "Community involvement" },
+  { href: "/junk-removal/demolition", label: "Demolition & structure removal" },
+  { href: "/junk-removal/faq", label: "Junk removal FAQs" },
   { href: "/junk-removal/resources", label: "Resource center" },
   { href: "/pricing", label: "How pricing works" },
   { href: "/junk-removal/guides", label: "Junk removal guides" },
@@ -40,6 +47,10 @@ export function buildRelatedAuthorityLinks(input?: {
 
   for (const p of input?.prefer ?? []) push(p);
 
+  if (input?.serviceSlug && DEMOLITION_PREFERRED_SERVICE_SLUGS.has(input.serviceSlug)) {
+    push({ href: "/junk-removal/demolition", label: "Demolition & structure removal" });
+  }
+
   if (input?.serviceSlug) {
     const svc = servicesForDivision("junk_removal").find((s) => s.slug === input.serviceSlug);
     if (svc) push({ href: `/junk-removal/services/${svc.slug}`, label: svc.name });
@@ -67,6 +78,8 @@ export function authorityHubNavLinks(): RelatedLink[] {
     { href: "/junk-removal/latest", label: "Latest jobs" },
     { href: "/junk-removal/videos", label: "Videos" },
     { href: "/junk-removal/gallery", label: "Gallery" },
+    { href: "/junk-removal/demolition", label: "Demolition" },
+    { href: "/junk-removal/faq", label: "FAQs" },
     { href: "/junk-removal/community", label: "Community" },
   ];
 }

@@ -14,6 +14,7 @@ import { isBookingSubmissionAllowed } from "@/lib/public-site";
 import { useAuth } from "@/components/auth/AuthProvider";
 import type { DivisionId } from "@/lib/divisions";
 import { Phone } from "lucide-react";
+import { MarketingImage } from "@/components/seo/MarketingImage";
 
 function BookPageContent() {
   const { company } = useCompany();
@@ -69,6 +70,9 @@ function BookPageContent() {
             Request an estimate without an account, or sign in for the full booking wizard with
             photos and scheduling.
           </p>
+          <div className="mt-4 mb-2">
+            <MarketingImage imageKey="book-hero" priority sizes="(max-width: 768px) 100vw, 640px" />
+          </div>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
               type="button"

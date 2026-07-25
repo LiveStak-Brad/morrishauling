@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { SocialFollowStrip } from "@/components/social/SocialFollowStrip";
 import { RelatedAuthorityLinks } from "@/components/authority/RelatedAuthorityLinks";
 import { AuthoritySpotlightClient } from "@/components/authority/AuthoritySpotlightClient";
+import { MarketingImage } from "@/components/seo/MarketingImage";
 
 const EXAMPLE_JOBS = [
   {
@@ -52,6 +53,10 @@ export default function PricingPage() {
           Transparent rates for {company.companyName}. Your estimate is based on volume, access, and
           disposal — confirmed before we load.
         </p>
+
+        <div className="mt-8">
+          <MarketingImage imageKey="pricing-hero" priority sizes="(max-width: 768px) 100vw, 720px" />
+        </div>
 
         <div className="mt-8 rounded-[1.25rem] border border-black/5 bg-white p-5 shadow-sm sm:p-6">
           <p className="font-semibold text-brand-primary">Clear estimates</p>
