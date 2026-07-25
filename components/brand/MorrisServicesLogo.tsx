@@ -39,6 +39,12 @@ export function MorrisServicesLogo({
   const safeHeight = Math.min(height, MAX_SHARP_HEIGHT);
   const displayWidth = width ?? Math.round(safeHeight * (LOGO_WIDTH / LOGO_HEIGHT));
 
+  const hasResponsiveSizing = className?.includes('max-h-') || className?.includes('max-w-') || className?.includes('h-') || className?.includes('w-');
+  
+  const inlineStyle = hasResponsiveSizing 
+    ? undefined 
+    : { maxHeight: safeHeight, maxWidth: displayWidth };
+
   const image = (
     <Image
       src={MORRIS_SERVICES_LOGO_SRC}
@@ -48,14 +54,15 @@ export function MorrisServicesLogo({
       priority={priority}
       unoptimized
       className={cn(
-        "block h-auto w-auto object-contain",
+        "block h-auto object-contain",
+        !hasResponsiveSizing && "w-auto",
         withShadow &&
           "drop-shadow-[0_6px_14px_rgba(0,0,0,0.28)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.18)]",
         onDark && "brightness-110",
         className
       )}
-      style={{ maxHeight: safeHeight, maxWidth: displayWidth }}
-      sizes={`${Math.max(displayWidth, safeHeight)}px`}
+      style={inlineStyle}
+      sizes={hasResponsiveSizing ? "(max-width: 640px) 100vw, (max-width: 768px) 90vw, 896px" : `${Math.max(displayWidth, safeHeight)}px`}
     />
   );
 
