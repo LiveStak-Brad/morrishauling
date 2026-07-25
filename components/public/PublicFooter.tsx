@@ -65,6 +65,12 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                 Morris Junk Removal
               </Link>
               <Link
+                href="/free-scrap-fridays"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Free Scrap Fridays
+              </Link>
+              <Link
                 href="/junk-removal/services"
                 className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
               >

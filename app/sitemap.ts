@@ -21,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_ORIGIN}/careers/jobs`, lastModified: now, changeFrequency: "weekly", priority: 0.55 },
     { url: `${SITE_ORIGIN}/junk-removal/services`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${SITE_ORIGIN}/junk-removal/responsible-disposal`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_ORIGIN}/free-scrap-fridays`, lastModified: now, changeFrequency: "weekly", priority: 0.88 },
     { url: `${SITE_ORIGIN}/junk-removal/resources`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${SITE_ORIGIN}/junk-removal/latest`, lastModified: now, changeFrequency: "weekly", priority: 0.82 },
     { url: `${SITE_ORIGIN}/junk-removal/videos`, lastModified: now, changeFrequency: "weekly", priority: 0.82 },

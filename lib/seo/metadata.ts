@@ -13,12 +13,21 @@ export function buildPageMetadata(input: {
   path: string;
   ogImage?: string;
   ogTitle?: string;
+  /** Social/OG description; defaults to `description`. */
+  ogDescription?: string;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
+  ogImageAlt?: string;
   noIndex?: boolean;
   keywords?: string[];
 }): Metadata {
   const url = absoluteUrl(input.path);
   const image = absoluteUrl(input.ogImage ?? "/og/og-morris-services.png");
   const ogTitle = input.ogTitle ?? input.title;
+  const socialDescription = input.ogDescription ?? input.description;
+  const imageWidth = input.ogImageWidth ?? 1200;
+  const imageHeight = input.ogImageHeight ?? 630;
+  const imageAlt = input.ogImageAlt ?? ogTitle;
 
   return {
     title: { absolute: input.title },
@@ -34,13 +43,13 @@ export function buildPageMetadata(input: {
       url,
       siteName: "Morris Services",
       title: ogTitle,
-      description: input.description,
-      images: [{ url: image, width: 1200, height: 630, alt: ogTitle }],
+      description: socialDescription,
+      images: [{ url: image, width: imageWidth, height: imageHeight, alt: imageAlt }],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
-      description: input.description,
+      description: socialDescription,
       images: [image],
     },
   };

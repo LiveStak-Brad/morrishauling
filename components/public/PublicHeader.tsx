@@ -1,15 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Phone, Sparkles } from "lucide-react";
+import { ChevronDown, Menu, Phone, Sparkles } from "lucide-react";
 import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import { isPublicPrelaunch } from "@/lib/public-site";
+import {
+  PUBLIC_NAV_GROUPS,
+  SCRAP_FRIDAYS_NAV,
+  navGroupIsActive,
+  navLinkIsActive,
+  type PublicNavGroup,
+  type PublicNavLink,
+} from "@/lib/public-nav";
 import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
 import { ButtonLink } from "@/components/ui/button-link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetContent,
@@ -19,71 +34,157 @@ import {
 } from "@/components/ui/sheet";
 import { SocialMobileNavSection, SocialNavDropdown } from "@/components/social/SocialNavMenu";
 
-const umbrellaLinks = [
-  { href: "/", label: "Home" },
-  { href: "/junk-removal", label: "Junk Removal" },
-  { href: "/hauling", label: "Hauling" },
-  { href: "/#standard", label: "Standard" },
-  { href: "/about", label: "About" },
-  { href: "/careers", label: "Careers" },
-  { href: "/contact", label: "Contact" },
-];
+function NewBadge({ onDark }: { onDark?: boolean }) {
+  return (
+    <span
+      className={cn(
+        "ml-1.5 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide",
+        onDark ? "bg-brand-primary text-white" : "bg-brand-primary/15 text-brand-primary"
+      )}
+    >
+      New
+    </span>
+  );
+}
 
-const companyLinks = [
-  { href: "/junk-removal", label: "Home" },
-  { href: "/junk-removal/services", label: "Services" },
-  { href: "/junk-removal/areas", label: "Areas" },
-  { href: "/junk-removal/videos", label: "Videos" },
-  { href: "/junk-removal/resources", label: "Resources" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/contact", label: "Contact" },
-];
-
-function NavLink({
-  href,
-  label,
+function DesktopNavLink({
+  link,
   pathname,
   onDark,
 }: {
-  href: string;
-  label: string;
+  link: PublicNavLink;
   pathname: string;
   onDark?: boolean;
 }) {
-  const path = href.split("?")[0].split("#")[0];
-  const active =
-    path === "/junk-removal"
-      ? pathname === "/junk-removal"
-      : path === "/"
-        ? pathname === "/"
-        : pathname === path || pathname.startsWith(`${path}/`);
-
-  if (onDark) {
-    return (
-      <Link
-        href={href}
-        className={cn(
-          "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
-          active
-            ? "bg-brand-primary text-white shadow-sm"
-            : "text-white/90 hover:bg-white/10 hover:text-white"
-        )}
-      >
-        {label}
-      </Link>
-    );
-  }
-
+  const active = navLinkIsActive(pathname, link.href);
   return (
     <Link
-      href={href}
+      href={link.href}
       className={cn(
-        "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
-        active ? "bg-brand-primary text-white shadow-sm" : "hover:bg-muted"
+        "inline-flex min-h-10 items-center rounded-full px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2",
+        onDark
+          ? active
+            ? "bg-brand-primary text-white shadow-sm"
+            : "text-white/90 hover:bg-white/10 hover:text-white"
+          : active
+            ? "bg-brand-primary text-white shadow-sm"
+            : "text-foreground/85 hover:bg-muted hover:text-foreground"
       )}
     >
-      {label}
+      {link.label}
+      {link.badge ? <NewBadge onDark={onDark || active} /> : null}
     </Link>
+  );
+}
+
+function DesktopNavDropdown({
+  group,
+  pathname,
+  onDark,
+}: {
+  group: PublicNavGroup;
+  pathname: string;
+  onDark?: boolean;
+}) {
+  const active = navGroupIsActive(pathname, group);
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={cn(
+          "inline-flex min-h-10 items-center gap-1 rounded-full px-3 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2",
+          onDark
+            ? active
+              ? "bg-white/15 text-white"
+              : "text-white/90 hover:bg-white/10 hover:text-white"
+            : active
+              ? "bg-muted text-foreground"
+              : "text-foreground/85 hover:bg-muted hover:text-foreground"
+        )}
+      >
+        {group.label}
+        <ChevronDown className="h-3.5 w-3.5 opacity-70" aria-hidden />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" sideOffset={10} className="min-w-[15.5rem] p-1.5">
+        {group.items.map((item) => (
+          <DropdownMenuItem
+            key={`${group.id}-${item.href}-${item.label}`}
+            render={<Link href={item.href} />}
+            className={cn(
+              "cursor-pointer rounded-lg px-3 py-2.5 text-sm font-medium",
+              item.highlight && "bg-brand-primary/5 text-brand-primary focus:bg-brand-primary/10",
+              navLinkIsActive(pathname, item.href) && "bg-accent"
+            )}
+          >
+            <span className="inline-flex items-center">
+              {item.label}
+              {item.badge ? <NewBadge /> : null}
+            </span>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function MobileAccordionGroup({
+  group,
+  pathname,
+  onDark,
+  onNavigate,
+}: {
+  group: PublicNavGroup;
+  pathname: string;
+  onDark?: boolean;
+  onNavigate: () => void;
+}) {
+  const [open, setOpen] = useState(() => navGroupIsActive(pathname, group));
+  return (
+    <div className="border-b border-border/50 last:border-b-0">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className={cn(
+          "flex min-h-12 w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold transition-colors",
+          onDark ? "text-white hover:bg-white/10" : "hover:bg-muted"
+        )}
+      >
+        {group.label}
+        <ChevronDown
+          className={cn("h-4 w-4 opacity-70 transition-transform", open && "rotate-180")}
+          aria-hidden
+        />
+      </button>
+      {open ? (
+        <div className="pb-2 pl-2">
+          {group.items.map((item) => {
+            const active = navLinkIsActive(pathname, item.href);
+            return (
+              <Link
+                key={`${group.id}-${item.href}-${item.label}`}
+                href={item.href}
+                onClick={onNavigate}
+                className={cn(
+                  "flex min-h-11 items-center rounded-xl px-4 py-2.5 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-brand-primary text-white"
+                    : item.highlight
+                      ? onDark
+                        ? "text-brand-primary hover:bg-white/10"
+                        : "text-brand-primary hover:bg-brand-primary/5"
+                      : onDark
+                        ? "text-white/85 hover:bg-white/10"
+                        : "text-foreground/90 hover:bg-muted"
+                )}
+              >
+                {item.label}
+                {item.badge ? <NewBadge onDark={active || onDark} /> : null}
+              </Link>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -99,11 +200,12 @@ export function PublicHeader({
 }) {
   const { company } = useCompany();
   const pathname = usePathname();
-  const mainLinks = variant === "umbrella" ? umbrellaLinks : companyLinks;
+  const [mobileOpen, setMobileOpen] = useState(false);
   const floatDesktop = floating === "desktop";
   const floatAll = floating === true;
   const onDark = floatAll || transparent || floatDesktop;
   const bookingCta = isPublicPrelaunch() ? "Book service" : "Book service";
+  const homeHref = variant === "company" ? "/junk-removal" : "/";
 
   return (
     <header
@@ -125,35 +227,47 @@ export function PublicHeader({
     >
       <div
         className={cn(
-          "mx-auto flex max-w-6xl items-center justify-between gap-2 px-4",
-          "h-[5.25rem] md:h-[5.75rem]"
+          "mx-auto flex max-w-7xl items-center gap-3 px-4 lg:gap-5",
+          "h-[4.75rem] md:h-[5.25rem]"
         )}
       >
         <MorrisServicesLogo
-          height={88}
+          height={72}
           priority
-          href="/"
-          className="max-h-[4.25rem] sm:max-h-[4.75rem] md:max-h-[5.25rem]"
+          href={homeHref}
+          className="max-h-[3.75rem] shrink-0 sm:max-h-[4.25rem] md:max-h-[4.5rem]"
         />
 
         <nav
+          aria-label="Primary"
           className={cn(
-            "hidden flex-1 flex-wrap items-center justify-center gap-0.5 xl:gap-1",
-            variant === "company" ? "md:flex" : "lg:flex"
+            "hidden min-w-0 flex-1 items-center justify-center gap-0.5",
+            "lg:flex"
           )}
         >
-          {mainLinks.map((link) => (
-            <NavLink key={link.href} {...link} pathname={pathname} onDark={onDark} />
+          <DesktopNavLink
+            link={{ href: homeHref, label: "Home" }}
+            pathname={pathname}
+            onDark={onDark}
+          />
+          <DesktopNavLink link={SCRAP_FRIDAYS_NAV} pathname={pathname} onDark={onDark} />
+          {PUBLIC_NAV_GROUPS.map((group) => (
+            <DesktopNavDropdown
+              key={group.id}
+              group={group}
+              pathname={pathname}
+              onDark={onDark}
+            />
           ))}
           <SocialNavDropdown onDark={onDark} />
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
           <a
             href={`tel:${company.phone}`}
             className={cn(
               buttonVariants({ size: "sm", variant: "outline" }),
-              "hidden rounded-full sm:inline-flex",
+              "hidden min-h-10 rounded-full sm:inline-flex",
               onDark
                 ? "border-white/35 bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
                 : "border-brand-primary/20 hover:bg-brand-primary/5"
@@ -168,7 +282,7 @@ export function PublicHeader({
             size="sm"
             variant="outline"
             className={cn(
-              "hidden rounded-full sm:inline-flex",
+              "hidden min-h-10 rounded-full md:inline-flex",
               onDark
                 ? "border-white/35 bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
                 : "border-border hover:bg-muted"
@@ -177,27 +291,24 @@ export function PublicHeader({
             Login
           </ButtonLink>
 
-          {variant === "company" && (
-            <ButtonLink
-              href="/book"
-              size="sm"
-              className={cn(
-                "hidden rounded-full bg-brand-primary shadow-md hover:bg-brand-primary/90 sm:inline-flex",
-                onDark && "bg-brand-primary hover:bg-brand-primary/90"
-              )}
-            >
-              <Sparkles className="mr-1.5 h-4 w-4" />
-              {bookingCta}
-            </ButtonLink>
-          )}
+          <ButtonLink
+            href="/book"
+            size="sm"
+            className={cn(
+              "hidden min-h-10 rounded-full bg-brand-primary shadow-md hover:bg-brand-primary/90 sm:inline-flex",
+              onDark && "bg-brand-primary hover:bg-brand-primary/90"
+            )}
+          >
+            <Sparkles className="mr-1.5 h-4 w-4" />
+            {bookingCta}
+          </ButtonLink>
 
-          <Sheet>
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger
               aria-label="Open menu"
               className={cn(
                 buttonVariants({ size: "icon", variant: "ghost" }),
-                "rounded-full",
-                variant === "company" ? "md:hidden" : "lg:hidden",
+                "min-h-11 min-w-11 rounded-full lg:hidden",
                 onDark && "text-white hover:bg-white/15 hover:text-white"
               )}
             >
@@ -206,7 +317,7 @@ export function PublicHeader({
             <SheetContent
               side="right"
               className={cn(
-                "w-[min(100vw-2rem,320px)]",
+                "w-[min(100vw-1.5rem,22rem)] overflow-y-auto",
                 onDark ? "border-border bg-slate-950 text-white" : "morris-glass"
               )}
             >
@@ -216,60 +327,76 @@ export function PublicHeader({
                     ? morrisServicesConfig.publicBrandName
                     : company.companyName}
                 </SheetTitle>
-                <MorrisServicesLogo height={72} href="/" className="max-h-[4.5rem]" />
+                <MorrisServicesLogo height={64} href={homeHref} className="max-h-16" />
               </SheetHeader>
-              <nav className="mt-8 flex flex-col gap-1">
-                {mainLinks.map((link) => {
-                  const path = link.href.split("?")[0].split("#")[0];
-                  const active =
-                    path === "/junk-removal"
-                      ? pathname === "/junk-removal"
-                      : path === "/"
-                        ? pathname === "/"
-                        : pathname === path || pathname.startsWith(`${path}/`);
-                  return (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className={cn(
-                        "rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-                        active
-                          ? "bg-brand-primary text-white"
-                          : onDark
-                            ? "text-white/90 hover:bg-white/10"
-                            : "hover:bg-muted"
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  );
-                })}
+
+              <div className="mt-4 grid grid-cols-2 gap-2 px-1">
+                <a
+                  href={`tel:${company.phone}`}
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-primary px-3 text-sm font-semibold text-white"
+                >
+                  <Phone className="h-4 w-4" />
+                  Call
+                </a>
+                <ButtonLink href="/book" className="min-h-12 w-full rounded-xl" onClick={() => setMobileOpen(false)}>
+                  {bookingCta}
+                </ButtonLink>
+              </div>
+
+              <nav className="mt-5 flex flex-col" aria-label="Mobile">
+                <Link
+                  href={homeHref}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "flex min-h-12 items-center rounded-xl px-4 text-sm font-semibold transition-colors",
+                    navLinkIsActive(pathname, homeHref)
+                      ? "bg-brand-primary text-white"
+                      : onDark
+                        ? "text-white/90 hover:bg-white/10"
+                        : "hover:bg-muted"
+                  )}
+                >
+                  Home
+                </Link>
+                <Link
+                  href={SCRAP_FRIDAYS_NAV.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "flex min-h-12 items-center rounded-xl px-4 text-sm font-semibold transition-colors",
+                    navLinkIsActive(pathname, SCRAP_FRIDAYS_NAV.href)
+                      ? "bg-brand-primary text-white"
+                      : onDark
+                        ? "text-brand-primary hover:bg-white/10"
+                        : "text-brand-primary hover:bg-brand-primary/5"
+                  )}
+                >
+                  {SCRAP_FRIDAYS_NAV.label}
+                  <NewBadge
+                    onDark={navLinkIsActive(pathname, SCRAP_FRIDAYS_NAV.href) || onDark}
+                  />
+                </Link>
+
+                {PUBLIC_NAV_GROUPS.map((group) => (
+                  <MobileAccordionGroup
+                    key={group.id}
+                    group={group}
+                    pathname={pathname}
+                    onDark={onDark}
+                    onNavigate={() => setMobileOpen(false)}
+                  />
+                ))}
+
                 <Link
                   href="/login"
+                  onClick={() => setMobileOpen(false)}
                   className={cn(
-                    "rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                    "mt-2 flex min-h-12 items-center rounded-xl px-4 text-sm font-medium transition-colors",
                     onDark ? "text-white/90 hover:bg-white/10" : "hover:bg-muted"
                   )}
                 >
                   Login
                 </Link>
-                <a
-                  href={`tel:${company.phone}`}
-                  className={cn(
-                    "mt-4 flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold",
-                    onDark
-                      ? "bg-brand-primary text-white"
-                      : "bg-brand-primary/10 text-brand-primary"
-                  )}
-                >
-                  <Phone className="h-4 w-4" />
-                  {company.phone}
-                </a>
-                {variant === "company" && (
-                  <ButtonLink href="/book" className="mt-2 w-full rounded-xl">
-                    {bookingCta}
-                  </ButtonLink>
-                )}
+
                 <SocialMobileNavSection onDark={onDark} />
               </nav>
             </SheetContent>

@@ -12,7 +12,7 @@ import { RouteTimeline } from "./RouteTimeline";
 import type { EmployeeDashboardData } from "@/types/hr/employee-portal";
 import {
   Clock, Truck, Users, Route, ChevronRight, ClipboardList,
-  Calendar, FileText, Wrench, GraduationCap, Palmtree,
+  Calendar, FileText, Wrench, GraduationCap, Palmtree, Recycle,
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 
@@ -221,6 +221,7 @@ function getPrimaryAction(data: EmployeeDashboardData): {
 function QuickLinks() {
   const links = [
     { href: "/employee/schedule", label: "Schedule", icon: Calendar },
+    { href: "/employee/scrap-fridays", label: "Scrap Fridays", icon: Recycle },
     { href: "/employee/time-off", label: "Time Off", icon: Palmtree },
     { href: "/employee/documents", label: "Documents", icon: FileText },
     { href: "/employee/training", label: "Training", icon: GraduationCap },
