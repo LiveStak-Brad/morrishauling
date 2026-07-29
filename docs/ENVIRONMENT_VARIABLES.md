@@ -78,9 +78,9 @@
 | Variable | Purpose |
 |----------|---------|
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console HTML tag verification token (meta content value only — do not invent) |
-| `NEXT_PUBLIC_ANALYTICS_PROVIDER` | Optional: `plausible` \| `ga4` \| unset (hooks exist; no vendor loaded until configured) |
+| `NEXT_PUBLIC_ANALYTICS_PROVIDER` | Optional: `ga4` \| `plausible` \| `off` \| unset (GA4 loads when measurement ID is set; default ID is `G-TPFMFZ1DEE`) |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Plausible domain when provider is plausible |
-| `NEXT_PUBLIC_GA4_MEASUREMENT_ID` | GA4 measurement ID when provider is ga4 |
+| `NEXT_PUBLIC_GA4_MEASUREMENT_ID` | GA4 measurement ID (default `G-TPFMFZ1DEE`) |
 | `STRIPE_SECRET_KEY` | Stripe server API |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe.js / Checkout |
 | `STRIPE_WEBHOOK_SECRET` | Webhook verification |

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { AppProviders } from "@/components/AppProviders";
+import { GoogleAnalytics } from "@/components/seo/GoogleAnalytics";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -82,6 +83,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col overflow-x-hidden bg-background">
+        <GoogleAnalytics />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

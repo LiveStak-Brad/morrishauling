@@ -54,16 +54,25 @@ export function MorrisServicesLogo({
         onDark && "brightness-110",
         className
       )}
-      style={{ maxHeight: safeHeight, maxWidth: displayWidth }}
-      sizes={`${Math.max(displayWidth, safeHeight)}px`}
+      style={{
+        maxHeight: safeHeight,
+        // Cap by intended display width, but never overflow a narrower parent.
+        maxWidth: `min(100%, ${displayWidth}px)`,
+      }}
+      sizes={`(max-width: 640px) 90vw, ${Math.max(displayWidth, safeHeight)}px`}
     />
   );
 
   if (!href) return image;
 
   return (
-    <Link href={href} className="inline-flex shrink-0 items-center transition-opacity hover:opacity-90">
-      <span className="transition-transform duration-300 hover:scale-[1.03]">{image}</span>
+    <Link
+      href={href}
+      className="inline-flex max-w-full items-center transition-opacity hover:opacity-90"
+    >
+      <span className="max-w-full transition-transform duration-300 hover:scale-[1.03]">
+        {image}
+      </span>
     </Link>
   );
 }

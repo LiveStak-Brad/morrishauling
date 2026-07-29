@@ -1,6 +1,6 @@
 /**
  * Privacy-conscious analytics event abstraction.
- * Wire GA/Plausible later without rewriting pages.
+ * Forwards to GA4 gtag when available; never send PII.
  */
 
 export type MarketingEventName =
@@ -55,7 +55,25 @@ export function trackMarketingEvent(
       /* ignore provider errors */
     }
   }
+  try {
+    window.gtag?.("event", name, {
+      event_category: "marketing",
+      division: safe.division,
+      page_path: safe.path,
+      event_label: safe.label,
+      platform: safe.platform,
+      surface: safe.surface,
+    });
+  } catch {
+    /* ignore gtag errors */
+  }
   if (process.env.NODE_ENV === "development") {
     console.debug("[marketing-event]", name, safe);
+  }
+}
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
   }
 }

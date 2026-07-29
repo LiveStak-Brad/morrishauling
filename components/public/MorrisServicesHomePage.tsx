@@ -18,7 +18,6 @@ import {
 } from "@/lib/public-copy";
 import { trackMarketingEvent } from "@/lib/seo/analytics";
 import { MorrisProtocolSteps } from "@/components/public/MorrisProtocolSteps";
-import { MarketingImage } from "@/components/seo/MarketingImage";
 
 export function MorrisServicesHomePage() {
   const junk = morrisServicesConfig.operatingCompanies[0];
@@ -102,18 +101,6 @@ export function MorrisServicesHomePage() {
             <MapPin className="h-4 w-4 text-brand-primary" aria-hidden />
             {SERVICE_AREA}
           </p>
-
-          <div
-            className="mt-10 w-full max-w-4xl opacity-0 animate-slide-up"
-            style={{ animationFillMode: "forwards", animationDelay: "0.4s" }}
-          >
-            <MarketingImage
-              imageKey="furniture-removal"
-              priority
-              className="w-full"
-              sizes="(max-width: 1024px) 100vw, 896px"
-            />
-          </div>
         </div>
       </section>
 
@@ -142,14 +129,16 @@ export function MorrisServicesHomePage() {
 
           <div className="overflow-hidden rounded-[1.75rem] border border-black/5 bg-white shadow-[0_24px_80px_-40px_rgba(10,10,10,0.35)]">
             <div className="grid lg:grid-cols-12">
-              <div className="flex flex-col items-center justify-center bg-gradient-to-br from-brand-primary/8 via-white to-[#F7F5F2] p-8 text-center lg:col-span-5 lg:p-12">
-                <MorrisServicesLogo
-                  height={360}
-                  priority
-                  href={junk.hubPath}
-                  alt={junk.name}
-                  className="max-h-56 sm:max-h-64 md:max-h-72"
-                />
+              <div className="flex w-full min-w-0 flex-col items-center justify-center bg-gradient-to-br from-brand-primary/8 via-white to-[#F7F5F2] p-6 text-center sm:p-8 lg:col-span-5 lg:p-12">
+                <div className="mx-auto w-full max-w-[11.5rem] sm:max-w-[14rem] md:max-w-[16rem] lg:max-w-[18rem]">
+                  <MorrisServicesLogo
+                    height={288}
+                    priority
+                    href={junk.hubPath}
+                    alt={junk.name}
+                    className="mx-auto h-auto w-full !max-h-none !max-w-full"
+                  />
+                </div>
                 <CompanyStatusBadge
                   divisionStatus={junkStatus?.launchStatus ?? "setup"}
                   label={junkStatus?.statusLabel}
