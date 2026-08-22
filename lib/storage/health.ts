@@ -19,6 +19,7 @@ const ALL_BUCKETS: StorageBucket[] = [
   STORAGE_BUCKETS.hrDocuments,
   STORAGE_BUCKETS.invoicePdfs,
   STORAGE_BUCKETS.disposalReceipts,
+  STORAGE_BUCKETS.intakeMedia,
 ];
 
 /** Minimal 1×1 JPEG — matches allowed MIME on photo buckets */
@@ -34,6 +35,7 @@ const BUCKET_PROBE: Record<StorageBucket, { ext: string; contentType: string; bo
   [STORAGE_BUCKETS.hrDocuments]: { ext: "pdf", contentType: "application/pdf", body: Buffer.from("%PDF-1.4 healthcheck") },
   [STORAGE_BUCKETS.invoicePdfs]: { ext: "pdf", contentType: "application/pdf", body: Buffer.from("%PDF-1.4 healthcheck") },
   [STORAGE_BUCKETS.disposalReceipts]: { ext: "jpg", contentType: "image/jpeg", body: TINY_JPEG },
+  [STORAGE_BUCKETS.intakeMedia]: { ext: "jpg", contentType: "image/jpeg", body: TINY_JPEG },
 };
 
 export async function checkStorageHealth(): Promise<{

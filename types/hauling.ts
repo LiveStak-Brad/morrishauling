@@ -1,6 +1,8 @@
 import type { LatLng } from "./company";
 
-export type ServiceType = "junk_removal" | "hauling_transport";
+import type { ServiceType as DivisionServiceType } from "@/lib/divisions";
+
+export type ServiceType = DivisionServiceType;
 export type EstimateType = ServiceType;
 
 export type HaulingCargoCategory =
@@ -119,6 +121,9 @@ export interface HaulingDetails {
 export const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
   junk_removal: "Junk Removal",
   hauling_transport: "Hauling & Transport",
+  land_clearing: "Land Clearing",
+  site_work: "Site Work",
+  equipment_services: "Equipment Services",
 };
 
 export const HAULING_CARGO_LABELS: Record<HaulingCargoCategory, string> = {

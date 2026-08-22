@@ -78,6 +78,9 @@ export async function GET(request: Request) {
 
     const junk = byDivision("junk_removal");
     const hauling = byDivision("hauling");
+    const land = byDivision("land_clearing");
+    const site = byDivision("site_work");
+    const equipment = byDivision("equipment_services");
 
     return apiOk({
       scope,
@@ -85,6 +88,9 @@ export async function GET(request: Request) {
       divisions: {
         junk_removal: { ...summarize(junk, "junk_removal"), name: "Morris Junk Removal" },
         hauling: { ...summarize(hauling, "hauling"), name: "Morris Hauling" },
+        land_clearing: { ...summarize(land, "land_clearing"), name: "Morris Land Clearing" },
+        site_work: { ...summarize(site, "site_work"), name: "Morris Site Work" },
+        equipment_services: { ...summarize(equipment, "equipment_services"), name: "Morris Equipment Services" },
       },
       recentJobs: filtered
         .slice()

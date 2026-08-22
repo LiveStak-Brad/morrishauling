@@ -3,7 +3,7 @@ import type { UserProfile } from "./types";
 import type { Invoice, Job } from "@/types";
 import { canHoldPrivilegedStaffRole, isStaffOwnerEmail } from "./staff-allowlist";
 import type { DivisionId } from "@/lib/divisions";
-import { serviceTypeToDivision } from "@/lib/divisions";
+import { ALL_DIVISION_IDS, serviceTypeToDivision } from "@/lib/divisions";
 
 export function isAdmin(profile: UserProfile | null | undefined): boolean {
   return profile?.role === "admin" && canHoldPrivilegedStaffRole(profile.email);
@@ -36,7 +36,7 @@ export function getProfileDivisionScope(profile: UserProfile | null | undefined)
   divisions: DivisionId[];
 } {
   if (!profile) return { scope: "limited", divisions: [] };
-  if (isAdmin(profile)) return { scope: "all", divisions: ["junk_removal", "hauling"] };
+  if (isAdmin(profile)) return { scope: "all", divisions: [...ALL_DIVISION_IDS] };
   const access = profile.division_access ?? "all";
   if (access === "all") {
     return { scope: "all", divisions: ["junk_removal", "hauling"] };

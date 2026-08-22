@@ -1,6 +1,7 @@
 // @supabase-table: jobs
 
 import type { LatLng } from "./company";
+import type { DivisionId } from "@/lib/divisions";
 import type {
   EstimateType,
   HaulingDetails,
@@ -130,8 +131,8 @@ export interface Job {
   id: string;
   companyId: string;
   customerId: string;
-  /** Morris Services division — junk_removal | hauling */
-  divisionId?: "junk_removal" | "hauling";
+  /** Morris Services division */
+  divisionId?: DivisionId;
   serviceType: ServiceType;
   status: JobStatus;
   junkType: string;

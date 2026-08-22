@@ -167,7 +167,7 @@ export default function AdminDivisionsPage() {
               Divisions
             </h1>
             <p className="mt-2 max-w-2xl text-muted-foreground">
-              Launch controls and cross-division operations for Junk Removal and Hauling.
+              Launch controls and cross-division operations for all Morris Service Group divisions.
             </p>
           </div>
           <ButtonLink href="/admin" variant="outline" className="h-10 rounded-full">
@@ -207,7 +207,20 @@ export default function AdminDivisionsPage() {
                       Current: {DIVISION_LAUNCH_LABELS[d.launchStatus]}
                     </p>
                   </div>
-                  <Link href={d.id === "hauling" ? "/hauling" : "/junk-removal"} className="text-sm font-semibold text-brand-primary hover:underline">
+                  <Link
+                    href={
+                      d.id === "hauling"
+                        ? "/hauling"
+                        : d.id === "land_clearing"
+                          ? "/land-clearing"
+                          : d.id === "site_work"
+                            ? "/site-work"
+                            : d.id === "equipment_services"
+                              ? "/equipment-services"
+                              : "/junk-removal"
+                    }
+                    className="text-sm font-semibold text-brand-primary hover:underline"
+                  >
                     Public page →
                   </Link>
                 </div>
@@ -248,7 +261,7 @@ export default function AdminDivisionsPage() {
         </section>
 
         <div className="mt-8 flex flex-wrap gap-2">
-          {(["all", "junk_removal", "hauling"] as const).map((id) => (
+          {(["all", "junk_removal", "hauling", "land_clearing", "site_work", "equipment_services"] as const).map((id) => (
             <button
               key={id}
               type="button"
@@ -259,7 +272,7 @@ export default function AdminDivisionsPage() {
                   : "border border-black/10 bg-white hover:border-brand-primary/30"
               }`}
             >
-              {id === "all" ? "All divisions" : id === "junk_removal" ? "Junk Removal" : "Hauling"}
+              {id === "all" ? "All divisions" : id.replace(/_/g, " ")}
             </button>
           ))}
         </div>
@@ -268,6 +281,9 @@ export default function AdminDivisionsPage() {
           {card("Combined", report?.combined)}
           {card("Junk Removal", report?.divisions.junk_removal)}
           {card("Hauling", report?.divisions.hauling)}
+          {card("Land Clearing", report?.divisions.land_clearing)}
+          {card("Site Work", report?.divisions.site_work)}
+          {card("Equipment Services", report?.divisions.equipment_services)}
         </div>
 
         <section className="mt-10">
@@ -286,7 +302,7 @@ export default function AdminDivisionsPage() {
                 {(report?.recentJobs ?? []).map((j) => (
                   <tr key={j.id} className="border-b border-black/5 last:border-0">
                     <td className="px-4 py-3">
-                      {j.divisionId === "hauling" ? "Hauling" : "Junk Removal"}
+                      {j.divisionId.replace(/_/g, " ")}
                     </td>
                     <td className="px-4 py-3">{j.status.replace(/_/g, " ")}</td>
                     <td className="px-4 py-3">{j.address}</td>

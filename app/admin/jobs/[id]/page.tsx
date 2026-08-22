@@ -285,7 +285,7 @@ export default function AdminJobDetailPage() {
               <div className="flex flex-wrap gap-2">
                 <StatusChip label={labelJobStatus(data.job.status)} variant="info" />
                 <StatusChip
-                  label={divisionId === "hauling" ? "Hauling" : "Junk Removal"}
+                  label={divisionId.replace(/_/g, " ")}
                   variant="neutral"
                 />
                 <StatusChip

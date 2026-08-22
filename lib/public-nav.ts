@@ -23,13 +23,22 @@ export const PUBLIC_NAV_GROUPS: PublicNavGroup[] = [
     label: "Services",
     items: [
       { href: "/junk-removal", label: "Junk Removal" },
-      { href: "/junk-removal/demolition", label: "Demolition" },
-      { href: "/hauling", label: "Hauling" },
       {
         href: "/free-scrap-fridays",
         label: "Scrap Pickup",
         highlight: true,
       },
+      { href: "/hauling", label: "Hauling" },
+      { href: "/land-clearing", label: "Land Clearing" },
+      { href: "/land-clearing/forestry-mulching", label: "Forestry Mulching" },
+      { href: "/land-clearing/brush-clearing", label: "Brush Clearing" },
+      { href: "/site-work", label: "Site Work" },
+      { href: "/site-work/rough-grading", label: "Rough Grading" },
+      { href: "/equipment-services", label: "Equipment Services" },
+      { href: "/equipment-services/skid-steer-services", label: "Skid Steer Services" },
+      { href: "/equipment-services/bobcat-services", label: "Bobcat Services" },
+      { href: "/junk-removal/demolition", label: "Demolition" },
+      { href: "/projects", label: "Projects" },
       { href: "/services", label: "All Services" },
     ],
   },
@@ -94,6 +103,9 @@ export function navLinkIsActive(pathname: string, href: string): boolean {
   if (!path || path === "/") return pathname === "/";
   if (path === "/junk-removal") return pathname === "/junk-removal";
   if (path === "/hauling") return pathname === "/hauling";
+  if (path === "/land-clearing") return pathname === "/land-clearing";
+  if (path === "/site-work") return pathname === "/site-work";
+  if (path === "/equipment-services") return pathname === "/equipment-services";
   if (path === "/services") return pathname === "/services";
   return pathname === path || pathname.startsWith(`${path}/`);
 }

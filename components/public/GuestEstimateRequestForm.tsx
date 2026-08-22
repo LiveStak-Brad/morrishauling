@@ -172,7 +172,13 @@ export function GuestEstimateRequestForm({
         placeholder={
           divisionId === "hauling"
             ? "What are you moving? Pickup and delivery notes…"
-            : "What needs to be removed?"
+            : divisionId === "land_clearing"
+              ? "Describe the vegetation, acreage, and what you want the property to look like…"
+              : divisionId === "site_work"
+                ? "Describe the grading, gravel, or dirt work…"
+                : divisionId === "equipment_services"
+                  ? "What do you need the machine to accomplish?"
+                  : "What needs to be removed?"
         }
         value={form.description}
         onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}

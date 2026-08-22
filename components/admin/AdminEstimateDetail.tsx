@@ -304,7 +304,7 @@ export function AdminEstimateDetail({ estimateId }: { estimateId: string }) {
             )}
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            {(estimate.divisionId === "hauling" ? "Hauling" : "Junk Removal")}
+            {(estimate.divisionId ?? "junk_removal").replace(/_/g, " ")}
             {" · $"}
             {estimate.estimatedTotal.toFixed(2)}
             {addr?.street ? ` · ${addr.street}, ${addr.city ?? ""} ${addr.state ?? ""} ${addr.zip ?? ""}` : ""}

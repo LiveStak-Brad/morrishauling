@@ -32,7 +32,15 @@ export function ConversionCtaGroup({
       : "/contact");
   const label =
     status?.bookingCtaLabel ??
-    (divisionId === "hauling" ? "Request hauling estimate" : "Request an estimate");
+    (divisionId === "hauling"
+      ? "Request hauling estimate"
+      : divisionId === "land_clearing"
+        ? "Request a Land Clearing Estimate"
+        : divisionId === "site_work"
+          ? "Request a Site Work Estimate"
+          : divisionId === "equipment_services"
+            ? "Request an Equipment Estimate"
+            : "Request an estimate");
 
   return (
     <div className={cn("flex flex-col gap-4", className)}>

@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { getDivisionLaunchStatus } from "@/lib/db/divisions";
-import { DIVISION_IDS, type DivisionId, type DivisionLaunchStatus, getDivision } from "@/lib/divisions";
+import {
+  ALL_DIVISION_IDS,
+  type DivisionId,
+  type DivisionLaunchStatus,
+  getDivision,
+} from "@/lib/divisions";
+import { ctaLabelForLaunchStatus } from "@/lib/equipment/status";
 import { MORRIS_COMPANY_ID } from "@/lib/morris-config";
 import { isBookingSubmissionAllowed, isPrelaunch } from "@/lib/public-site";
 import { enforceRateLimit } from "@/lib/api/rate-limit";
@@ -19,22 +25,11 @@ type PublicDivisionStatus = {
   statusLabel: string;
 };
 
-function labelsFor(status: DivisionLaunchStatus): { statusLabel: string; bookingCtaLabel: string } {
-  switch (status) {
-    case "accepting_bookings":
-      return { statusLabel: "Now booking", bookingCtaLabel: "Book now" };
-    case "accepting_estimate_requests":
-      return { statusLabel: "Accepting estimates", bookingCtaLabel: "Request estimate" };
-    case "accepting_interest":
-      return { statusLabel: "Accepting interest", bookingCtaLabel: "Share interest" };
-    case "internal_testing":
-      return { statusLabel: "Internal testing", bookingCtaLabel: "Preview" };
-    case "temporarily_paused":
-      return { statusLabel: "Temporarily paused", bookingCtaLabel: "Contact us" };
-    case "setup":
-    default:
-      return { statusLabel: "Coming soon", bookingCtaLabel: "Coming soon" };
-  }
+function labelsFor(
+  status: DivisionLaunchStatus,
+  id: DivisionId
+): { statusLabel: string; bookingCtaLabel: string } {
+  return ctaLabelForLaunchStatus(status, id);
 }
 
 async function resolvePublicDivisionStatus(id: DivisionId): Promise<PublicDivisionStatus> {
@@ -50,7 +45,7 @@ async function resolvePublicDivisionStatus(id: DivisionId): Promise<PublicDivisi
     }
   }
 
-  const { statusLabel, bookingCtaLabel } = labelsFor(launchStatus);
+  const { statusLabel, bookingCtaLabel } = labelsFor(launchStatus, id);
   return {
     id,
     name: config.name,
@@ -81,14 +76,17 @@ export async function GET(request: Request) {
   });
   if (limited) return limited;
 
-  const junk = await resolvePublicDivisionStatus(DIVISION_IDS.junk_removal);
-  const hauling = await resolvePublicDivisionStatus(DIVISION_IDS.hauling);
+  const divisions = Object.fromEntries(
+    await Promise.all(
+      ALL_DIVISION_IDS.map(async (id) => [id, await resolvePublicDivisionStatus(id)] as const)
+    )
+  );
 
   return NextResponse.json({
     ok: true,
     data: {
       globalFrozen: isPrelaunch() || !isBookingSubmissionAllowed(),
-      divisions: { junk_removal: junk, hauling },
+      divisions,
     },
   });
 }

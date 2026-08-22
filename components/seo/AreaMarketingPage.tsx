@@ -179,6 +179,16 @@ export function AreaMarketingPage({
           />
         )}
 
+        <RelatedLinks
+          title="Property services in this area"
+          links={[
+            { href: "/land-clearing/forestry-mulching", label: "Forestry Mulching" },
+            { href: "/land-clearing", label: "Land Clearing" },
+            { href: "/land-clearing/brush-clearing", label: "Brush Clearing" },
+            { href: "/site-work", label: "Site Work" },
+          ]}
+        />
+
         {division === "junk_removal" && (
           <>
             <AuthoritySpotlightClient

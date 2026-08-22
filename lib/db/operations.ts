@@ -16,7 +16,8 @@ import {
 import { logActivity } from "./activity";
 import { isDemoDataEnabled } from "@/lib/is-demo-data";
 import type { UserProfile } from "@/lib/auth/types";
-import type { FinancingRequest, Invoice, Job, Payment } from "@/types";
+import type { FinancingRequest, Invoice, Job, Payment, ServiceType } from "@/types";
+import { serviceTypeToDivision } from "@/lib/divisions";
 import { derivePaymentStatus, generatePaymentSchedule } from "@/lib/payment-utils";
 import type { Customer, Employee } from "@/types/user";
 import {
@@ -162,7 +163,7 @@ export async function createJobFromBooking(
 
   const newJob = mockCreateJob(companyId, {
     ...job,
-    divisionId: job.divisionId ?? "junk_removal",
+    divisionId: job.divisionId ?? serviceTypeToDivision(job.serviceType),
     serviceType: job.serviceType ?? "junk_removal",
   });
   if (newJob.estimate) {
@@ -182,7 +183,7 @@ export async function createJobFromBooking(
         company_id: companyId,
         job_id: newJob.id,
         customer_id: newJob.customerId,
-        division_id: "junk_removal",
+        division_id: newJob.divisionId ?? serviceTypeToDivision(newJob.serviceType),
         estimate_number: `EST-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
         status: jrd?.reviewRequired ? "draft" : "sent",
         base_amount: newJob.estimate.subtotal,
@@ -1356,7 +1357,7 @@ export async function createAdminJobManual(
   companyId: string,
   input: {
     customerId: string;
-    serviceType: "junk_removal" | "hauling_transport";
+    serviceType: ServiceType;
     street: string;
     city: string;
     state: string;
@@ -1379,6 +1380,7 @@ export async function createAdminJobManual(
       companyId,
       customerId: input.customerId,
       serviceType: input.serviceType,
+      divisionId: serviceTypeToDivision(input.serviceType),
       status: input.scheduledDate ? "scheduled" : "submitted",
       junkType: input.junkType ?? "mixed",
       items: [],

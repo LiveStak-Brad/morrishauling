@@ -6,6 +6,8 @@ import { allGuideSlugs } from "@/lib/seo/guides";
 import { allItemSlugs } from "@/lib/seo/items";
 import { allTopicSlugs } from "@/lib/seo/topics";
 import { allDemolitionSlugs } from "@/lib/seo/demolition";
+import { allEquipmentMarketingServices } from "@/lib/seo/equipment-divisions";
+import { DIVISION_SEO } from "@/lib/seo/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -43,6 +45,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_ORIGIN}/hauling/services`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${SITE_ORIGIN}/junk-removal/areas`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_ORIGIN}/hauling/areas`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${SITE_ORIGIN}/land-clearing`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE_ORIGIN}/site-work`, lastModified: now, changeFrequency: "weekly", priority: 0.88 },
+    { url: `${SITE_ORIGIN}/equipment-services`, lastModified: now, changeFrequency: "weekly", priority: 0.88 },
+    { url: `${SITE_ORIGIN}/projects`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
   ];
 
   const junkServices = servicesForDivision("junk_removal").map((s) => ({
@@ -94,6 +100,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
+  const equipmentPages = allEquipmentMarketingServices().map((s) => ({
+    url: `${SITE_ORIGIN}${DIVISION_SEO[s.division].path}/${s.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.78,
+  }));
+
   return [
     ...staticRoutes,
     ...junkServices,
@@ -104,5 +117,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...items,
     ...topics,
     ...demolition,
+    ...equipmentPages,
   ];
 }

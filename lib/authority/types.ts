@@ -89,6 +89,9 @@ export const COMMUNITY_EVENT_LABELS: Record<CommunityEventKind, string> = {
 export const AUTHORITY_DIVISION_TAGS = [
   "junk_removal",
   "hauling",
+  "land_clearing",
+  "site_work",
+  "equipment_services",
   "pressure_washing",
   "window_cleaning",
   "landscaping",

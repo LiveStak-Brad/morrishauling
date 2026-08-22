@@ -434,6 +434,27 @@ export function JunkRemovalHomePage() {
           </ButtonLink>
         </section>
 
+        <section className="mt-6 rounded-[1.5rem] border border-black/5 bg-white p-6 sm:flex sm:items-center sm:justify-between sm:p-8">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-brand-primary">
+              Machine-assisted work
+            </p>
+            <h3 className="mt-1 text-lg font-semibold">Need a compact machine on the property?</h3>
+            <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+              Land clearing, grading, and skid steer help are separate Morris divisions — useful when
+              a crew and trailer are not the right tool.
+            </p>
+          </div>
+          <div className="mt-4 flex flex-col gap-2 sm:mt-0 sm:flex-row">
+            <ButtonLink href="/equipment-services" variant="outline" className="h-11 rounded-full">
+              Equipment Services
+            </ButtonLink>
+            <ButtonLink href="/land-clearing" variant="outline" className="h-11 rounded-full">
+              Land Clearing
+            </ButtonLink>
+          </div>
+        </section>
+
         <section className="py-12 text-center">
           <CompanyLogo height={180} className="mx-auto max-h-36 sm:max-h-40" href="/junk-removal" />
           <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">

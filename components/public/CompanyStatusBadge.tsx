@@ -53,7 +53,7 @@ export function CompanyStatusBadge({
       <Badge
         variant="outline"
         className={cn(
-          "rounded-full px-3 py-0.5 text-[11px] font-semibold uppercase tracking-[0.14em]",
+          "h-auto min-w-0 max-w-full overflow-visible whitespace-normal break-words rounded-full px-3 py-1.5 text-center text-[10px] font-semibold uppercase leading-snug tracking-[0.08em]",
           DIVISION_STYLES[divisionStatus],
           className
         )}

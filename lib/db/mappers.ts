@@ -6,6 +6,7 @@ import type {
 } from "@/types";
 import type { Customer, Employee } from "@/types/user";
 import type { LoadSizeTier, JobStatus } from "@/types/job";
+import { parseDivisionId, serviceTypeToDivision, type ServiceType } from "@/lib/divisions";
 
 const TIER_FROM_PERCENT: Record<number, LoadSizeTier> = {
   10: "min_10",
@@ -25,12 +26,15 @@ export function rowToJob(row: Record<string, unknown>, hauling?: Record<string, 
   const payload = (row.payload as Partial<Job>) ?? {};
   const loadPct = Number(row.load_percentage ?? payload.estimate?.trailerPercent ?? 25);
   const serviceTypeRaw = (row.service_type as string) ?? payload.serviceType ?? "junk_removal";
-  const serviceType =
-    serviceTypeRaw === "hauling_transport" ? "hauling_transport" : "junk_removal";
+  const serviceType = (
+    ["junk_removal", "hauling_transport", "land_clearing", "site_work", "equipment_services"].includes(
+      serviceTypeRaw
+    )
+      ? serviceTypeRaw
+      : "junk_removal"
+  ) as ServiceType;
   const divisionId =
-    (row.division_id as "junk_removal" | "hauling" | undefined) ??
-    payload.divisionId ??
-    (serviceType === "hauling_transport" ? "hauling" : "junk_removal");
+    parseDivisionId((row.division_id as string) ?? payload.divisionId ?? serviceTypeToDivision(serviceType));
 
   const job: Job = {
     ...payload,
@@ -410,8 +414,7 @@ export function jobToRow(job: Job) {
     ] ?? 25);
 
   const { id, companyId, customerId, status, junkType, serviceType, scheduledDate, address, items, accessDetails, customerNotes, divisionId, ...rest } = job;
-  const resolvedDivision =
-    divisionId ?? (serviceType === "hauling_transport" ? "hauling" : "junk_removal");
+  const resolvedDivision = divisionId ?? serviceTypeToDivision(serviceType);
 
   return {
     id,

@@ -16,7 +16,7 @@ export type MarketingEventName =
   | "social_follow";
 
 export type MarketingEventPayload = {
-  division?: "junk_removal" | "hauling" | "parent";
+  division?: import("@/lib/divisions").DivisionId | "parent";
   path?: string;
   label?: string;
   platform?: string;

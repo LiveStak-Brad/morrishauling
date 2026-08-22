@@ -81,6 +81,32 @@ export default function ServicesPage() {
           </div>
         </section>
 
+        <section className="mt-14">
+          <h2 className="font-heading text-2xl font-medium tracking-tight">Other Morris divisions</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <ButtonLink href="/free-scrap-fridays" variant="outline" className="h-11 justify-between rounded-full">
+              Scrap Pickup
+              <ArrowRight className="h-4 w-4" />
+            </ButtonLink>
+            <ButtonLink href="/land-clearing" variant="outline" className="h-11 justify-between rounded-full">
+              Land Clearing
+              <ArrowRight className="h-4 w-4" />
+            </ButtonLink>
+            <ButtonLink href="/site-work" variant="outline" className="h-11 justify-between rounded-full">
+              Site Work
+              <ArrowRight className="h-4 w-4" />
+            </ButtonLink>
+            <ButtonLink href="/equipment-services" variant="outline" className="h-11 justify-between rounded-full">
+              Equipment Services
+              <ArrowRight className="h-4 w-4" />
+            </ButtonLink>
+            <ButtonLink href="/hauling" variant="outline" className="h-11 justify-between rounded-full">
+              Hauling
+              <ArrowRight className="h-4 w-4" />
+            </ButtonLink>
+          </div>
+        </section>
+
         <div className="mt-8 flex flex-wrap gap-3">
           <ButtonLink href="/junk-removal/services" variant="outline" className="h-11 rounded-full">
             Detailed service pages

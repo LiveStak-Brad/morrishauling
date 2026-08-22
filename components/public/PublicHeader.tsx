@@ -8,7 +8,6 @@ import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import {
   PUBLIC_NAV_GROUPS,
-  SCRAP_FRIDAYS_NAV,
   navGroupIsActive,
   navLinkIsActive,
   type PublicNavGroup,
@@ -221,7 +220,6 @@ export function PublicHeader({
             pathname={pathname}
             onDark={onDark}
           />
-          <DesktopNavLink link={SCRAP_FRIDAYS_NAV} pathname={pathname} onDark={onDark} />
           {PUBLIC_NAV_GROUPS.map((group) => (
             <DesktopNavDropdown
               key={group.id}
@@ -333,20 +331,6 @@ export function PublicHeader({
                   )}
                 >
                   Home
-                </Link>
-                <Link
-                  href={SCRAP_FRIDAYS_NAV.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    "flex min-h-12 items-center rounded-xl px-4 text-sm font-semibold transition-colors",
-                    navLinkIsActive(pathname, SCRAP_FRIDAYS_NAV.href)
-                      ? "bg-brand-primary text-white"
-                      : onDark
-                        ? "text-brand-primary hover:bg-white/10"
-                        : "text-brand-primary hover:bg-brand-primary/5"
-                  )}
-                >
-                  {SCRAP_FRIDAYS_NAV.label}
                 </Link>
 
                 {PUBLIC_NAV_GROUPS.map((group) => (

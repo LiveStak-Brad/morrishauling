@@ -25,6 +25,7 @@ import type {
   AcceptanceMethod,
 } from "@/types/billing";
 import type { Invoice, Payment } from "@/types/payment";
+import { divisionToServiceType, parseDivisionId } from "@/lib/divisions";
 
 async function sb() {
   const client = createAdminClient();
@@ -777,7 +778,7 @@ export async function sendEstimate(
   const { enqueueNotification } = await import("@/lib/notifications/enqueue");
   const delivery = await enqueueNotification({
     companyId,
-    divisionId: (next.divisionId as "junk_removal" | "hauling") ?? "junk_removal",
+    divisionId: parseDivisionId(next.divisionId),
     jobId: next.jobId ?? undefined,
     customerId: next.customerId,
     eventType: options?.resend || existing.status === "revised" ? "estimate_revised" : "estimate_ready",
@@ -997,7 +998,7 @@ export async function convertEstimateToJob(
       companyId,
       {
         customerId: existing.customerId,
-        serviceType: existing.divisionId === "hauling" ? "hauling_transport" : "junk_removal",
+        serviceType: divisionToServiceType(parseDivisionId(existing.divisionId)),
         street: addr.street ?? "Service address TBD",
         city: addr.city ?? "Warrenton",
         state: addr.state ?? "MO",

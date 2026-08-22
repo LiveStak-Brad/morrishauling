@@ -24,6 +24,9 @@ export function MorrisServicesHomePage() {
   const hauling = morrisServicesConfig.haulingDivision;
   const { status: junkStatus } = useDivisionPublicStatus("junk_removal");
   const { status: haulingStatus } = useDivisionPublicStatus("hauling");
+  const { status: landStatus } = useDivisionPublicStatus("land_clearing");
+  const { status: siteStatus } = useDivisionPublicStatus("site_work");
+  const { status: equipStatus } = useDivisionPublicStatus("equipment_services");
   const junkCanBook = junkStatus?.acceptsBookings || junkStatus?.acceptsEstimateRequests;
   const haulingCanBook =
     haulingStatus?.acceptsBookings || haulingStatus?.acceptsEstimateRequests;
@@ -68,7 +71,8 @@ export function MorrisServicesHomePage() {
             className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground opacity-0 animate-slide-up sm:text-lg"
             style={{ animationFillMode: "forwards", animationDelay: "0.18s" }}
           >
-            {morrisServicesConfig.tagline} Junk Removal and Hauling across {SERVICE_AREA}.
+            {morrisServicesConfig.tagline} Junk Removal · Hauling · Land Clearing · Site Work ·
+            Equipment Services across {SERVICE_AREA}.
           </p>
 
           <div
@@ -121,9 +125,10 @@ export function MorrisServicesHomePage() {
               One parent company. Focused operating divisions.
             </h2>
             <p className="max-w-2xl text-muted-foreground">
-              Morris Service Group LLC is the parent. Morris Junk Removal owns junk removal
-              searches. Morris Hauling owns equipment and material transport. Future crafts will
-              join the same family — without competing for the same keywords.
+              Morris Service Group LLC is the parent. Morris Junk Removal and Morris Hauling
+              remain the home-service and transport divisions. Land Clearing, Site Work, and
+              Equipment Services extend the same family into vegetation and compact-equipment
+              work — without competing for the same keywords.
             </p>
           </div>
 
@@ -221,6 +226,61 @@ export function MorrisServicesHomePage() {
           </div>
         </section>
 
+        <section className="mt-10 grid gap-4 md:grid-cols-3">
+          {morrisServicesConfig.propertyDivisions.map((div) => (
+            <article
+              key={div.slug}
+              className="flex flex-col rounded-[1.5rem] border border-black/5 bg-white p-6 shadow-sm"
+            >
+              <CompanyStatusBadge
+                className="max-w-full"
+                divisionStatus={
+                  div.divisionId === "land_clearing"
+                    ? landStatus?.launchStatus
+                    : div.divisionId === "site_work"
+                      ? siteStatus?.launchStatus
+                      : equipStatus?.launchStatus
+                }
+                status="launching_soon"
+                label={
+                  div.divisionId === "land_clearing"
+                    ? landStatus?.statusLabel
+                    : div.divisionId === "site_work"
+                      ? siteStatus?.statusLabel
+                      : equipStatus?.statusLabel
+                }
+              />
+              <h3 className="mt-4 text-xl font-semibold tracking-tight">{div.name}</h3>
+              <p className="mt-2 flex-1 text-sm text-muted-foreground">{div.tagline}</p>
+              <div className="mt-6 flex flex-col gap-2">
+                <ButtonLink href={div.hubPath} className="h-11 w-full rounded-full">
+                  Enter {div.name.replace("Morris ", "")}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </ButtonLink>
+                <ButtonLink
+                  href={
+                    (div.divisionId === "land_clearing"
+                      ? landStatus
+                      : div.divisionId === "site_work"
+                        ? siteStatus
+                        : equipStatus
+                    )?.bookPath ?? `/book?division=${div.divisionId}`
+                  }
+                  variant="outline"
+                  className="h-11 w-full rounded-full"
+                >
+                  {(div.divisionId === "land_clearing"
+                    ? landStatus
+                    : div.divisionId === "site_work"
+                      ? siteStatus
+                      : equipStatus
+                  )?.bookingCtaLabel ?? "Request an Upcoming Project Estimate"}
+                </ButtonLink>
+              </div>
+            </article>
+          ))}
+        </section>
+
         <section id="standard" className="mt-16 scroll-mt-24 sm:mt-20">
           <div className="rounded-[1.5rem] border border-black/5 bg-[#0A0A0A] px-5 py-7 text-white sm:px-8 sm:py-10 md:px-10">
             <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/50">
@@ -285,6 +345,24 @@ export function MorrisServicesHomePage() {
               className="rounded-full bg-brand-primary/90 px-4 py-2 text-sm font-semibold text-white"
             >
               Hauling · booking
+            </Link>
+            <Link
+              href="/land-clearing"
+              className="rounded-full bg-brand-primary/80 px-4 py-2 text-sm font-semibold text-white"
+            >
+              Land Clearing · estimates
+            </Link>
+            <Link
+              href="/site-work"
+              className="rounded-full bg-brand-primary/80 px-4 py-2 text-sm font-semibold text-white"
+            >
+              Site Work · estimates
+            </Link>
+            <Link
+              href="/equipment-services"
+              className="rounded-full bg-brand-primary/80 px-4 py-2 text-sm font-semibold text-white"
+            >
+              Equipment Services · estimates
             </Link>
             {morrisServicesConfig.futureCompanies.map((co) => (
               <span

@@ -5,6 +5,7 @@ export const STORAGE_BUCKETS = {
   hrDocuments: "hr-documents",
   invoicePdfs: "invoice-pdfs",
   disposalReceipts: "disposal-receipts",
+  intakeMedia: "intake-media",
 } as const;
 
 export type StorageBucket = (typeof STORAGE_BUCKETS)[keyof typeof STORAGE_BUCKETS];

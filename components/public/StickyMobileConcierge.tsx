@@ -24,17 +24,16 @@ export function StickyMobileConcierge({
   const tel = company.phone.replace(/\D/g, "");
   const junk = useDivisionPublicStatus("junk_removal");
   const hauling = useDivisionPublicStatus("hauling");
+  const preferredDivision = useDivisionPublicStatus(divisionId ?? "junk_removal");
 
   const preferred =
-    divisionId === "hauling"
-      ? hauling.status
-      : divisionId === "junk_removal"
+    divisionId
+      ? preferredDivision.status
+      : junk.status?.acceptsBookings || junk.status?.acceptsEstimateRequests
         ? junk.status
-        : junk.status?.acceptsBookings || junk.status?.acceptsEstimateRequests
-          ? junk.status
-          : hauling.status?.acceptsBookings || hauling.status?.acceptsEstimateRequests
-            ? hauling.status
-            : junk.status;
+        : hauling.status?.acceptsBookings || hauling.status?.acceptsEstimateRequests
+          ? hauling.status
+          : junk.status;
 
   const canEstimate =
     preferred?.acceptsBookings ||

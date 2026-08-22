@@ -7,7 +7,7 @@ import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
 export const metadata: Metadata = buildPageMetadata({
   title: "Morris Service Group LLC | Professional Missouri Home Services",
   description:
-    "Morris Services — the parent brand for Morris Junk Removal and Morris Hauling. Professional local home services across Warren County and nearby Missouri communities.",
+    "Morris Services — Junk Removal, Hauling, Land Clearing, Site Work, and Equipment Services across Warren County and nearby Missouri communities.",
   path: "/",
   ogImage: "/og/og-morris-services.png",
   ogTitle: "Morris Service Group LLC | Morris Services",

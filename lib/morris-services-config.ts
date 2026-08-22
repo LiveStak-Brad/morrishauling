@@ -27,7 +27,7 @@ export const morrisServicesConfig = {
   /** System positioning */
   tagline: "The standard for home services.",
   brandTagline: "One relationship. Every craft.",
-  serviceCategoriesLine: "Residential · Commercial · Property care",
+  serviceCategoriesLine: "Junk Removal · Hauling · Land Clearing · Site Work · Equipment Services",
   footerMission:
     "We build trusted local service companies one craft at a time — starting in Warren, Lincoln & St. Charles Counties.",
   operatingCompanies: [
@@ -72,6 +72,57 @@ export const morrisServicesConfig = {
       "Contractor Deliveries",
     ],
   },
+  propertyDivisions: [
+    {
+      slug: "land-clearing",
+      name: "Morris Land Clearing",
+      status: "launching_soon" as const,
+      tagline: "Forestry mulching, brush clearing, lot clearing and property reclamation.",
+      logo: "/MorrisServicesLogo.png?v=6",
+      services: [
+        "Forestry Mulching",
+        "Brush Clearing",
+        "Lot Clearing",
+        "Property Reclamation",
+        "Honeysuckle Clearing",
+        "Fence-Line Clearing",
+      ],
+      hubPath: "/land-clearing",
+      divisionId: "land_clearing" as const,
+    },
+    {
+      slug: "site-work",
+      name: "Morris Site Work",
+      status: "launching_soon" as const,
+      tagline: "Grading, site preparation, gravel, dirt work and property improvement.",
+      logo: "/MorrisServicesLogo.png?v=6",
+      services: [
+        "Rough Grading",
+        "Site Preparation",
+        "Gravel Spreading",
+        "Dirt Moving",
+        "Backfilling",
+        "Driveway Grading",
+      ],
+      hubPath: "/site-work",
+      divisionId: "site_work" as const,
+    },
+    {
+      slug: "equipment-services",
+      name: "Morris Equipment Services",
+      status: "launching_soon" as const,
+      tagline: "Skid steer, grapple, bucket, fork and equipment-assisted property services.",
+      logo: "/MorrisServicesLogo.png?v=6",
+      services: [
+        "Skid Steer Services",
+        "Bobcat Services",
+        "Grapple Services",
+        "Material Handling",
+      ],
+      hubPath: "/equipment-services",
+      divisionId: "equipment_services" as const,
+    },
+  ],
   /**
    * Roadmap order: lightest startup cost / easiest to operate first.
    * Authority content (lib/authority) is division-tagged so these crafts can reuse

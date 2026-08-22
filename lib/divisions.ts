@@ -1,22 +1,87 @@
-/** Shared Morris Services divisions — Junk Removal and Hauling. */
+/** Shared Morris Services divisions — parent company operating units. */
 
 export const DIVISION_IDS = {
   junk_removal: "junk_removal",
   hauling: "hauling",
+  land_clearing: "land_clearing",
+  site_work: "site_work",
+  equipment_services: "equipment_services",
 } as const;
 
 export type DivisionId = (typeof DIVISION_IDS)[keyof typeof DIVISION_IDS];
 
-/** Maps legacy service_type column values to division ids. */
-export type ServiceType = "junk_removal" | "hauling_transport";
+export const ALL_DIVISION_IDS = Object.values(DIVISION_IDS) as DivisionId[];
+
+/** Maps operational service_type column values to division ids. */
+export type ServiceType =
+  | "junk_removal"
+  | "hauling_transport"
+  | "land_clearing"
+  | "site_work"
+  | "equipment_services";
+
+export const SERVICE_TYPE_VALUES: ServiceType[] = [
+  "junk_removal",
+  "hauling_transport",
+  "land_clearing",
+  "site_work",
+  "equipment_services",
+];
+
+export function isDivisionId(value: string | undefined | null): value is DivisionId {
+  return !!value && (ALL_DIVISION_IDS as string[]).includes(value);
+}
+
+export function isEquipmentDivision(id: DivisionId): boolean {
+  return id === "land_clearing" || id === "site_work" || id === "equipment_services";
+}
+
+/** Safe parse for query params / API bodies. Unknown values fall back to junk (legacy). */
+export function parseDivisionId(
+  raw: string | undefined | null,
+  fallback: DivisionId = "junk_removal"
+): DivisionId {
+  if (!raw) return fallback;
+  const v = raw.toLowerCase().trim();
+  if (v === "hauling_transport") return "hauling";
+  if (isDivisionId(v)) return v;
+  return fallback;
+}
 
 export function serviceTypeToDivision(serviceType: ServiceType | string | undefined): DivisionId {
-  if (serviceType === "hauling_transport" || serviceType === "hauling") return "hauling";
-  return "junk_removal";
+  switch (serviceType) {
+    case "hauling_transport":
+    case "hauling":
+      return "hauling";
+    case "land_clearing":
+      return "land_clearing";
+    case "site_work":
+      return "site_work";
+    case "equipment_services":
+      return "equipment_services";
+    case "junk_removal":
+    default:
+      return "junk_removal";
+  }
 }
 
 export function divisionToServiceType(divisionId: DivisionId): ServiceType {
-  return divisionId === "hauling" ? "hauling_transport" : "junk_removal";
+  switch (divisionId) {
+    case "hauling":
+      return "hauling_transport";
+    case "land_clearing":
+      return "land_clearing";
+    case "site_work":
+      return "site_work";
+    case "equipment_services":
+      return "equipment_services";
+    default:
+      return "junk_removal";
+  }
+}
+
+export function divisionShortLabel(id: DivisionId): string {
+  return getDivision(id).shortName;
 }
 
 /**
@@ -46,6 +111,7 @@ export type DivisionConfig = {
 
 const DEFAULT_JUNK_STATUS: DivisionLaunchStatus = "accepting_bookings";
 const DEFAULT_HAULING_STATUS: DivisionLaunchStatus = "accepting_bookings";
+const DEFAULT_EQUIPMENT_STATUS: DivisionLaunchStatus = "accepting_estimate_requests";
 
 function parseLaunchStatus(raw: string | undefined, fallback: DivisionLaunchStatus): DivisionLaunchStatus {
   const v = raw?.toLowerCase().trim();
@@ -90,6 +156,50 @@ export function getDivisionConfigs(): Record<DivisionId, DivisionConfig> {
         DEFAULT_HAULING_STATUS
       ),
       envKey: "DIVISION_HAULING_LAUNCH_STATUS",
+    },
+    land_clearing: {
+      id: "land_clearing",
+      name: "Morris Land Clearing",
+      shortName: "Land Clearing",
+      serviceType: "land_clearing",
+      hubPath: "/land-clearing",
+      bookPath: "/book?division=land_clearing",
+      logo: "/MorrisServicesLogo.png?v=6",
+      launchStatus: parseLaunchStatus(
+        process.env.DIVISION_LAND_CLEARING_LAUNCH_STATUS ??
+          process.env.NEXT_PUBLIC_DIVISION_LAND_CLEARING_LAUNCH_STATUS,
+        DEFAULT_EQUIPMENT_STATUS
+      ),
+      envKey: "DIVISION_LAND_CLEARING_LAUNCH_STATUS",
+    },
+    site_work: {
+      id: "site_work",
+      name: "Morris Site Work",
+      shortName: "Site Work",
+      serviceType: "site_work",
+      hubPath: "/site-work",
+      bookPath: "/book?division=site_work",
+      logo: "/MorrisServicesLogo.png?v=6",
+      launchStatus: parseLaunchStatus(
+        process.env.DIVISION_SITE_WORK_LAUNCH_STATUS ?? process.env.NEXT_PUBLIC_DIVISION_SITE_WORK_LAUNCH_STATUS,
+        DEFAULT_EQUIPMENT_STATUS
+      ),
+      envKey: "DIVISION_SITE_WORK_LAUNCH_STATUS",
+    },
+    equipment_services: {
+      id: "equipment_services",
+      name: "Morris Equipment Services",
+      shortName: "Equipment Services",
+      serviceType: "equipment_services",
+      hubPath: "/equipment-services",
+      bookPath: "/book?division=equipment_services",
+      logo: "/MorrisServicesLogo.png?v=6",
+      launchStatus: parseLaunchStatus(
+        process.env.DIVISION_EQUIPMENT_SERVICES_LAUNCH_STATUS ??
+          process.env.NEXT_PUBLIC_DIVISION_EQUIPMENT_SERVICES_LAUNCH_STATUS,
+        DEFAULT_EQUIPMENT_STATUS
+      ),
+      envKey: "DIVISION_EQUIPMENT_SERVICES_LAUNCH_STATUS",
     },
   };
 }

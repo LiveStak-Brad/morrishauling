@@ -13,6 +13,7 @@ import { useCompany } from "@/lib/company-context";
 import { isBookingSubmissionAllowed } from "@/lib/public-site";
 import { useAuth } from "@/components/auth/AuthProvider";
 import type { DivisionId } from "@/lib/divisions";
+import { isEquipmentDivision, parseDivisionId } from "@/lib/divisions";
 import { Phone } from "lucide-react";
 import { MarketingImage } from "@/components/seo/MarketingImage";
 
@@ -20,9 +21,7 @@ function BookPageContent() {
   const { company } = useCompany();
   const { profile } = useAuth();
   const searchParams = useSearchParams();
-  const divisionParam = searchParams.get("division");
-  const divisionId: DivisionId =
-    divisionParam === "hauling" ? "hauling" : "junk_removal";
+  const divisionId: DivisionId = parseDivisionId(searchParams.get("division"));
   const open = isBookingSubmissionAllowed();
   const [mode, setMode] = useState<"guest" | "full">(
     profile ? "full" : "guest"
@@ -38,7 +37,7 @@ function BookPageContent() {
             Booking temporarily unavailable
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            Please call us to schedule Junk Removal or Hauling.
+            Please call us to schedule service.
           </p>
           <a
             href={`tel:${company.phone.replace(/\D/g, "")}`}
@@ -92,10 +91,10 @@ function BookPageContent() {
             </Button>
           </div>
         </div>
-        {mode === "guest" ? (
-          <GuestEstimateRequestForm divisionId={divisionId} />
+        {isEquipmentDivision(divisionId) || mode === "full" ? (
+          <BookingFlow division={divisionId} />
         ) : (
-          <BookingFlow />
+          <GuestEstimateRequestForm divisionId={divisionId} />
         )}
       </main>
       <PublicFooter variant="company" />

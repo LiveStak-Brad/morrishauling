@@ -7,6 +7,7 @@ import {
   type DivisionId,
   type DivisionLaunchStatus,
   getDivision,
+  parseDivisionId,
 } from "@/lib/divisions";
 import { getDivisionLaunchStatus } from "@/lib/db/divisions";
 import { MORRIS_COMPANY_ID } from "@/lib/morris-config";
@@ -91,9 +92,7 @@ export function isBookingDemoMode(
 export function parseDivisionParam(
   searchParams: URLSearchParams | { get: (key: string) => string | null }
 ): DivisionId {
-  const raw = searchParams.get("division")?.toLowerCase();
-  if (raw === "hauling" || raw === "hauling_transport") return "hauling";
-  return "junk_removal";
+  return parseDivisionId(searchParams.get("division"));
 }
 
 export function divisionBookingClosedMessage(divisionId: DivisionId): string {

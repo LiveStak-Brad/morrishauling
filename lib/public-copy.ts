@@ -27,7 +27,7 @@ export const PRICING_NOTE =
 export const PRELAUNCH_PRICING_NOTE = PRICING_NOTE;
 
 export const SERVICES_INTRO =
-  "Professional junk removal, property cleanouts, and hauling for homes and businesses across our service area.";
+  "Junk removal, hauling, land clearing, site work, and equipment-assisted property services for homes and businesses across our service area.";
 
 /** @deprecated */
 export const PRELAUNCH_SERVICES_INTRO = SERVICES_INTRO;

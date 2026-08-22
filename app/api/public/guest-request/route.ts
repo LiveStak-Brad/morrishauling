@@ -6,7 +6,8 @@ import {
   isDivisionSubmissionAllowedAsync,
   divisionBookingClosedMessage,
 } from "@/lib/public-site";
-import type { DivisionId } from "@/lib/divisions";
+import { parseDivisionId, type DivisionId } from "@/lib/divisions";
+import { getDivision } from "@/lib/divisions";
 import { billingId, createShareToken, estimateNumber, normalizeLineItem } from "@/lib/billing/utils";
 import { enqueueNotification } from "@/lib/notifications/enqueue";
 import { getAppBaseUrl } from "@/lib/payments/stripe-client";
@@ -111,7 +112,7 @@ export async function POST(request: Request) {
       cargoDescription?: string;
     }>(request);
 
-    const divisionId = body.divisionId === "hauling" ? "hauling" : "junk_removal";
+    const divisionId = parseDivisionId(body.divisionId);
     if (!(await isDivisionSubmissionAllowedAsync(divisionId))) {
       return apiError(divisionBookingClosedMessage(divisionId), 403);
     }
@@ -160,7 +161,7 @@ export async function POST(request: Request) {
 
     const lineItems = [
       normalizeLineItem({
-        label: divisionId === "hauling" ? "Hauling estimate request" : "Junk removal estimate request",
+        label: `${getDivision(divisionId).shortName} estimate request`,
         description,
         unitPrice: 0,
         quantity: 1,

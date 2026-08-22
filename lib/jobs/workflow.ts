@@ -1,4 +1,5 @@
 import type { DivisionId } from "@/lib/divisions";
+import { isEquipmentDivision } from "@/lib/divisions";
 import type { Job } from "@/types/job";
 import type { HaulingJobStatus, JunkJobStatus, JobPhotoStage, OperationalJobStatus } from "@/types/division";
 
@@ -90,13 +91,25 @@ export const HAULING_FIELD_FLOW: { status: HaulingJobStatus; label: string }[] =
   { status: "completed", label: "Completed" },
 ];
 
+export const EQUIPMENT_FIELD_FLOW: { status: OperationalJobStatus; label: string }[] = [
+  { status: "en_route", label: "En route" },
+  { status: "arrived", label: "Arrived" },
+  { status: "loading", label: "Working" },
+  { status: "completed", label: "Completed" },
+];
+
 export function fieldFlowForDivision(divisionId: DivisionId) {
-  return divisionId === "hauling" ? HAULING_FIELD_FLOW : JUNK_FIELD_FLOW;
+  if (divisionId === "hauling") return HAULING_FIELD_FLOW;
+  if (isEquipmentDivision(divisionId)) return EQUIPMENT_FIELD_FLOW;
+  return JUNK_FIELD_FLOW;
 }
 
 export function requiredPhotoStagesForCompletion(divisionId: DivisionId): JobPhotoStage[] {
   if (divisionId === "hauling") {
     return ["pickup_condition", "securement", "loaded", "delivery"];
+  }
+  if (isEquipmentDivision(divisionId)) {
+    return ["before", "after"];
   }
   return ["arrival", "before", "loaded_trailer", "after"];
 }

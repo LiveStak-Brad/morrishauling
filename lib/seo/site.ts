@@ -50,6 +50,42 @@ export const DIVISION_SEO = {
     description:
       "Local equipment hauling, machinery transport, material delivery, and contractor hauling across Warren County and nearby Missouri communities.",
   },
+  land_clearing: {
+    id: "land_clearing" as const,
+    name: "Morris Land Clearing",
+    shortName: "Land Clearing",
+    path: "/land-clearing",
+    bookPath: "/book?division=land_clearing",
+    logo: `${SITE_ORIGIN}/MorrisServicesLogo.png?v=6`,
+    ogImage: "/og/og-morris-services.png",
+    tagline: "Reclaim the ground. Leave it usable.",
+    description:
+      "Forestry mulching, brush clearing, lot clearing, and overgrown property reclamation for Warren County and nearby Missouri communities.",
+  },
+  site_work: {
+    id: "site_work" as const,
+    name: "Morris Site Work",
+    shortName: "Site Work",
+    path: "/site-work",
+    bookPath: "/book?division=site_work",
+    logo: `${SITE_ORIGIN}/MorrisServicesLogo.png?v=6`,
+    ogImage: "/og/og-morris-services.png",
+    tagline: "Grade it. Place it. Get the site ready.",
+    description:
+      "Rough grading, site preparation, gravel spreading, dirt moving, and driveway grading across Warren County and nearby Missouri communities.",
+  },
+  equipment_services: {
+    id: "equipment_services" as const,
+    name: "Morris Equipment Services",
+    shortName: "Equipment Services",
+    path: "/equipment-services",
+    bookPath: "/book?division=equipment_services",
+    logo: `${SITE_ORIGIN}/MorrisServicesLogo.png?v=6`,
+    ogImage: "/og/og-morris-services.png",
+    tagline: "A compact machine and an operator — for the outcome you need.",
+    description:
+      "Professional skid steer and Bobcat services, grapple work, and material handling in Warren County and nearby Missouri communities. Independent contractor.",
+  },
 } as const;
 
 export type SeoDivisionId = keyof typeof DIVISION_SEO;

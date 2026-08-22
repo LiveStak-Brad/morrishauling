@@ -137,6 +137,30 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
                 What we can take
               </Link>
               <Link
+                href="/land-clearing"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Morris Land Clearing
+              </Link>
+              <Link
+                href="/site-work"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Morris Site Work
+              </Link>
+              <Link
+                href="/equipment-services"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Morris Equipment Services
+              </Link>
+              <Link
+                href="/projects"
+                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+              >
+                Projects
+              </Link>
+              <Link
                 href="/hauling"
                 className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
               >
