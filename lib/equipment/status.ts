@@ -16,10 +16,8 @@ export function ctaLabelForLaunchStatus(
       };
     case "accepting_estimate_requests":
       return {
-        statusLabel: "Now Accepting Estimates",
-        bookingCtaLabel: equipment
-          ? "Request an Upcoming Project Estimate"
-          : "Request estimate",
+        statusLabel: "Estimates Available",
+        bookingCtaLabel: "Request an Estimate",
       };
     case "accepting_interest":
       return { statusLabel: "Accepting interest", bookingCtaLabel: "Share interest" };
@@ -38,7 +36,7 @@ export function ctaLabelForServiceStatus(status: ServiceStatus, fallback?: strin
     case "active":
       return fallback ?? "Request an Estimate";
     case "accepting_estimates":
-      return "Request an Upcoming Project Estimate";
+      return fallback ?? "Request an Estimate";
     case "temporarily_unavailable":
       return "Contact us";
     case "coming_soon":

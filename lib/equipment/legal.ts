@@ -6,5 +6,5 @@ export const EQUIPMENT_LEGAL_POINTS = [
   "Morris Service Group LLC is an independent contractor. References to skid steer or Bobcat services describe common machine classes customers search for — not an affiliation with or endorsement by Bobcat Company or any manufacturer.",
 ] as const;
 
-export const EQUIPMENT_PRELAUNCH_NOTE =
-  "These divisions are currently accepting upcoming project estimates. Equipment and scheduling are confirmed after review. We do not claim a specific machine is on the property until the job is accepted and the equipment record is active.";
+export const EQUIPMENT_ESTIMATE_NOTE =
+  "These services accept written estimates. Pricing depends on actual site conditions. Photos and a short video help us review the property before we quote.";

@@ -77,7 +77,7 @@ export const CAPABILITIES: CapabilityRecord[] = [
 type CatalogSeed = Omit<CatalogServiceRecord, "capabilityIds"> & { capabilityIds: string[] };
 
 export const CATALOG_SERVICES: CatalogSeed[] = [
-  // Land clearing — public, accepting upcoming estimates
+  // Land clearing — public, accepting estimates
   { id: "svc-forestry-mulching", divisionId: "land_clearing", slug: "forestry-mulching", name: "Forestry Mulching", status: "accepting_estimates", publiclyListed: true, sortOrder: 10, capabilityIds: ["cap-ctl-mulcher"] },
   { id: "svc-land-clearing", divisionId: "land_clearing", slug: "land-clearing", name: "Land Clearing", status: "accepting_estimates", publiclyListed: false, sortOrder: 15, capabilityIds: ["cap-ctl-mulcher", "cap-ctl-grapple"] },
   { id: "svc-brush-clearing", divisionId: "land_clearing", slug: "brush-clearing", name: "Brush Clearing", status: "accepting_estimates", publiclyListed: true, sortOrder: 20, capabilityIds: ["cap-ctl-mulcher"] },

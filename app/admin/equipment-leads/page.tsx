@@ -51,7 +51,7 @@ export default function AdminEquipmentLeadsPage() {
   return (
     <AdminPageShell
       title="Land & equipment leads"
-      description="Upcoming project estimates from land clearing, site work, and equipment services."
+      description="Estimate requests from land clearing, site work, and equipment services."
     >
       {error && <p className="mb-4 text-sm text-red-800">{error}</p>}
 

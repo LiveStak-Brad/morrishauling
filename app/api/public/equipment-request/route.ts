@@ -156,8 +156,8 @@ export async function POST(request: Request) {
       normalizeLineItem({
         label: `${config.shortName} estimate request`,
         description: body.serviceSlug
-          ? `${body.serviceSlug.replace(/-/g, " ")} — upcoming project estimate`
-          : "Upcoming project estimate — no instant price",
+          ? `${body.serviceSlug.replace(/-/g, " ")} — estimate request`
+          : "Estimate request — no instant price",
         unitPrice: 0,
         quantity: 1,
         category: "labor",
@@ -241,7 +241,7 @@ export async function POST(request: Request) {
       message:
         delivery.deliveryStatus === "skipped" || delivery.deliveryStatus === "failed"
           ? "Request received. Copy your secure estimate link — email is not configured or failed."
-          : "Request received. We will review your upcoming project estimate. Check your email for next steps.",
+          : "Request received. We will review your estimate. Check your email for next steps.",
     });
   } catch (e) {
     return apiError(e instanceof Error ? e.message : "Failed to submit request", 500);

@@ -9,7 +9,7 @@ const DIVISION_LABELS: Record<DivisionLaunchStatus, string> = {
   setup: "Coming Soon",
   internal_testing: "Internal testing",
   accepting_interest: "Accepting interest",
-  accepting_estimate_requests: "Now Accepting Estimates",
+  accepting_estimate_requests: "Estimates Available",
   accepting_bookings: "Available",
   temporarily_paused: "Temporarily paused",
 };
@@ -25,7 +25,7 @@ const DIVISION_STYLES: Record<DivisionLaunchStatus, string> = {
 
 const LEGACY_LABELS: Record<CompanyLaunchStatus, string> = {
   open: "Available",
-  launching_soon: "Now Accepting Estimates",
+  launching_soon: "Estimates Available",
   coming_soon: "Coming Soon",
   future_expansion: "As the fleet grows",
 };

@@ -43,12 +43,12 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     shortName: "Forestry Mulching",
     title: `Forestry Mulching in Warrenton & East-Central Missouri | Morris Service Group`,
     description:
-      "Forestry mulching for overgrown acreage, brush, and small trees around Warrenton and nearby Missouri counties. Request an upcoming project estimate — pricing depends on density, terrain, and access.",
+      "Forestry mulching for overgrown acreage, brush, and small trees around Warrenton and nearby Missouri counties. Request an estimate — pricing depends on density, terrain, and access.",
     h1: "Forestry Mulching",
     intro: [
       `Forestry mulching turns standing brush and small trees into a usable ground cover on the same property. For many ${AREA} parcels, that is a cleaner way to reclaim land than cutting everything and hauling piles away.`,
       "We review acreage, vegetation, density, slope, and access before we quote. There is no published per-acre price — two similar-looking tracts can be very different jobs.",
-      "This service is currently accepting upcoming project estimates. We confirm equipment, timing, and scope after we see photos or walk the property. We do not claim a specific machine is owned until that record is active.",
+      "Request an estimate with photos or a short walkthrough. We review the property and send a written estimate — not an instant guaranteed price.",
     ],
     detailSections: [
       {
@@ -144,10 +144,10 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
       "Whether debris must be piled, hauled, or left as mulch",
     ],
     process: [
-      "Request an upcoming project estimate with photos or video",
+      "Request an estimate with photos or video",
       "We review the property and may ask for an onsite look on larger jobs",
       "You receive a written estimate — not an instant guaranteed price",
-      "When equipment is scheduled, we complete the agreed area and leave it as scoped",
+      "After the estimate is accepted, we complete the agreed area and leave it as scoped",
     ],
     restrictions: [
       "We do not publish a fixed per-acre forestry-mulching rate",
@@ -170,8 +170,12 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
         a: "That is the usual result when the goal is to reclaim ground in place. If you need piles removed, that is a separate hauling conversation.",
       },
       {
-        q: "Do you own a forestry mulcher today?",
-        a: "We are accepting upcoming project estimates. Equipment and timing are confirmed when we accept the job. We will not advertise a specific machine as owned until that record is active.",
+        q: "How soon can you look at my property?",
+        a: "Send photos or request an estimate and we will review the property. Timing depends on the job, access, and current schedule. We do not publish a guaranteed response time.",
+      },
+      {
+        q: "Do you provide onsite assessments?",
+        a: "Yes, when photos cannot show the stand clearly, or the acreage is large or mixed. Many estimates start from photos or video.",
       },
       {
         q: "What happens to the vegetation after forestry mulching?",
@@ -195,7 +199,7 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     shortName: "Brush Clearing",
     title: `Brush Clearing in Warrenton & East-Central Missouri | Morris Service Group`,
     description:
-      "Brush clearing for fence rows, overgrown edges, and thick undergrowth around Warrenton and nearby Missouri counties. Photo-based upcoming estimates — no thin city pages, no canned pricing.",
+      "Brush clearing for fence rows, overgrown edges, and thick undergrowth around Warrenton and nearby Missouri counties. Photo-based estimates — no thin city pages, no canned pricing.",
     h1: "Brush Clearing",
     intro: [
       "Brush clearing is for the thick edge that took over a fence, ditch, or back lot — honeysuckle, briars, saplings, and mixed undergrowth that a mower cannot handle.",
@@ -225,7 +229,7 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     process: [
       "Send photos and a simple sketch of the area",
       "We estimate after review",
-      "Work is scheduled when equipment is available",
+      "Work is scheduled after the estimate is accepted",
     ],
     restrictions: [
       "We do not clear protected wetlands or marked conservation ground without your documentation",
@@ -255,7 +259,7 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     shortName: "Lot Clearing",
     title: `Lot Clearing in Warrenton & East-Central Missouri | Morris Service Group`,
     description:
-      "Lot clearing for building sites, extra lots, and overgrown parcels in Warren County and nearby Missouri communities. Upcoming project estimates based on real site conditions.",
+      "Lot clearing for building sites, extra lots, and overgrown parcels in Warren County and nearby Missouri communities. Estimates based on real site conditions.",
     h1: "Lot Clearing",
     intro: [
       "Lot clearing is about making a defined parcel usable again — a future house pad, a sold lot that grew up, or a second acre that has not been touched in years.",
@@ -305,7 +309,7 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     shortName: "Property Reclamation",
     title: `Overgrown Property Reclamation | Morris Land Clearing`,
     description:
-      "Reclaim overgrown Missouri property — yards, fields, and neglected acreage around Warrenton. Upcoming estimates based on density, access, and the finish you want.",
+      "Reclaim overgrown Missouri property — yards, fields, and neglected acreage around Warrenton. Estimates based on density, access, and the finish you want.",
     h1: "Overgrown Property Reclamation",
     intro: [
       "Property reclamation is the longer job: a place that slipped past mowing, a field that became a thicket, or a homestead edge that disappeared.",
@@ -341,7 +345,7 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     shortName: "Honeysuckle Clearing",
     title: `Honeysuckle Removal in Missouri | Morris Land Clearing`,
     description:
-      "Honeysuckle and invasive vegetation clearing in Warren County and nearby Missouri communities. Upcoming project estimates — density and access decide the work.",
+      "Honeysuckle and invasive vegetation clearing in Warren County and nearby Missouri communities. Request an estimate — density and access decide the work.",
     h1: "Honeysuckle and Invasive Vegetation Clearing",
     intro: [
       "Bush honeysuckle is a familiar problem on Missouri woodlots, fence lines, and overgrown acreage. It shades out the ground, hides trash, and turns a walkable woods into a wall.",
@@ -417,7 +421,7 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     shortName: "Fence-Line Clearing",
     title: `Fence-Line Clearing | Morris Land Clearing`,
     description:
-      "Fence-line clearing for overgrown rows around Warrenton and nearby Missouri farms and homes. Upcoming estimates based on length, density, and wire.",
+      "Fence-line clearing for overgrown rows around Warrenton and nearby Missouri farms and homes. Estimates based on length, density, and wire.",
     h1: "Fence-Line Clearing",
     intro: [
       "A fence line that disappeared into brush is a common Missouri job. The work is usually a long, narrow strip — and hidden wire is the main risk.",
@@ -513,7 +517,7 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     shortName: "Selective Clearing",
     title: `Selective Land Clearing & Tree Thinning | Morris Land Clearing`,
     description:
-      "Selective land clearing and understory thinning around Warrenton — keep desirable mature trees while clearing brush, saplings, and invasive vegetation. Upcoming project estimates.",
+      "Selective land clearing and understory thinning around Warrenton — keep desirable mature trees while clearing brush, saplings, and invasive vegetation. Request an estimate.",
     h1: "Selective Clearing and Tree Thinning",
     intro: [
       "Some owners want the woods back — not a bare lot. Selective clearing and tree thinning remove brush, honeysuckle, saplings, and unwanted understory while leaving the mature trees you want to keep.",
@@ -581,7 +585,7 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     shortName: "Field Reclamation",
     title: `Pasture and Field Reclamation | Morris Land Clearing`,
     description:
-      "Reclaim overgrown Missouri fields and pasture — brush, saplings, and woody edges around Warrenton. Upcoming estimates. Vegetation work only, not farm management.",
+      "Reclaim overgrown Missouri fields and pasture — brush, saplings, and woody edges around Warrenton. Request an estimate. Vegetation work only, not farm management.",
     h1: "Pasture and Field Reclamation",
     intro: [
       "A field that sat a few seasons can fill with brush, saplings, honeysuckle, and woody edges. Pasture and field reclamation is about making that ground usable again — not running a farm.",
@@ -617,7 +621,7 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     shortName: "Hunting Property",
     title: `Hunting Property Clearing | Morris Land Clearing`,
     description:
-      "Vegetation and access clearing for rural Missouri hunting properties — trails, lanes, and food-plot areas. Upcoming estimates. Not wildlife-management consulting.",
+      "Vegetation and access clearing for rural Missouri hunting properties — trails, lanes, and food-plot areas. Request an estimate. Not wildlife-management consulting.",
     h1: "Hunting Property Clearing",
     intro: [
       "Rural landowners often need access more than a clear-cut: ATV or walking trails, shooting-lane vegetation, property-line access, and a defined patch they intend to use as a food plot.",
@@ -668,7 +672,7 @@ export const SITE_WORK_SERVICES: EquipmentMarketingService[] = [
     shortName: "Rough Grading",
     title: `Rough Grading in Warrenton & East-Central Missouri | Morris Service Group`,
     description:
-      "Rough grading and property leveling with compact equipment around Warrenton and nearby Missouri counties. Upcoming estimates — no excavation advertised until it is enabled.",
+      "Rough grading and property leveling with compact equipment around Warrenton and nearby Missouri counties. Request an estimate. Excavation is not advertised until it is enabled.",
     h1: "Rough Grading",
     intro: [
       "Rough grading shapes dirt that is already there — smoothing ruts, knocking down piles, and getting a yard or pad area closer to usable.",
@@ -699,7 +703,7 @@ export const SITE_WORK_SERVICES: EquipmentMarketingService[] = [
     shortName: "Site Preparation",
     title: `Site Preparation | Morris Site Work`,
     description:
-      "Site preparation for compact-equipment work in east-central Missouri — clearing follow-up, dirt work, and getting a defined area ready. Upcoming estimates.",
+      "Site preparation for compact-equipment work in east-central Missouri — clearing follow-up, dirt work, and getting a defined area ready. Request an estimate.",
     h1: "Site Preparation",
     intro: [
       "Site preparation here means getting a defined area ready for the next use: a shed spot, a graveled parking edge, or ground that was just cleared.",
@@ -731,7 +735,7 @@ export const SITE_WORK_SERVICES: EquipmentMarketingService[] = [
     shortName: "Gravel Spreading",
     title: `Gravel Spreading | Morris Site Work`,
     description:
-      "Gravel spreading and material placement with compact equipment in Warren County and nearby Missouri communities. Upcoming estimates.",
+      "Gravel spreading and material placement with compact equipment in Warren County and nearby Missouri communities. Request an estimate.",
     h1: "Gravel Spreading",
     intro: [
       "Gravel spreading is placing and rough-leveling stone that is already on site or being delivered. We are not a quarry and do not publish rock prices.",
@@ -762,7 +766,7 @@ export const SITE_WORK_SERVICES: EquipmentMarketingService[] = [
     shortName: "Dirt Moving",
     title: `Dirt Moving | Morris Site Work`,
     description:
-      "Dirt moving and fill placement with a compact track loader around Warrenton and nearby Missouri counties. Upcoming project estimates.",
+      "Dirt moving and fill placement with a compact track loader around Warrenton and nearby Missouri counties. Request an estimate.",
     h1: "Dirt Moving",
     intro: [
       "Dirt moving is relocating soil that is already on the property — piles, low spots, and leftover berms. Long-haul trucking of fill is hauling, not this page.",
@@ -792,7 +796,7 @@ export const SITE_WORK_SERVICES: EquipmentMarketingService[] = [
     shortName: "Backfilling",
     title: `Backfilling | Morris Site Work`,
     description:
-      "Backfilling around structures, edges, and low areas with compact equipment. Upcoming estimates — not advertised as excavation.",
+      "Backfilling around structures, edges, and low areas with compact equipment. Request an estimate. This is not advertised as excavation.",
     h1: "Backfilling",
     intro: [
       "Backfilling places soil back against an edge or into a low area. We stay conservative around foundations, septic, and unmarked lines.",
@@ -822,7 +826,7 @@ export const SITE_WORK_SERVICES: EquipmentMarketingService[] = [
     shortName: "Driveway Grading",
     title: `Driveway Grading and Maintenance | Morris Site Work`,
     description:
-      "Driveway grading and gravel-drive maintenance in Warren County and nearby Missouri communities. Upcoming estimates based on length, material, and drainage notes.",
+      "Driveway grading and gravel-drive maintenance in Warren County and nearby Missouri communities. Estimates based on length, material, and drainage notes.",
     h1: "Driveway Grading",
     intro: [
       "Rural Missouri driveways wash, rut, and lose crown. This service is maintenance-minded grading and spreading — not a paved-road contractor and not a drainage-engineering firm.",
@@ -855,7 +859,7 @@ export const EQUIPMENT_SERVICES_PAGES: EquipmentMarketingService[] = [
     shortName: "Skid Steer Services",
     title: `Skid Steer Services near Warrenton | Morris Service Group`,
     description:
-      "Professional skid steer and compact track loader services in east-central Missouri — grading, grapple, forks, and property work. Upcoming project estimates.",
+      "Professional skid steer and compact track loader services in east-central Missouri — grading, grapple, forks, and property work. Request an estimate.",
     h1: "Skid Steer Services",
     intro: [
       "Some customers know they need a machine and an operator more than they know the service name. This page is for professional skid steer and compact-track-loader work on a property or jobsite.",
@@ -901,10 +905,9 @@ export const EQUIPMENT_SERVICES_PAGES: EquipmentMarketingService[] = [
     included: ["Operated compact-loader work as scoped"],
     needed: ["The job in your words", "Photos", "Access width"],
     pricingFactors: ["Scope", "Time", "Attachment", "Travel"],
-    process: ["Request an upcoming project estimate", "We review", "We confirm what the machine can actually do"],
+    process: ["Request an estimate", "We review", "We confirm what the machine can actually do"],
     restrictions: [
       "Not official Bobcat services and not a manufacturer dealer page",
-      "We do not claim a specific Bobcat model is owned until an equipment record is active",
     ],
     related: ["skid-steer-services", "grapple-services", "material-handling"],
     crossLinks: [
@@ -917,8 +920,8 @@ export const EQUIPMENT_SERVICES_PAGES: EquipmentMarketingService[] = [
         a: "No. We are an independent local contractor. Bobcat is a common search phrase for compact loader work.",
       },
       {
-        q: "Do you own a Bobcat?",
-        a: "We accept upcoming estimates for compact loader work. We will not advertise a specific model as owned until that is true in our equipment records.",
+        q: "Can you estimate from photos or video?",
+        a: "Yes. Photos and a short video are often enough to start. We may ask for an onsite look if the job is unclear.",
       },
     ],
     keywords: ["Bobcat services near me", "Bobcat work near me", "skid steer services"],
@@ -930,7 +933,7 @@ export const EQUIPMENT_SERVICES_PAGES: EquipmentMarketingService[] = [
     shortName: "Grapple Services",
     title: `Grapple Services | Morris Equipment Services`,
     description:
-      "Grapple work for brush piles, logs, storm debris, and demolition debris around Warrenton and nearby Missouri counties. Upcoming estimates.",
+      "Grapple work for brush piles, logs, storm debris, and demolition debris around Warrenton and nearby Missouri counties. Request an estimate.",
     h1: "Grapple Services",
     intro: [
       "A grapple picks and piles what a bucket scoops poorly — brush piles, logs, root balls, and mixed debris. It is often the right tool after a storm or after someone else cut and stacked.",
@@ -961,7 +964,7 @@ export const EQUIPMENT_SERVICES_PAGES: EquipmentMarketingService[] = [
     shortName: "Material Handling",
     title: `Material Handling and Pallet Fork Services | Morris Equipment Services`,
     description:
-      "Pallet fork and material handling with compact equipment in east-central Missouri — lumber, stone, and jobsite placement. Upcoming estimates.",
+      "Pallet fork and material handling with compact equipment in east-central Missouri — lumber, stone, and jobsite placement. Request an estimate.",
     h1: "Material Handling",
     intro: [
       "Pallet forks move what people should not carry: palletized stone, lumber, and staged materials. A bucket still handles loose dirt and gravel.",
@@ -1020,7 +1023,7 @@ export const DIVISION_HUB_COPY: Record<
   land_clearing: {
     title: "Land Clearing in Warrenton & East-Central Missouri | Morris Land Clearing",
     description:
-      "Forestry mulching, brush clearing, lot clearing, and overgrown property reclamation from Morris Service Group. Upcoming project estimates for Warren County and nearby Missouri communities.",
+      "Forestry mulching, brush clearing, lot clearing, and overgrown property reclamation from Morris Service Group. Request an estimate for Warren County and nearby Missouri communities.",
     h1: "Morris Land Clearing",
     lede: "Reclaim overgrown acreage, restore usable wooded property, open trails and fence lines, and control invasive vegetation — so rural, residential, and commercial land is ready for its next use.",
     tone: "capable",
@@ -1035,7 +1038,7 @@ export const DIVISION_HUB_COPY: Record<
   site_work: {
     title: "Site Work in Warrenton & East-Central Missouri | Morris Site Work",
     description:
-      "Rough grading, site preparation, gravel spreading, dirt moving, and driveway grading from Morris Service Group. Upcoming estimates. Excavation is not a current service.",
+      "Rough grading, site preparation, gravel spreading, dirt moving, and driveway grading from Morris Service Group. Request an estimate. Excavation is not a current service.",
     h1: "Morris Site Work",
     lede: "Practical dirt work with a standard bucket: rough grading, site preparation, gravel spreading, backfilling, and driveway maintenance. We do not advertise excavation, trenching, or drainage work until those services are listed.",
     tone: "practical",
@@ -1047,7 +1050,7 @@ export const DIVISION_HUB_COPY: Record<
   equipment_services: {
     title: "Skid Steer and Equipment Services | Morris Equipment Services",
     description:
-      "Professional skid steer and Bobcat services, grapple work, and material handling in east-central Missouri. Independent contractor. Upcoming project estimates.",
+      "Professional skid steer and Bobcat services, grapple work, and material handling in east-central Missouri. Independent contractor. Request an estimate.",
     h1: "Skid Steer & Equipment Services",
     lede: "When you know you need a machine and an operator — for property cleanup, brush and log handling, material movement, gravel or dirt placement, rough grading, site preparation, storm debris, or construction cleanup.",
     tone: "direct",

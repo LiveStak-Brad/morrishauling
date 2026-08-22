@@ -87,7 +87,7 @@ export const morrisServicesConfig = {
     {
       slug: "land-clearing",
       name: "Morris Land Clearing",
-      status: "launching_soon" as const,
+      status: "open" as const,
       tagline: "Forestry mulching, brush clearing, lot clearing and property reclamation.",
       logo: "/MorrisServicesLogo.png?v=6",
       services: [
@@ -104,7 +104,7 @@ export const morrisServicesConfig = {
     {
       slug: "site-work",
       name: "Morris Site Work",
-      status: "launching_soon" as const,
+      status: "open" as const,
       tagline: "Grading, site preparation, dirt work, gravel and property improvement.",
       logo: "/MorrisServicesLogo.png?v=6",
       services: [
@@ -121,7 +121,7 @@ export const morrisServicesConfig = {
     {
       slug: "equipment-services",
       name: "Morris Equipment Services",
-      status: "launching_soon" as const,
+      status: "open" as const,
       tagline: "Skid steer, grapple, bucket, fork and machine-assisted property services.",
       logo: "/MorrisServicesLogo.png?v=6",
       services: [

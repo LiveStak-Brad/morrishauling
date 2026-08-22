@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "@/lib/toast";
 import { trackMarketingEvent } from "@/lib/seo/analytics";
 import { BookingSocialUpsell } from "@/components/social/BookingSocialUpsell";
-import { EQUIPMENT_LEGAL_POINTS, EQUIPMENT_PRELAUNCH_NOTE } from "@/lib/equipment/legal";
+import { EQUIPMENT_LEGAL_POINTS, EQUIPMENT_ESTIMATE_NOTE } from "@/lib/equipment/legal";
 import {
   ACCESS_FLAG_OPTIONS,
   DESIRED_RESULT_OPTIONS,
@@ -313,7 +313,7 @@ export function EquipmentIntakeWizard({
       <div className="space-y-4 rounded-xl border border-border bg-card p-5">
         <h3 className="text-lg font-semibold">Thank you</h3>
         <p className="text-sm text-muted-foreground">
-          Your upcoming project estimate request has been received. This is not an instant price.
+          Your estimate request has been received. This is not an instant price.
         </p>
         <Input readOnly value={result.customerUrl} className="font-mono text-xs" aria-label="Secure estimate link" />
         <Button
@@ -743,7 +743,7 @@ export function EquipmentIntakeWizard({
               Goal: <span className="font-medium">{goalLabel(form.projectGoal)}</span>
             </p>
           ) : null}
-          <p className="text-sm text-muted-foreground">{EQUIPMENT_PRELAUNCH_NOTE}</p>
+          <p className="text-sm text-muted-foreground">{EQUIPMENT_ESTIMATE_NOTE}</p>
           <p className="text-sm text-muted-foreground">
             We will not give an instant guaranteed price for forestry mulching or equipment work.
             Larger or complex jobs may need an onsite assessment.
@@ -782,7 +782,7 @@ export function EquipmentIntakeWizard({
           {busy ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : step === steps.length - 1 ? (
-            "Request an Upcoming Project Estimate"
+            "Request an Estimate"
           ) : (
             <>
               Continue

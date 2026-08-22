@@ -19,7 +19,7 @@ export const SERVICE_STATUS_VALUES: ServiceStatus[] = [
 
 export const SERVICE_STATUS_LABELS: Record<ServiceStatus, string> = {
   active: "Available",
-  accepting_estimates: "Now Accepting Estimates",
+  accepting_estimates: "Estimates Available",
   coming_soon: "Coming soon",
   temporarily_unavailable: "Temporarily unavailable",
 };

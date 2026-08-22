@@ -14,8 +14,8 @@ import { SEO_ORG } from "@/lib/seo/site";
 import { organizationSchema, localBusinessSchema, serviceSchema } from "@/lib/seo/schema";
 import { publicCatalogServices } from "@/lib/equipment/catalog";
 import { ctaLabelForLaunchStatus, ctaLabelForServiceStatus } from "@/lib/equipment/status";
-import { getEquipmentService, DIVISION_HUB_COPY } from "@/lib/seo/equipment-divisions";
-import { EQUIPMENT_LEGAL_POINTS } from "@/lib/equipment/legal";
+import { getEquipmentService, DIVISION_HUB_COPY, allEquipmentMarketingServices } from "@/lib/seo/equipment-divisions";
+import { EQUIPMENT_LEGAL_POINTS, EQUIPMENT_ESTIMATE_NOTE } from "@/lib/equipment/legal";
 import { morrisConfig } from "@/lib/morris-config";
 
 describe("service-area source of truth", () => {
@@ -114,20 +114,20 @@ describe("hidden future services", () => {
 });
 
 describe("estimate-only CTA behavior", () => {
-  it("uses estimate CTAs for prelaunch equipment and Book now only for bookable junk", () => {
+  it("uses normal estimate CTAs for equipment divisions and Book now only for bookable junk", () => {
     const land = ctaLabelForLaunchStatus("accepting_estimate_requests", "land_clearing");
-    expect(land.statusLabel).toBe("Now Accepting Estimates");
-    expect(land.bookingCtaLabel).toBe("Request an Upcoming Project Estimate");
+    expect(land.statusLabel).toBe("Estimates Available");
+    expect(land.bookingCtaLabel).toBe("Request an Estimate");
     expect(land.bookingCtaLabel.toLowerCase()).not.toContain("book now");
+    expect(land.bookingCtaLabel.toLowerCase()).not.toContain("upcoming");
 
     const junk = ctaLabelForLaunchStatus("accepting_bookings", "junk_removal");
     expect(junk.statusLabel).toBe("Available");
     expect(junk.bookingCtaLabel).toBe("Book now");
 
     expect(ctaLabelForServiceStatus("active")).toBe("Request an Estimate");
-    expect(ctaLabelForServiceStatus("accepting_estimates")).toBe(
-      "Request an Upcoming Project Estimate"
-    );
+    expect(ctaLabelForServiceStatus("accepting_estimates")).toBe("Request an Estimate");
+    expect(ctaLabelForServiceStatus("coming_soon")).toBe("Coming soon");
   });
 });
 
@@ -140,6 +140,25 @@ describe("Bobcat affiliation disclaimer", () => {
     expect(bobcat?.intro.some((p) => /not because Morris Service Group is affiliated/i.test(p))).toBe(
       true
     );
+  });
+});
+
+describe("enabled services are estimate-ready, not prelaunch", () => {
+  it("removes customer-facing prelaunch and ownership-wait language from marketed services", () => {
+    expect(EQUIPMENT_ESTIMATE_NOTE).not.toMatch(/upcoming|prelaunch|equipment record/i);
+    for (const page of allEquipmentMarketingServices()) {
+      const blob = JSON.stringify(page);
+      expect(blob).not.toMatch(/upcoming project/i);
+      expect(blob).not.toMatch(/accepting upcoming/i);
+      expect(blob).not.toMatch(/prelaunch/i);
+      expect(blob).not.toMatch(/Do you own a forestry mulcher/i);
+      expect(blob).not.toMatch(/Do you own a Bobcat/i);
+      expect(blob).not.toMatch(/equipment record is active/i);
+      expect(blob).not.toMatch(/once equipment/i);
+    }
+    const excavation = publicCatalogServices().some((s) => s.slug === "excavation");
+    expect(excavation).toBe(false);
+    expect(DIVISION_HUB_COPY.site_work.description).toMatch(/Excavation is not a current service/);
   });
 });
 
