@@ -7,14 +7,20 @@ import { ConversionCtaGroup, RelatedLinks } from "@/components/seo/ConversionCta
 import { JsonLd } from "@/components/seo/JsonLd";
 import { PlaceholderMedia } from "@/components/seo/PlaceholderMedia";
 import { EquipmentLegalNotice } from "@/components/seo/EquipmentLegalNotice";
+import { LandClearingGoalSelector } from "@/components/seo/LandClearingGoalSelector";
+import { OnePropertyOneCompany } from "@/components/seo/OnePropertyOneCompany";
+import { EquipmentWeUse } from "@/components/seo/EquipmentWeUse";
+import { ProjectTrustStrip } from "@/components/seo/ProjectTrustStrip";
+import { FaqAccordion } from "@/components/seo/FaqAccordion";
 import {
   DIVISION_HUB_COPY,
   equipmentServicesForDivision,
   type EquipmentMarketingService,
 } from "@/lib/seo/equipment-divisions";
 import { DIVISION_SEO } from "@/lib/seo/site";
-import { breadcrumbSchema, localBusinessSchema, serviceSchema } from "@/lib/seo/schema";
+import { breadcrumbSchema, faqSchema, localBusinessSchema, serviceSchema } from "@/lib/seo/schema";
 import { listPublishedProjects } from "@/lib/db/published-projects";
+import { HUB_ONLY_INTENT_SECTIONS, LAND_CLEARING_HUB_FAQS, landClearingBookHref } from "@/lib/land-clearing/intents";
 
 export async function EquipmentDivisionHub({
   division,
@@ -46,6 +52,7 @@ export async function EquipmentDivisionHub({
             { name: "Morris Services", path: "/" },
             { name: d.name, path: d.path },
           ]),
+          ...(division === "land_clearing" ? [faqSchema([...LAND_CLEARING_HUB_FAQS])] : []),
         ]}
       />
       <PublicHeader variant="umbrella" />
@@ -60,7 +67,13 @@ export async function EquipmentDivisionHub({
               {copy.h1}
             </h1>
             <p className="mt-4 text-lg leading-relaxed text-muted-foreground">{copy.lede}</p>
-            <ConversionCtaGroup divisionId={division} className="mt-8" />
+            <ConversionCtaGroup
+              divisionId={division}
+              estimateHref={
+                division === "land_clearing" ? landClearingBookHref({ goal: "general_land_clearing" }) : undefined
+              }
+              className="mt-8"
+            />
           </div>
           <div className="lg:col-span-2">
             <PlaceholderMedia
@@ -72,6 +85,12 @@ export async function EquipmentDivisionHub({
             />
           </div>
         </div>
+
+        {division === "land_clearing" && (
+          <div className="mt-14">
+            <LandClearingGoalSelector />
+          </div>
+        )}
 
         <section className="mt-14">
           <h2 className="font-heading text-3xl font-medium tracking-tight">Services</h2>
@@ -91,6 +110,41 @@ export async function EquipmentDivisionHub({
             ))}
           </div>
         </section>
+
+        {division === "land_clearing" && (
+          <section className="mt-14 space-y-8">
+            <h2 className="font-heading text-2xl font-medium tracking-tight">
+              Other property goals we discuss
+            </h2>
+            {HUB_ONLY_INTENT_SECTIONS.map((section) => (
+              <article
+                key={section.id}
+                id={section.id}
+                className="scroll-mt-24 rounded-2xl border border-black/5 bg-white p-5 shadow-sm"
+              >
+                <h3 className="text-lg font-semibold tracking-tight">{section.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{section.body}</p>
+                <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                  {section.links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="font-medium text-brand-primary hover:underline"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                  <Link
+                    href={landClearingBookHref({ goal: section.goal })}
+                    className="font-medium text-brand-primary hover:underline"
+                  >
+                    Request an estimate
+                  </Link>
+                </p>
+              </article>
+            ))}
+          </section>
+        )}
 
         {copy.secondary.length > 0 && (
           <section className="mt-14">
@@ -116,11 +170,14 @@ export async function EquipmentDivisionHub({
           </section>
         )}
 
+        {division === "land_clearing" && (
+          <OnePropertyOneCompany className="mt-14" />
+        )}
+
+        {division === "land_clearing" && <EquipmentWeUse />}
+
         {projects.length > 0 ? (
-          <RelatedLinks
-            title="Published projects"
-            links={projects.map((p) => ({ href: `/projects/${p.slug}`, label: p.title }))}
-          />
+          <ProjectTrustStrip projects={projects} title="Published projects" />
         ) : (
           <section className="mt-14">
             <h2 className="font-heading text-2xl font-medium">Projects</h2>
@@ -132,6 +189,13 @@ export async function EquipmentDivisionHub({
               </Link>{" "}
               when real jobs are published.
             </p>
+          </section>
+        )}
+
+        {division === "land_clearing" && (
+          <section className="mt-14">
+            <h2 className="font-heading text-2xl font-medium">FAQ</h2>
+            <FaqAccordion items={[...LAND_CLEARING_HUB_FAQS]} className="mt-4" />
           </section>
         )}
 

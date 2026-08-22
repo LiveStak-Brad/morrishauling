@@ -88,7 +88,16 @@ export const CATALOG_SERVICES: CatalogSeed[] = [
   { id: "svc-fence-line", divisionId: "land_clearing", slug: "fence-line-clearing", name: "Fence-Line Clearing", status: "accepting_estimates", publiclyListed: true, sortOrder: 70, capabilityIds: ["cap-ctl-mulcher"] },
   { id: "svc-trail", divisionId: "land_clearing", slug: "trail-clearing", name: "Trail / Path Clearing", status: "accepting_estimates", publiclyListed: true, sortOrder: 80, capabilityIds: ["cap-ctl-mulcher"] },
   { id: "svc-storm-veg", divisionId: "land_clearing", slug: "storm-debris-clearing", name: "Storm Debris / Vegetation Cleanup", status: "accepting_estimates", publiclyListed: true, sortOrder: 90, capabilityIds: ["cap-ctl-grapple", "cap-ctl-mulcher"] },
+  { id: "svc-selective", divisionId: "land_clearing", slug: "selective-clearing", name: "Selective Clearing / Tree Thinning", status: "accepting_estimates", publiclyListed: true, sortOrder: 95, capabilityIds: ["cap-ctl-mulcher"] },
+  { id: "svc-pasture", divisionId: "land_clearing", slug: "pasture-field-reclamation", name: "Pasture & Field Reclamation", status: "accepting_estimates", publiclyListed: true, sortOrder: 96, capabilityIds: ["cap-ctl-mulcher", "cap-ctl-grapple"] },
+  { id: "svc-hunting", divisionId: "land_clearing", slug: "hunting-property-clearing", name: "Hunting Property Clearing", status: "accepting_estimates", publiclyListed: true, sortOrder: 97, capabilityIds: ["cap-ctl-mulcher"] },
   { id: "svc-brush-pile", divisionId: "land_clearing", slug: "brush-pile-cleanup", name: "Brush & Tree Pile Cleanup", status: "accepting_estimates", publiclyListed: false, sortOrder: 100, capabilityIds: ["cap-ctl-grapple"] },
+  { id: "svc-park-like", divisionId: "land_clearing", slug: "park-like-clearing", name: "Park-Like Property Clearing", status: "accepting_estimates", publiclyListed: false, sortOrder: 101, capabilityIds: ["cap-ctl-mulcher"] },
+  { id: "svc-food-plot", divisionId: "land_clearing", slug: "food-plot-area", name: "Food Plot Area Clearing", status: "accepting_estimates", publiclyListed: false, sortOrder: 102, capabilityIds: ["cap-ctl-mulcher"] },
+  { id: "svc-encroachment", divisionId: "land_clearing", slug: "road-field-encroachment", name: "Road / Field Encroachment Clearing", status: "accepting_estimates", publiclyListed: false, sortOrder: 103, capabilityIds: ["cap-ctl-mulcher"] },
+  { id: "svc-pond-access", divisionId: "land_clearing", slug: "pond-lake-access", name: "Pond / Lake Access Clearing", status: "accepting_estimates", publiclyListed: false, sortOrder: 104, capabilityIds: ["cap-ctl-mulcher"] },
+  { id: "svc-homesite-veg", divisionId: "land_clearing", slug: "home-site-vegetation", name: "Home-Site Vegetation Clearing", status: "accepting_estimates", publiclyListed: false, sortOrder: 105, capabilityIds: ["cap-ctl-mulcher", "cap-ctl-grapple"] },
+  { id: "svc-re-cleanup", divisionId: "land_clearing", slug: "real-estate-cleanup", name: "Real-Estate Property Cleanup", status: "accepting_estimates", publiclyListed: false, sortOrder: 106, capabilityIds: ["cap-ctl-mulcher", "cap-ctl-grapple"] },
 
   // Site work — public now; excavation family stays coming_soon
   { id: "svc-rough-grading", divisionId: "site_work", slug: "rough-grading", name: "Rough Grading", status: "accepting_estimates", publiclyListed: true, sortOrder: 10, capabilityIds: ["cap-ctl-bucket"] },

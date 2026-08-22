@@ -21,6 +21,7 @@ import {
 import { HOMEPAGE_GOAL_CARDS } from "@/lib/public-nav";
 import { trackMarketingEvent } from "@/lib/seo/analytics";
 import { MorrisProtocolSteps } from "@/components/public/MorrisProtocolSteps";
+import { OnePropertyOneCompany } from "@/components/seo/OnePropertyOneCompany";
 import type { DivisionId } from "@/lib/divisions";
 
 export function MorrisServicesHomePage() {
@@ -198,6 +199,8 @@ export function MorrisServicesHomePage() {
             })}
           </div>
         </section>
+
+        <OnePropertyOneCompany className="mt-16 sm:mt-20" />
 
         <section id="standard" className="mt-16 scroll-mt-24 sm:mt-20">
           <div className="rounded-[1.5rem] border border-black/5 bg-[#0A0A0A] px-5 py-7 text-white sm:px-8 sm:py-10 md:px-10">

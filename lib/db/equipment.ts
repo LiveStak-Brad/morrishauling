@@ -116,11 +116,14 @@ export async function insertEquipmentIntake(input: {
   vegetationDensity?: string | null;
   treeDiameterRange?: string | null;
   terrainType?: string | null;
+  leadCompletenessScore?: number | null;
+  acreageSource?: string | null;
+  workAreas?: unknown;
 }) {
   const sb = createAdminClient();
   if (!sb) throw new Error("Database unavailable");
   const now = new Date().toISOString();
-  const { error } = await sb.from("equipment_intake_details").insert({
+  const row: Record<string, unknown> = {
     id: input.id,
     company_id: input.companyId,
     estimate_id: input.estimateId,
@@ -136,8 +139,31 @@ export async function insertEquipmentIntake(input: {
     terrain_type: input.terrainType ?? null,
     created_at: now,
     updated_at: now,
-  });
-  if (error) throw error;
+  };
+  if (input.leadCompletenessScore != null) row.lead_completeness_score = input.leadCompletenessScore;
+  if (input.acreageSource) row.acreage_source = input.acreageSource;
+  if (input.workAreas != null) row.work_areas = input.workAreas;
+  const { error } = await sb.from("equipment_intake_details").insert(row);
+  if (error) {
+    const retry = await sb.from("equipment_intake_details").insert({
+      id: input.id,
+      company_id: input.companyId,
+      estimate_id: input.estimateId,
+      division_id: input.divisionId,
+      service_slug: input.serviceSlug ?? null,
+      kind: input.kind,
+      intake: input.intake,
+      equipment_type_id: input.equipmentTypeId ?? null,
+      attachment_type_id: input.attachmentTypeId ?? null,
+      estimated_acres: input.estimatedAcres ?? null,
+      vegetation_density: input.vegetationDensity ?? null,
+      tree_diameter_range: input.treeDiameterRange ?? null,
+      terrain_type: input.terrainType ?? null,
+      created_at: now,
+      updated_at: now,
+    });
+    if (retry.error) throw retry.error;
+  }
 }
 
 export async function updateEquipmentIntakeOps(

@@ -13,6 +13,9 @@ import { getAppBaseUrl } from "@/lib/payments/stripe-client";
 import { insertEquipmentIntake } from "@/lib/db/equipment";
 import { inferCapabilityFromServiceSlug } from "@/lib/equipment/catalog";
 import { getDivision } from "@/lib/divisions";
+import { goalLabel, parseProjectGoal } from "@/lib/land-clearing/intents";
+import { landClearingLeadCompletenessScore } from "@/lib/land-clearing/lead-score";
+import { resolveAcreageSource } from "@/lib/land-clearing/acreage";
 
 function normalizePhone(phone: string): string {
   return phone.replace(/\D/g, "");
@@ -135,8 +138,19 @@ export async function POST(request: Request) {
     const now = new Date().toISOString();
     const config = getDivision(divisionId);
     const inferred = inferCapabilityFromServiceSlug(body.serviceSlug);
-    const intake = body.intake ?? {};
+    const intake = { ...(body.intake ?? {}) };
+    const projectGoal = parseProjectGoal(typeof intake.projectGoal === "string" ? intake.projectGoal : null);
     const addressBits = [intake.address, intake.city, intake.zip].filter(Boolean).join(", ");
+    const enteredAcres = Number(intake.acreage);
+    const mapAcres = Number(intake.calculatedAcres);
+    const acreageResolved = resolveAcreageSource({
+      mapAcres: Number.isFinite(mapAcres) && mapAcres > 0 ? mapAcres : null,
+      enteredAcres: Number.isFinite(enteredAcres) && enteredAcres > 0 ? enteredAcres : null,
+    });
+    if (acreageResolved.source) intake.acreageSource = acreageResolved.source;
+    const completeness =
+      divisionId === "land_clearing" ? landClearingLeadCompletenessScore(intake) : null;
+    if (completeness != null) intake.leadCompletenessScore = completeness;
 
     const lineItems = [
       normalizeLineItem({
@@ -162,13 +176,24 @@ export async function POST(request: Request) {
       line_items: lineItems,
       customer_notes: [
         addressBits && `Property: ${addressBits}`,
-        intake.acreage && `Acreage: ${intake.acreage}`,
+        (acreageResolved.acres ?? intake.acreage) && `Acreage: ${acreageResolved.acres ?? intake.acreage}`,
+        projectGoal && `Goal: ${goalLabel(projectGoal)}`,
         intake.goal && `Goal: ${intake.goal}`,
+        intake.propertyEndUse && `Later use: ${String(intake.propertyEndUse).replace(/_/g, " ")}`,
         "No instant guaranteed pricing. Review required.",
       ]
         .filter(Boolean)
         .join("\n"),
-      internal_notes: `Equipment intake (${created ? "new customer" : "matched"}). Service: ${body.serviceSlug ?? "n/a"}. Capability: ${inferred.capabilityId ?? "n/a"}`,
+      internal_notes: [
+        `Equipment intake (${created ? "new customer" : "matched"}).`,
+        `Service: ${body.serviceSlug ?? "n/a"}.`,
+        `Capability: ${inferred.capabilityId ?? "n/a"}.`,
+        projectGoal && `Project goal: ${projectGoal}.`,
+        completeness != null && `Lead completeness (internal): ${completeness}.`,
+        intake.keepVegetation && `Keep/remove: ${intake.keepVegetation}.`,
+      ]
+        .filter(Boolean)
+        .join(" "),
       share_token_hash: share.hash,
       share_token_expires_at: share.expiresAt,
       created_at: now,
@@ -176,7 +201,7 @@ export async function POST(request: Request) {
     });
     if (estError) throw estError;
 
-    const acres = Number(intake.acreage);
+    const acres = acreageResolved.acres ?? Number(intake.acreage);
     await insertEquipmentIntake({
       id: billingId("eqi"),
       companyId,
@@ -187,10 +212,13 @@ export async function POST(request: Request) {
       intake,
       equipmentTypeId: inferred.equipmentTypeId ?? null,
       attachmentTypeId: inferred.attachmentId ?? null,
-      estimatedAcres: Number.isFinite(acres) ? acres : null,
+      estimatedAcres: Number.isFinite(acres) && acres != null && acres > 0 ? acres : null,
       vegetationDensity: typeof intake.density === "string" ? intake.density : null,
       treeDiameterRange: typeof intake.diameterRange === "string" ? intake.diameterRange : null,
       terrainType: typeof intake.terrain === "string" ? intake.terrain : null,
+      leadCompletenessScore: completeness,
+      acreageSource: acreageResolved.source,
+      workAreas: Array.isArray(intake.workAreas) ? intake.workAreas : [],
     });
 
     const customerUrl = `${getAppBaseUrl()}/e/${share.token}`;

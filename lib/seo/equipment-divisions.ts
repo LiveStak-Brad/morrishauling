@@ -8,6 +8,7 @@ import type { DivisionId } from "@/lib/divisions";
 export type EquipmentMarketingSection = {
   heading: string;
   body: string[];
+  id?: string;
 };
 
 export type EquipmentMarketingService = {
@@ -76,9 +77,9 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
       {
         heading: "Benefits versus traditional clearing",
         body: [
-          "Material usually stays on site as mulch, so there is less hauling and fewer burn piles.",
-          "The ground cover can help with erosion compared with scraping a site bare.",
-          "Traditional cut-and-haul still makes sense when logs must leave, large trees dominate, or you need a clean dirt finish. We will say so.",
+          "Forestry mulching can process vegetation on site, which often reduces hauling or burning compared with cut-and-pile work.",
+          "The chip layer left on the ground can help limit bare-soil disturbance, depending on how the machine works the stand and how wet the ground is.",
+          "Selective understory work is often a good fit when mature trees should stay. Traditional cut-and-haul still makes sense when logs must leave, large trees dominate, or you need a clean dirt finish.",
         ],
       },
       {
@@ -171,6 +172,18 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
       {
         q: "Do you own a forestry mulcher today?",
         a: "We are accepting upcoming project estimates. Equipment and timing are confirmed when we accept the job. We will not advertise a specific machine as owned until that record is active.",
+      },
+      {
+        q: "What happens to the vegetation after forestry mulching?",
+        a: "It is typically processed on site into a chip layer. That can reduce hauling or burning. If material must leave the property, that is a separate hauling conversation.",
+      },
+      {
+        q: "Do I need to know how many acres need cleared?",
+        a: "A guess helps. Photos, a short video, or outlining the area on a map can be enough to start. We may adjust acreage after review.",
+      },
+      {
+        q: "Can I send photos or video for an estimate?",
+        a: "Yes — that is the fastest way to start. A wide view, the thickest vegetation, access, and any gates or slopes help.",
       },
     ],
     keywords: ["forestry mulching", "land clearing", "brush mulching", "Warrenton MO"],
@@ -280,7 +293,7 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     faqs: [
       {
         q: "Can you clear a lot for a new house?",
-        a: "We can discuss vegetation removal for a building area. Foundation excavation and pad construction are not listed as current services.",
+        a: "We can discuss vegetation and initial site clearing for a future home, garage, barn, or shop. Foundation excavation, engineered pads, utility trenching, and final grade are not current promises.",
       },
     ],
     keywords: ["lot clearing", "land clearing", "building lot", "Warren County"],
@@ -331,8 +344,18 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
       "Honeysuckle and invasive vegetation clearing in Warren County and nearby Missouri communities. Upcoming project estimates — density and access decide the work.",
     h1: "Honeysuckle and Invasive Vegetation Clearing",
     intro: [
-      "Bush honeysuckle is a familiar problem on Missouri woodlots and fence lines. It shades out the ground, hides trash, and turns a walkable woods into a wall.",
-      "We treat it as vegetation work, not a chemical program. If you have a follow-up plan with a landscaper or landowner practice, say so — it helps us leave the ground in a useful condition.",
+      "Bush honeysuckle is a familiar problem on Missouri woodlots, fence lines, and overgrown acreage. It shades out the ground, hides trash, and turns a walkable woods into a wall.",
+      "Mechanical clearing can remove and process existing above-ground growth so the property is usable again. Mulching does not permanently eradicate invasive species — some stands need ongoing landowner management.",
+      "We treat it as vegetation work, not a chemical or herbicide program.",
+    ],
+    detailSections: [
+      {
+        heading: "What mechanical clearing can do",
+        body: [
+          "A forestry machine can grind dense woody honeysuckle and mixed understory so you can walk, see, and decide the next land use.",
+          "That removes the current wall of growth. Roots, seed, and sprouts can still return. Honest work is reclaiming the stand you have now — not promising it never comes back.",
+        ],
+      },
     ],
     whoFor: ["Wooded residential lots", "Fence lines taken over by honeysuckle", "People opening a woods they used to walk"],
     included: ["Mulching or machine clearing of the stands you mark"],
@@ -347,7 +370,11 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     faqs: [
       {
         q: "Will honeysuckle grow back?",
-        a: "It can. Clearing the standing growth is the machine part. Long-term control is a landowner or landscaping follow-up, not something we guarantee.",
+        a: "It can. We remove and process existing above-ground growth. That is not a permanent eradication. Long-term control is a landowner follow-up, not something we guarantee.",
+      },
+      {
+        q: "Can you remove honeysuckle?",
+        a: "Often yes, depending on density, stem size, and access. Photos of the worst patches help. We do not apply herbicide unless that service is added later.",
       },
     ],
     keywords: ["honeysuckle removal Missouri", "invasive brush clearing", "bush honeysuckle"],
@@ -407,6 +434,10 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     ],
     faqs: [
       {
+        q: "Can you clear fence lines?",
+        a: "Yes, when access and utilities allow. Hidden wire is the main risk. Mark the line and tell us whether the fence stays.",
+      },
+      {
         q: "Can you work right against an existing fence?",
         a: "Sometimes. Standing fence, electric wire, and neighbor lines need to be marked. We stay conservative around anything that can wrap a drum or cut a hose.",
       },
@@ -431,9 +462,10 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
     pricingFactors: ["Length", "Width", "Vegetation and slope"],
     process: ["Describe the route", "Estimate", "Cut the agreed path"],
     restrictions: ["Public right-of-way and utility easements need owner authority and any required permissions"],
-    related: ["forestry-mulching", "fence-line-clearing"],
+    related: ["forestry-mulching", "fence-line-clearing", "hunting-property-clearing"],
     crossLinks: [
       { href: "/site-work/driveway-grading", label: "Driveway grading", note: "If the path needs to become a graded drive later, that is a site-work estimate." },
+      { href: "/land-clearing#pond-lake-access", label: "Pond access", note: "A path to a pond is often the same kind of scoped vegetation corridor." },
     ],
     faqs: [
       {
@@ -473,6 +505,158 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
       },
     ],
     keywords: ["storm debris cleanup", "downed tree cleanup", "vegetation cleanup Missouri"],
+  },
+  {
+    slug: "selective-clearing",
+    division: "land_clearing",
+    name: "Selective Clearing / Tree Thinning",
+    shortName: "Selective Clearing",
+    title: `Selective Land Clearing & Tree Thinning | Morris Land Clearing`,
+    description:
+      "Selective land clearing and understory thinning around Warrenton — keep desirable mature trees while clearing brush, saplings, and invasive vegetation. Upcoming project estimates.",
+    h1: "Selective Clearing and Tree Thinning",
+    intro: [
+      "Some owners want the woods back — not a bare lot. Selective clearing and tree thinning remove brush, honeysuckle, saplings, and unwanted understory while leaving the mature trees you want to keep.",
+      "People also call this wooded-property cleanup or park-like property clearing: more visibility, easier walking, and a maintained look. “Park-like” describes the goal, not a guaranteed finished appearance.",
+      "This is vegetation work, not arborist-level tree management and not hazardous tree removal. We will not take a leaning tree off a roof or climb a canopy.",
+    ],
+    detailSections: [
+      {
+        heading: "A more usable woods",
+        body: [
+          "Understory clearing can open sight lines, improve walking access, and expose the trees worth keeping. The result depends on density, what you mark to stay, and how the machine can move.",
+        ],
+      },
+      {
+        id: "park-like",
+        heading: "Park-like property clearing",
+        body: [
+          "Many owners say they want to keep the woods, but make them usable. Selective vegetation clearing can open visibility, improve walking access, reduce dense understory, and expose desirable mature trees.",
+          "“Park-like” is descriptive language for that maintained look — not a guarantee of a particular finished appearance. Terrain, what you keep, and how thick the stand is still decide the result.",
+        ],
+      },
+    ],
+    whoFor: [
+      "Owners who want to keep mature trees",
+      "Wooded lots that became a wall of brush",
+      "People who want a maintained, walkable woods",
+    ],
+    included: [
+      "A conversation about what stays and what goes",
+      "Scoped understory and sapling work",
+      "Honest limits when a tree is too large or too close to a structure",
+    ],
+    needed: [
+      "Photos of the stand and the trees you want to keep",
+      "Whether trees will be marked",
+      "Access notes",
+    ],
+    pricingFactors: ["Density", "How selective the cut is", "Access and terrain", "Acreage"],
+    process: [
+      "Tell us what you want the woods to become",
+      "Send photos or video",
+      "We estimate after review",
+    ],
+    restrictions: [
+      "Not a certified arborist service",
+      "Not hazardous or structural tree removal",
+    ],
+    related: ["forestry-mulching", "property-reclamation", "honeysuckle-clearing"],
+    crossLinks: [
+      { href: "/land-clearing/forestry-mulching", label: "Forestry mulching", note: "When the stand is mixed brush and saplings, mulching is often how selective work is done." },
+      { href: "/land-clearing/property-reclamation", label: "Property reclamation", note: "If almost everything needs to come down, reclamation is the clearer path." },
+    ],
+    faqs: [
+      {
+        q: "Can you clear property while leaving mature trees?",
+        a: "That is the usual goal of selective clearing. Mark what must stay. Tight clusters, vines in the canopy, and access still decide what is safe.",
+      },
+    ],
+    keywords: ["selective land clearing", "tree thinning", "understory clearing", "wooded property cleanup"],
+  },
+  {
+    slug: "pasture-field-reclamation",
+    division: "land_clearing",
+    name: "Pasture & Field Reclamation",
+    shortName: "Field Reclamation",
+    title: `Pasture and Field Reclamation | Morris Land Clearing`,
+    description:
+      "Reclaim overgrown Missouri fields and pasture — brush, saplings, and woody edges around Warrenton. Upcoming estimates. Vegetation work only, not farm management.",
+    h1: "Pasture and Field Reclamation",
+    intro: [
+      "A field that sat a few seasons can fill with brush, saplings, honeysuckle, and woody edges. Pasture and field reclamation is about making that ground usable again — not running a farm.",
+      "We do not advertise seeding, fertilization, livestock services, or agricultural consulting. After vegetation is down, you decide the next land use.",
+    ],
+    whoFor: [
+      "Owners reclaiming neglected pasture",
+      "Overgrown field edges and fence rows",
+      "People opening acreage that used to be mowed or grazed",
+    ],
+    included: ["Scoped vegetation work on the field or edge you mark", "Mulching in place when that fits"],
+    needed: ["About how many acres", "Photos of the thickest growth", "What should stay — trees, fence, waterers"],
+    pricingFactors: ["Acreage", "Stem size and density", "Soft or wet ground", "Access"],
+    process: ["Describe the field", "Send photos", "We estimate after review"],
+    restrictions: ["Not a farm-management or seeding service"],
+    related: ["brush-clearing", "property-reclamation", "forestry-mulching"],
+    crossLinks: [
+      { href: "/land-clearing/brush-clearing", label: "Brush clearing", note: "Smaller edges and fence rows may fit brush clearing." },
+      { href: "/land-clearing/hunting-property-clearing", label: "Hunting property", note: "If the field will become access or a food-plot area, say so." },
+    ],
+    faqs: [
+      {
+        q: "Can forestry mulching reclaim an overgrown field?",
+        a: "Often it can, depending on stem size, density, and ground conditions. Two fields of the same acreage can be very different jobs. Photos keep the estimate honest.",
+      },
+    ],
+    keywords: ["pasture reclamation", "field reclamation", "overgrown field clearing", "brush clearing pasture"],
+  },
+  {
+    slug: "hunting-property-clearing",
+    division: "land_clearing",
+    name: "Hunting Property Clearing",
+    shortName: "Hunting Property",
+    title: `Hunting Property Clearing | Morris Land Clearing`,
+    description:
+      "Vegetation and access clearing for rural Missouri hunting properties — trails, lanes, and food-plot areas. Upcoming estimates. Not wildlife-management consulting.",
+    h1: "Hunting Property Clearing",
+    intro: [
+      "Rural landowners often need access more than a clear-cut: ATV or walking trails, shooting-lane vegetation, property-line access, and a defined patch they intend to use as a food plot.",
+      "This is vegetation and access preparation only. We do not provide wildlife-management consulting, and we do not advertise hunting results.",
+    ],
+    detailSections: [
+      {
+        id: "food-plot",
+        heading: "Food-plot area clearing",
+        body: [
+          "We can discuss clearing vegetation from an area you intend to use as a food plot. We do not seed, fertilize, or prepare soil beyond the site-work services that are actually listed.",
+        ],
+      },
+    ],
+    whoFor: [
+      "Acreage owners opening hunting access",
+      "People who need a trail or lane through brush",
+      "Owners clearing a defined food-plot area",
+    ],
+    included: ["Scoped vegetation work on the routes or patches you mark"],
+    needed: ["Start and end points or a simple sketch", "Desired width", "What trees stay"],
+    pricingFactors: ["Length or acreage", "Density", "Terrain"],
+    process: ["Describe the access you want", "Send photos", "We estimate"],
+    restrictions: [
+      "Not a wildlife-management or hunting-outfitter service",
+      "Food-plot seeding and soil programs are not offered",
+    ],
+    related: ["trail-clearing", "pasture-field-reclamation", "selective-clearing"],
+    crossLinks: [
+      { href: "/land-clearing/trail-clearing", label: "Trail clearing", note: "A walking or ATV path is often estimated as trail clearing." },
+      { href: "/land-clearing/pasture-field-reclamation", label: "Field reclamation", note: "Larger neglected fields may fit pasture reclamation." },
+    ],
+    faqs: [
+      {
+        q: "Can you clear hunting trails?",
+        a: "We can discuss a scoped vegetation corridor. Width, trees that stay, and ground conditions decide the work. We do not design hunt strategies.",
+      },
+    ],
+    keywords: ["hunting property clearing", "hunting trails", "food plot clearing Missouri"],
   },
 ];
 
@@ -838,12 +1022,14 @@ export const DIVISION_HUB_COPY: Record<
     description:
       "Forestry mulching, brush clearing, lot clearing, and overgrown property reclamation from Morris Service Group. Upcoming project estimates for Warren County and nearby Missouri communities.",
     h1: "Morris Land Clearing",
-    lede: "Reclaim overgrown acreage, restore usable property, open trails and fence lines, and control invasive vegetation — so the land is ready for its next use.",
+    lede: "Reclaim overgrown acreage, restore usable wooded property, open trails and fence lines, and control invasive vegetation — so rural, residential, and commercial land is ready for its next use.",
     tone: "capable",
     secondary: [
       "Right-of-way and access clearing on private property",
       "Brush and tree pile cleanup",
       "Honeysuckle and invasive vegetation",
+      "Selective thinning that keeps mature trees",
+      "Pasture, field, and hunting-property access conversations",
     ],
   },
   site_work: {

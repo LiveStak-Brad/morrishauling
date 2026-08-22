@@ -37,6 +37,7 @@ export const PUBLIC_NAV_GROUPS: PublicNavGroup[] = [
       { href: "/land-clearing/brush-clearing", label: "Brush Clearing", nested: true },
       { href: "/land-clearing/lot-clearing", label: "Lot Clearing", nested: true },
       { href: "/land-clearing/property-reclamation", label: "Property Reclamation", nested: true },
+      { href: "/land-clearing/selective-clearing", label: "Selective Clearing", nested: true },
       { href: "/site-work", label: "Site Work" },
       { href: "/site-work/rough-grading", label: "Rough Grading", nested: true },
       { href: "/site-work/site-preparation", label: "Site Preparation", nested: true },

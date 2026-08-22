@@ -98,6 +98,39 @@ export type DesiredResult =
   | "storm_cleanup"
   | "other";
 
+export type KeepVegetationIntent =
+  | "keep_most_mature"
+  | "keep_marked"
+  | "clear_most"
+  | "unsure";
+
+export type PropertyEndUse =
+  | "lawn_mowing"
+  | "recreation"
+  | "hunting"
+  | "trails_atv"
+  | "pasture_field"
+  | "building_site"
+  | "visibility"
+  | "property_sale"
+  | "general_cleanup"
+  | "other"
+  | "unsure";
+
+export type AcreageSource = "customer_entered" | "map_calculated" | "onsite_verified";
+
+export type WorkAreaGeometry = {
+  type: "Polygon";
+  coordinates: number[][][];
+};
+
+export type WorkArea = {
+  id: string;
+  label?: string;
+  geometry?: WorkAreaGeometry;
+  acres?: number;
+};
+
 export type TerrainType =
   | "flat"
   | "rolling"
@@ -134,6 +167,13 @@ export type LandClearingIntake = {
   density?: VegetationDensity;
   desiredResult?: DesiredResult;
   desiredResultNotes?: string;
+  projectGoal?: string;
+  keepVegetation?: KeepVegetationIntent;
+  keepVegetationNotes?: string;
+  propertyEndUse?: PropertyEndUse;
+  workAreas?: WorkArea[];
+  calculatedAcres?: number;
+  acreageSource?: AcreageSource;
   terrain?: TerrainType;
   access: AccessConcerns;
   scheduling?: SchedulingPreference;
@@ -246,6 +286,13 @@ export type PublishedProject = {
   attachmentUsed: string | null;
   approximateMachineHours: number | null;
   customerGoal: string | null;
+  propertyUse: string | null;
+  clearingStyle: string | null;
+  vegetationDensity: string | null;
+  vegetationTypes: string | null;
+  preservedFeatures: string | null;
+  approximateAcres: number | null;
+  verifiedAcres: number | null;
   workCompleted: string | null;
   beforeImageUrls: string[];
   duringImageUrls: string[];

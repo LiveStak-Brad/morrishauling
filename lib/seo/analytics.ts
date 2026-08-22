@@ -13,7 +13,14 @@ export type MarketingEventName =
   | "booking_abandon"
   | "facebook_follow_click"
   | "social_click"
-  | "social_follow";
+  | "social_follow"
+  | "property_goal_selected"
+  | "service_recommendation_viewed"
+  | "land_clearing_estimate_started"
+  | "land_clearing_media_uploaded"
+  | "land_clearing_estimate_submitted"
+  | "map_area_started"
+  | "map_area_completed";
 
 export type MarketingEventPayload = {
   division?: import("@/lib/divisions").DivisionId | "parent";

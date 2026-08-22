@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,8 +26,23 @@ import {
 import { publicCatalogServices } from "@/lib/equipment/catalog";
 import type { DivisionId } from "@/lib/divisions";
 import { getDivision, isEquipmentDivision } from "@/lib/divisions";
+import {
+  KEEP_VEGETATION_OPTIONS,
+  LAND_CLEARING_PROJECT_GOALS,
+  PROPERTY_END_USE_OPTIONS,
+  goalLabel,
+  parseProjectGoal,
+  serviceSlugForGoal,
+} from "@/lib/land-clearing/intents";
+import type { WorkArea } from "@/lib/land-clearing/acreage";
+import { MAP_ACREAGE_DISCLAIMER } from "@/lib/land-clearing/acreage";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const WorkAreaMapStep = dynamic(
+  () => import("@/components/public/WorkAreaMapStep").then((m) => m.WorkAreaMapStep),
+  { ssr: false, loading: () => <p className="text-xs text-muted-foreground">Loading map option…</p> }
+);
 
 type AccessFlags = Record<(typeof ACCESS_FLAG_OPTIONS)[number]["id"], boolean>;
 
@@ -92,7 +108,10 @@ export function EquipmentIntakeWizard({
   const division = isEquipmentDivision(divisionProp) ? divisionProp : "land_clearing";
   const config = getDivision(division);
   const services = publicCatalogServices(division);
+  const presetGoal = parseProjectGoal(searchParams.get("goal"));
   const presetService = searchParams.get("service") ?? "";
+  const startedRef = useRef(false);
+  const mediaTrackedRef = useRef(false);
 
   const steps = useMemo(() => {
     if (division === "land_clearing") {
@@ -114,7 +133,18 @@ export function EquipmentIntakeWizard({
     lastName: "",
     email: "",
     phone: "",
-    serviceSlug: services.some((s) => s.slug === presetService) ? presetService : services[0]?.slug ?? "",
+    serviceSlug: services.some((s) => s.slug === presetService)
+      ? presetService
+      : presetGoal
+        ? serviceSlugForGoal(presetGoal)
+        : services[0]?.slug ?? "",
+    projectGoal: presetGoal ?? "",
+    keepVegetation: "",
+    keepVegetationNotes: "",
+    propertyEndUse: "",
+    workAreas: [] as WorkArea[],
+    calculatedAcres: 0,
+    acreageSource: "",
     address: "",
     city: "",
     county: "",
@@ -152,6 +182,25 @@ export function EquipmentIntakeWizard({
     setForm((f) => ({ ...f, [key]: value }));
   }
 
+  const onWorkAreasChange = useCallback((areas: WorkArea[], acres: number) => {
+    setForm((f) => ({
+      ...f,
+      workAreas: areas,
+      calculatedAcres: acres,
+      acreageSource: acres > 0 ? "map_calculated" : f.acreageSource,
+      acreage: acres > 0 ? acres.toFixed(2) : f.acreage,
+    }));
+  }, []);
+
+  function markEstimateStarted() {
+    if (startedRef.current || division !== "land_clearing") return;
+    startedRef.current = true;
+    trackMarketingEvent("land_clearing_estimate_started", {
+      division,
+      label: form.projectGoal || form.serviceSlug,
+    });
+  }
+
   const progress = ((step + 1) / steps.length) * 100;
 
   async function submit() {
@@ -185,6 +234,14 @@ export function EquipmentIntakeWizard({
           desiredResult: form.desiredResult,
           desiredResultNotes: form.desiredResultNotes,
           terrain: form.terrain,
+          projectGoal: form.projectGoal || undefined,
+          keepVegetation: form.keepVegetation || undefined,
+          keepVegetationNotes: form.keepVegetationNotes || undefined,
+          propertyEndUse: form.propertyEndUse || undefined,
+          workAreas: form.workAreas,
+          calculatedAcres: form.calculatedAcres || undefined,
+          acreageSource: form.acreageSource || (form.acreage ? "customer_entered" : undefined),
+          mediaCount: files.length,
         });
       } else if (division === "site_work") {
         Object.assign(intake, {
@@ -237,6 +294,12 @@ export function EquipmentIntakeWizard({
         message: json.message,
       });
       trackMarketingEvent("estimate_complete", { division, label: "equipment_intake" });
+      if (division === "land_clearing") {
+        trackMarketingEvent("land_clearing_estimate_submitted", {
+          division,
+          label: form.projectGoal || form.serviceSlug,
+        });
+      }
       toast.success(json.message || "Request submitted");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Request failed");
@@ -273,7 +336,10 @@ export function EquipmentIntakeWizard({
       className="space-y-6"
       onSubmit={(e) => {
         e.preventDefault();
-        if (step < steps.length - 1) setStep((s) => s + 1);
+        if (step < steps.length - 1) {
+          markEstimateStarted();
+          setStep((s) => s + 1);
+        }
         else void submit();
       }}
     >
@@ -287,21 +353,29 @@ export function EquipmentIntakeWizard({
 
       {step === 0 && (
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <Label htmlFor="eq-service">Service</Label>
-            <select
-              id="eq-service"
-              className="mt-1 h-11 w-full rounded-xl border border-black/10 bg-white px-3 text-sm"
-              value={form.serviceSlug}
-              onChange={(e) => patch("serviceSlug", e.target.value)}
-            >
-              {services.map((s) => (
-                <option key={s.slug} value={s.slug}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          {division !== "land_clearing" ? (
+            <div className="sm:col-span-2">
+              <Label htmlFor="eq-service">Service</Label>
+              <select
+                id="eq-service"
+                className="mt-1 h-11 w-full rounded-xl border border-black/10 bg-white px-3 text-sm"
+                value={form.serviceSlug}
+                onChange={(e) => patch("serviceSlug", e.target.value)}
+              >
+                {services.map((s) => (
+                  <option key={s.slug} value={s.slug}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <p className="sm:col-span-2 text-sm text-muted-foreground">
+              {form.projectGoal
+                ? `We’ll start from “${goalLabel(form.projectGoal)}.” You can change that on the next screens.`
+                : "Tell us who you are. Next we’ll ask what you want the property to become — not which machine to use."}
+            </p>
+          )}
           <div>
             <Label htmlFor="eq-first">First name</Label>
             <Input id="eq-first" required value={form.firstName} onChange={(e) => patch("firstName", e.target.value)} />
@@ -322,34 +396,99 @@ export function EquipmentIntakeWizard({
       )}
 
       {division === "land_clearing" && step === 1 && (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <Label htmlFor="eq-address">Property address</Label>
-            <Input id="eq-address" value={form.address} onChange={(e) => patch("address", e.target.value)} />
-          </div>
+        <div className="space-y-5">
           <div>
-            <Label htmlFor="eq-city">City</Label>
-            <Input id="eq-city" value={form.city} onChange={(e) => patch("city", e.target.value)} />
+            <Label>What are you trying to accomplish?</Label>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Pick the closest goal. You can change this.
+            </p>
+            <div className="mt-2">
+              <ChipGroup
+                name="Project goal"
+                options={LAND_CLEARING_PROJECT_GOALS}
+                value={form.projectGoal}
+                onChange={(v) => {
+                  const goal = parseProjectGoal(v as string);
+                  setForm((f) => ({
+                    ...f,
+                    projectGoal: (v as string) ?? "",
+                    serviceSlug: goal ? serviceSlugForGoal(goal) : f.serviceSlug,
+                  }));
+                }}
+              />
+            </div>
           </div>
-          <div>
-            <Label htmlFor="eq-county">County</Label>
-            <Input id="eq-county" value={form.county} onChange={(e) => patch("county", e.target.value)} />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <Label htmlFor="eq-address">Property address</Label>
+              <Input id="eq-address" value={form.address} onChange={(e) => patch("address", e.target.value)} />
+            </div>
+            <div>
+              <Label htmlFor="eq-city">City</Label>
+              <Input id="eq-city" value={form.city} onChange={(e) => patch("city", e.target.value)} />
+            </div>
+            <div>
+              <Label htmlFor="eq-county">County</Label>
+              <Input id="eq-county" value={form.county} onChange={(e) => patch("county", e.target.value)} />
+            </div>
+            <div>
+              <Label htmlFor="eq-zip">ZIP</Label>
+              <Input id="eq-zip" value={form.zip} onChange={(e) => patch("zip", e.target.value)} />
+            </div>
+            <div className="sm:col-span-2">
+              <Label htmlFor="eq-acres">About how many acres need work?</Label>
+              <Input
+                id="eq-acres"
+                inputMode="decimal"
+                value={form.acreage}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, acreage: e.target.value, acreageSource: "customer_entered" }))
+                }
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                A guess is fine. {MAP_ACREAGE_DISCLAIMER}
+              </p>
+            </div>
           </div>
-          <div>
-            <Label htmlFor="eq-zip">ZIP</Label>
-            <Input id="eq-zip" value={form.zip} onChange={(e) => patch("zip", e.target.value)} />
-          </div>
-          <div>
-            <Label htmlFor="eq-acres">Approximate acreage</Label>
-            <Input id="eq-acres" inputMode="decimal" value={form.acreage} onChange={(e) => patch("acreage", e.target.value)} />
-          </div>
+          <WorkAreaMapStep address={form.address} onAreasChange={onWorkAreasChange} />
         </div>
       )}
 
       {division === "land_clearing" && step === 2 && (
         <div className="space-y-5">
           <div>
-            <Label>Vegetation</Label>
+            <Label>Are there trees or vegetation you want to keep?</Label>
+            <div className="mt-2">
+              <ChipGroup
+                name="Keep or remove"
+                options={KEEP_VEGETATION_OPTIONS}
+                value={form.keepVegetation}
+                onChange={(v) => patch("keepVegetation", v as string)}
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="eq-keep-notes">Tell us what you want to preserve</Label>
+            <Textarea
+              id="eq-keep-notes"
+              value={form.keepVegetationNotes}
+              onChange={(e) => patch("keepVegetationNotes", e.target.value)}
+              placeholder="Mature oaks along the drive, the fence, a marked walnut…"
+            />
+          </div>
+          <div>
+            <Label>What do you want to use the property for afterward?</Label>
+            <div className="mt-2">
+              <ChipGroup
+                name="Property end use"
+                options={PROPERTY_END_USE_OPTIONS}
+                value={form.propertyEndUse}
+                onChange={(v) => patch("propertyEndUse", v as string)}
+              />
+            </div>
+          </div>
+          <div>
+            <Label>What is growing there?</Label>
             <div className="mt-2">
               <ChipGroup
                 name="Vegetation"
@@ -361,25 +500,25 @@ export function EquipmentIntakeWizard({
             </div>
           </div>
           <div>
-            <Label>Approximate diameter</Label>
+            <Label>How thick is the largest typical growth?</Label>
             <div className="mt-2">
-              <ChipGroup name="Diameter" options={DIAMETER_OPTIONS} value={form.diameterRange} onChange={(v) => patch("diameterRange", v as string)} />
+              <ChipGroup name="Stem size" options={DIAMETER_OPTIONS} value={form.diameterRange} onChange={(v) => patch("diameterRange", v as string)} />
             </div>
           </div>
           <div>
-            <Label>Density</Label>
+            <Label>How thick is the stand?</Label>
             <div className="mt-2">
               <ChipGroup name="Density" options={DENSITY_OPTIONS} value={form.density} onChange={(v) => patch("density", v as string)} />
             </div>
           </div>
           <div>
-            <Label>Desired result</Label>
+            <Label>Preferred finish, if you already know</Label>
             <div className="mt-2">
               <ChipGroup name="Desired result" options={DESIRED_RESULT_OPTIONS} value={form.desiredResult} onChange={(v) => patch("desiredResult", v as string)} />
             </div>
           </div>
           <div>
-            <Label>Terrain</Label>
+            <Label>What is the ground like?</Label>
             <div className="mt-2">
               <ChipGroup name="Terrain" options={TERRAIN_OPTIONS} value={form.terrain} onChange={(v) => patch("terrain", v as string)} />
             </div>
@@ -536,9 +675,20 @@ export function EquipmentIntakeWizard({
         (division === "site_work" && step === 4) ||
         (division === "equipment_services" && step === 3)) && (
         <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Photos help a great deal. A short walkthrough video from your phone is even better.
-          </p>
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <p className="font-medium text-foreground">Photos that help us estimate faster:</p>
+            <ul className="list-disc space-y-1 pl-5">
+              <li>wide view of the area</li>
+              <li>thickest vegetation</li>
+              <li>largest material</li>
+              <li>property access, gates, and slopes</li>
+              <li>obstacles such as wire, trash, or structures</li>
+            </ul>
+            <p>
+              For video: walk the edge of the area and show us what you want cleared. A phone video is
+              enough.
+            </p>
+          </div>
           <div>
             <Label htmlFor="eq-files">Photos or video</Label>
             <Input
@@ -547,7 +697,14 @@ export function EquipmentIntakeWizard({
               multiple
               accept="image/*,video/mp4,video/quicktime,video/webm"
               className="mt-1"
-              onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+              onChange={(e) => {
+                const next = Array.from(e.target.files ?? []);
+                setFiles(next);
+                if (next.length > 0 && division === "land_clearing" && !mediaTrackedRef.current) {
+                  mediaTrackedRef.current = true;
+                  trackMarketingEvent("land_clearing_media_uploaded", { division });
+                }
+              }}
             />
             {files.length > 0 && (
               <p className="mt-2 text-xs text-muted-foreground">{files.length} file(s) selected</p>
@@ -581,6 +738,11 @@ export function EquipmentIntakeWizard({
 
       {step === steps.length - 1 && (
         <div className="space-y-4">
+          {division === "land_clearing" && form.projectGoal ? (
+            <p className="text-sm">
+              Goal: <span className="font-medium">{goalLabel(form.projectGoal)}</span>
+            </p>
+          ) : null}
           <p className="text-sm text-muted-foreground">{EQUIPMENT_PRELAUNCH_NOTE}</p>
           <p className="text-sm text-muted-foreground">
             We will not give an instant guaranteed price for forestry mulching or equipment work.

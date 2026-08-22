@@ -11,7 +11,10 @@ import { buildPageMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, imageObjectSchema } from "@/lib/seo/schema";
 import { getPublishedProjectBySlug, listPublishedProjects } from "@/lib/db/published-projects";
 import { DIVISION_SEO } from "@/lib/seo/site";
-import { getDivision } from "@/lib/divisions";
+import { getDivision, type DivisionId } from "@/lib/divisions";
+import { PublishedBeforeAfter } from "@/components/seo/BeforeAfterSlider";
+import { ProjectTrustStrip } from "@/components/seo/ProjectTrustStrip";
+import { RELATED_PROJECT_SLUGS, defaultGoalForServiceSlug, landClearingBookHref } from "@/lib/land-clearing/intents";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -75,67 +78,104 @@ export default async function ProjectPage({ params }: Props) {
         <h1 className="mt-2 font-heading text-4xl font-medium tracking-tight sm:text-5xl">
           {project.title}
         </h1>
-        {project.customerGoal && (
-          <p className="mt-4 text-lg text-muted-foreground">{project.customerGoal}</p>
+        {(project.city || project.county || project.propertyUse || project.clearingStyle) && (
+          <section className="mt-10">
+            <h2 className="font-heading text-2xl font-medium">The property</h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              {[project.city, project.county].filter(Boolean).join(", ")}
+              {project.propertyUse ? ` — later use: ${project.propertyUse}` : ""}
+              {project.clearingStyle ? `. Clearing style: ${project.clearingStyle}.` : ""}
+            </p>
+          </section>
         )}
 
-        <dl className="mt-8 grid gap-3 text-sm sm:grid-cols-2">
-          {project.serviceSlug && (
-            <div>
-              <dt className="text-muted-foreground">Service</dt>
-              <dd className="font-medium">{project.serviceSlug.replace(/-/g, " ")}</dd>
-            </div>
-          )}
-          {project.acreage != null && (
-            <div>
-              <dt className="text-muted-foreground">Acreage</dt>
-              <dd className="font-medium">{project.acreage}</dd>
-            </div>
-          )}
-          {project.vegetationType && (
-            <div>
-              <dt className="text-muted-foreground">Vegetation</dt>
-              <dd className="font-medium">{project.vegetationType}</dd>
-            </div>
-          )}
-          {project.equipmentUsed && (
-            <div>
-              <dt className="text-muted-foreground">Equipment</dt>
-              <dd className="font-medium">{project.equipmentUsed}</dd>
-            </div>
-          )}
-          {project.attachmentUsed && (
-            <div>
-              <dt className="text-muted-foreground">Attachment</dt>
-              <dd className="font-medium">{project.attachmentUsed}</dd>
-            </div>
-          )}
-          {project.approximateMachineHours != null && (
-            <div>
-              <dt className="text-muted-foreground">Approx. machine hours</dt>
-              <dd className="font-medium">{project.approximateMachineHours}</dd>
-            </div>
-          )}
-        </dl>
+        {project.customerGoal && (
+          <section className="mt-10">
+            <h2 className="font-heading text-2xl font-medium">What the owner wanted</h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{project.customerGoal}</p>
+            {project.preservedFeatures ? (
+              <p className="mt-2 text-sm text-muted-foreground">Preserved: {project.preservedFeatures}</p>
+            ) : null}
+          </section>
+        )}
 
         {project.workCompleted && (
           <section className="mt-10">
-            <h2 className="font-heading text-2xl font-medium">Work completed</h2>
+            <h2 className="font-heading text-2xl font-medium">What Morris did</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               {project.workCompleted}
             </p>
           </section>
         )}
 
-        {project.beforeImageUrls.length > 0 && (
-          <MediaBlock title="Before" urls={project.beforeImageUrls} />
-        )}
-        {project.duringImageUrls.length > 0 && (
-          <MediaBlock title="During" urls={project.duringImageUrls} />
-        )}
-        {project.afterImageUrls.length > 0 && (
-          <MediaBlock title="After" urls={project.afterImageUrls} />
-        )}
+        {(project.beforeImageUrls[0] && project.afterImageUrls[0]) ||
+        project.beforeImageUrls.length > 0 ||
+        project.duringImageUrls.length > 0 ||
+        project.afterImageUrls.length > 0 ? (
+          <section className="mt-10">
+            <h2 className="font-heading text-2xl font-medium">Before & after</h2>
+            <div className="mt-4">
+              <PublishedBeforeAfter
+                beforeSrc={project.beforeImageUrls[0]}
+                afterSrc={project.afterImageUrls[0]}
+                title={project.title}
+              />
+            </div>
+            {project.duringImageUrls.length > 0 && (
+              <MediaBlock title="During" urls={project.duringImageUrls} />
+            )}
+          </section>
+        ) : null}
+
+        <section className="mt-10">
+          <h2 className="font-heading text-2xl font-medium">Project details</h2>
+          <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+            {project.serviceSlug && (
+              <div>
+                <dt className="text-muted-foreground">Service</dt>
+                <dd className="font-medium">{project.serviceSlug.replace(/-/g, " ")}</dd>
+              </div>
+            )}
+            {(project.verifiedAcres ?? project.approximateAcres ?? project.acreage) != null && (
+              <div>
+                <dt className="text-muted-foreground">Acreage</dt>
+                <dd className="font-medium">
+                  {project.verifiedAcres ?? project.approximateAcres ?? project.acreage}
+                </dd>
+              </div>
+            )}
+            {(project.vegetationTypes || project.vegetationType) && (
+              <div>
+                <dt className="text-muted-foreground">Vegetation</dt>
+                <dd className="font-medium">{project.vegetationTypes || project.vegetationType}</dd>
+              </div>
+            )}
+            {project.vegetationDensity && (
+              <div>
+                <dt className="text-muted-foreground">Density</dt>
+                <dd className="font-medium">{project.vegetationDensity}</dd>
+              </div>
+            )}
+            {project.equipmentUsed && (
+              <div>
+                <dt className="text-muted-foreground">Equipment</dt>
+                <dd className="font-medium">{project.equipmentUsed}</dd>
+              </div>
+            )}
+            {project.attachmentUsed && (
+              <div>
+                <dt className="text-muted-foreground">Attachment</dt>
+                <dd className="font-medium">{project.attachmentUsed}</dd>
+              </div>
+            )}
+            {project.approximateMachineHours != null && (
+              <div>
+                <dt className="text-muted-foreground">Approx. machine hours</dt>
+                <dd className="font-medium">{project.approximateMachineHours}</dd>
+              </div>
+            )}
+          </dl>
+        </section>
 
         {project.testimonial && (
           <blockquote className="mt-10 border-l-4 border-brand-primary pl-4 text-sm italic text-muted-foreground">
@@ -143,12 +183,36 @@ export default async function ProjectPage({ params }: Props) {
           </blockquote>
         )}
 
-        <p className="mt-10 text-sm">
+        <section className="mt-10">
+          <h2 className="font-heading text-2xl font-medium">Need something similar?</h2>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Tell us what you want the property to become. We will match the service from there.
+          </p>
+        </section>
+
+        <p className="mt-6 text-sm">
           <Link href={seo.path} className="font-medium text-brand-primary hover:underline">
             More about {division.shortName}
           </Link>
         </p>
-        <ConversionCtaGroup divisionId={project.divisionId} className="mt-8" />
+        <ConversionCtaGroup
+          divisionId={project.divisionId}
+          estimateHref={
+            project.divisionId === "land_clearing"
+              ? landClearingBookHref({
+                  goal: defaultGoalForServiceSlug(project.serviceSlug),
+                  serviceSlug: project.serviceSlug,
+                })
+              : undefined
+          }
+          className="mt-8"
+        />
+
+        <RelatedPublishedProjects
+          divisionId={project.divisionId}
+          serviceSlug={project.serviceSlug}
+          currentId={project.id}
+        />
       </main>
       <PublicFooter variant="umbrella" />
       <StickyMobileConcierge divisionId={project.divisionId} />
@@ -156,10 +220,26 @@ export default async function ProjectPage({ params }: Props) {
   );
 }
 
+async function RelatedPublishedProjects({
+  divisionId,
+  serviceSlug,
+  currentId,
+}: {
+  divisionId: DivisionId;
+  serviceSlug: string | null;
+  currentId: string;
+}) {
+  const slugs = (serviceSlug && RELATED_PROJECT_SLUGS[serviceSlug]) || (serviceSlug ? [serviceSlug] : undefined);
+  const related = (await listPublishedProjects({ divisionId, serviceSlugs: slugs, limit: 6 })).filter(
+    (p) => p.id !== currentId
+  );
+  return <ProjectTrustStrip projects={related} title="Related projects" />;
+}
+
 function MediaBlock({ title, urls }: { title: string; urls: string[] }) {
   return (
-    <section className="mt-10">
-      <h2 className="font-heading text-2xl font-medium">{title}</h2>
+    <div className="mt-6">
+      <h3 className="font-heading text-xl font-medium">{title}</h3>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         {urls.map((src) => (
           // eslint-disable-next-line @next/next/no-img-element
@@ -172,6 +252,6 @@ function MediaBlock({ title, urls }: { title: string; urls: string[] }) {
           />
         ))}
       </div>
-    </section>
+    </div>
   );
 }

@@ -11,7 +11,7 @@ export const VEGETATION_OPTIONS = [
 ] as const;
 
 export const DIAMETER_OPTIONS = [
-  { id: "under_2", label: "Under 2 inches" },
+  { id: "under_2", label: "Mostly under 2 inches" },
   { id: "2_to_4", label: "2–4 inches" },
   { id: "4_to_6", label: "4–6 inches" },
   { id: "6_to_8", label: "6–8 inches" },

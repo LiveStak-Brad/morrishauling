@@ -28,7 +28,11 @@ assert.equal(capabilityIsEnabled("cap-mini-bucket"), false);
 
 const land = publicCatalogServices("land_clearing");
 assert.ok(land.some((s) => s.slug === "forestry-mulching"));
+assert.ok(land.some((s) => s.slug === "selective-clearing"));
+assert.ok(land.some((s) => s.slug === "pasture-field-reclamation"));
+assert.ok(land.some((s) => s.slug === "hunting-property-clearing"));
 assert.ok(!land.some((s) => s.slug === "excavation"));
+assert.ok(!land.some((s) => s.slug === "food-plot-area"));
 
 const site = publicCatalogServices("site_work");
 assert.ok(site.some((s) => s.slug === "rough-grading"));

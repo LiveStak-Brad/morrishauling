@@ -12,6 +12,10 @@ import { getEquipmentService, equipmentServicesForDivision } from "@/lib/seo/equ
 import { DIVISION_SEO } from "@/lib/seo/site";
 import { breadcrumbSchema, faqSchema, localBusinessSchema, serviceSchema } from "@/lib/seo/schema";
 import { listPublishedProjects } from "@/lib/db/published-projects";
+import { RELATED_PROJECT_SLUGS, defaultGoalForServiceSlug, landClearingBookHref } from "@/lib/land-clearing/intents";
+import { EquipmentWeUse } from "@/components/seo/EquipmentWeUse";
+import { ProjectTrustStrip } from "@/components/seo/ProjectTrustStrip";
+import { OnePropertyOneCompany } from "@/components/seo/OnePropertyOneCompany";
 import Link from "next/link";
 
 export async function EquipmentServiceMarketingPage({
@@ -24,11 +28,19 @@ export async function EquipmentServiceMarketingPage({
     .map((slug) => getEquipmentService(service.division, slug) ?? findRelatedAcross(slug))
     .filter(Boolean) as EquipmentMarketingService[];
   const more = equipmentServicesForDivision(service.division).filter((s) => s.slug !== service.slug);
+  const relatedSlugs = RELATED_PROJECT_SLUGS[service.slug] ?? [service.slug];
   const projects = await listPublishedProjects({
     divisionId: service.division,
-    serviceSlug: service.slug,
-    limit: 3,
+    serviceSlugs: relatedSlugs,
+    limit: 4,
   });
+  const estimateHref =
+    service.division === "land_clearing"
+      ? landClearingBookHref({
+          goal: defaultGoalForServiceSlug(service.slug),
+          serviceSlug: service.slug,
+        })
+      : `${division.bookPath}&service=${service.slug}`;
 
   const path = `${division.path}/${service.slug}`;
   const crumbs = [
@@ -72,7 +84,7 @@ export async function EquipmentServiceMarketingPage({
             ))}
             <ConversionCtaGroup
               divisionId={service.division}
-              estimateHref={`${division.bookPath}&service=${service.slug}`}
+              estimateHref={estimateHref}
               className="mt-8"
             />
           </div>
@@ -84,7 +96,7 @@ export async function EquipmentServiceMarketingPage({
         {service.detailSections?.length ? (
           <section className="mt-14 space-y-8">
             {service.detailSections.map((section) => (
-              <div key={section.heading}>
+              <div key={section.heading} id={section.id} className={section.id ? "scroll-mt-24" : undefined}>
                 <h2 className="font-heading text-2xl font-medium">{section.heading}</h2>
                 {section.body.map((p) => (
                   <p key={p.slice(0, 48)} className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -152,10 +164,7 @@ export async function EquipmentServiceMarketingPage({
         </section>
 
         {projects.length > 0 ? (
-          <RelatedLinks
-            title="Completed local projects"
-            links={projects.map((p) => ({ href: `/projects/${p.slug}`, label: p.title }))}
-          />
+          <ProjectTrustStrip projects={projects} title="Completed local projects" />
         ) : (
           <section className="mt-14">
             <h2 className="font-heading text-2xl font-medium">Local projects</h2>
@@ -209,6 +218,12 @@ export async function EquipmentServiceMarketingPage({
           </ul>
         </section>
 
+        {service.division === "land_clearing" && service.slug === "property-reclamation" && (
+          <OnePropertyOneCompany className="mt-14" />
+        )}
+
+        {service.division === "land_clearing" && <EquipmentWeUse />}
+
         <section className="mt-14">
           <h2 className="font-heading text-2xl font-medium">FAQ</h2>
           <FaqAccordion items={service.faqs} className="mt-4" />
@@ -217,7 +232,7 @@ export async function EquipmentServiceMarketingPage({
         <EquipmentLegalNotice className="mt-14" />
         <ConversionCtaGroup
           divisionId={service.division}
-          estimateHref={`${division.bookPath}&service=${service.slug}`}
+          estimateHref={estimateHref}
           className="mt-10"
         />
       </main>

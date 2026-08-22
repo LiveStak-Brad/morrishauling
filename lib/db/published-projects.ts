@@ -19,6 +19,13 @@ function rowToProject(r: Record<string, unknown>): PublishedProject {
     approximateMachineHours:
       r.approximate_machine_hours != null ? Number(r.approximate_machine_hours) : null,
     customerGoal: (r.customer_goal as string) ?? null,
+    propertyUse: (r.property_use as string) ?? null,
+    clearingStyle: (r.clearing_style as string) ?? null,
+    vegetationDensity: (r.vegetation_density as string) ?? null,
+    vegetationTypes: (r.vegetation_types as string) ?? null,
+    preservedFeatures: (r.preserved_features as string) ?? null,
+    approximateAcres: r.approximate_acres != null ? Number(r.approximate_acres) : null,
+    verifiedAcres: r.verified_acres != null ? Number(r.verified_acres) : null,
     workCompleted: (r.work_completed as string) ?? null,
     beforeImageUrls: (r.before_image_urls as string[]) ?? [],
     duringImageUrls: (r.during_image_urls as string[]) ?? [],
@@ -35,6 +42,8 @@ function rowToProject(r: Record<string, unknown>): PublishedProject {
 export async function listPublishedProjects(input?: {
   divisionId?: DivisionId;
   serviceSlug?: string;
+  serviceSlugs?: string[];
+  city?: string;
   limit?: number;
   includeUnpublished?: boolean;
 }): Promise<PublishedProject[]> {
@@ -43,7 +52,9 @@ export async function listPublishedProjects(input?: {
   let q = sb.from("published_projects").select("*").order("published_at", { ascending: false });
   if (!input?.includeUnpublished) q = q.eq("published", true);
   if (input?.divisionId) q = q.eq("division_id", input.divisionId);
-  if (input?.serviceSlug) q = q.eq("service_slug", input.serviceSlug);
+  if (input?.serviceSlugs?.length) q = q.in("service_slug", input.serviceSlugs);
+  else if (input?.serviceSlug) q = q.eq("service_slug", input.serviceSlug);
+  if (input?.city) q = q.ilike("city", input.city);
   if (input?.limit) q = q.limit(input.limit);
   const { data, error } = await q;
   if (error || !data) return [];
@@ -87,6 +98,13 @@ export async function upsertPublishedProject(
       attachment_used: project.attachmentUsed ?? null,
       approximate_machine_hours: project.approximateMachineHours ?? null,
       customer_goal: project.customerGoal ?? null,
+      property_use: project.propertyUse ?? null,
+      clearing_style: project.clearingStyle ?? null,
+      vegetation_density: project.vegetationDensity ?? null,
+      vegetation_types: project.vegetationTypes ?? null,
+      preserved_features: project.preservedFeatures ?? null,
+      approximate_acres: project.approximateAcres ?? null,
+      verified_acres: project.verifiedAcres ?? null,
       work_completed: project.workCompleted ?? null,
       before_image_urls: project.beforeImageUrls ?? [],
       during_image_urls: project.duringImageUrls ?? [],
