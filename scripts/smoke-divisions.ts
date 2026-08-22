@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { evaluateHaulingReview } from "../lib/hauling/review-rules";
 import { morrisConfig } from "../lib/morris-config";
 import {
+  divisionAcceptsBookings,
   divisionAcceptsEstimateRequests,
   serviceTypeToDivision,
   divisionToServiceType,
@@ -12,7 +13,10 @@ import type { Job } from "../types/job";
 assert.equal(serviceTypeToDivision("junk_removal"), "junk_removal");
 assert.equal(serviceTypeToDivision("hauling_transport"), "hauling");
 assert.equal(divisionToServiceType("hauling"), "hauling_transport");
-assert.equal(divisionAcceptsEstimateRequests("junk_removal"), false);
+assert.equal(divisionAcceptsBookings("junk_removal"), true);
+assert.equal(divisionAcceptsEstimateRequests("junk_removal"), true);
+assert.equal(divisionAcceptsEstimateRequests("land_clearing"), true);
+assert.equal(divisionAcceptsBookings("land_clearing"), false);
 
 const base = {
   pickup: { city: "Warrenton", state: "MO", zip: "63383" },

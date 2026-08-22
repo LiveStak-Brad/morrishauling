@@ -1,6 +1,12 @@
 /** Canonical public site SEO constants — truthful only. */
 
 import { socialPlatformById, socialSameAsUrls } from "@/lib/social/config";
+import {
+  ALL_PUBLIC_COUNTIES,
+  COMPANY_PRIMARY_COUNTIES,
+  EXTENDED_SERVICE_COUNTIES,
+  serviceAreaSeoLabel,
+} from "@/lib/service-coverage";
 
 export const SITE_ORIGIN = "https://www.morris-services.com";
 
@@ -15,14 +21,10 @@ export const SEO_ORG = {
   /** Prefer lib/social/config for new code — derived from SocialConfig */
   facebook: socialPlatformById("facebook")!.profileUrl,
   sameAs: socialSameAsUrls(),
-  serviceAreaLabel: "Warren, Lincoln, St. Charles, Franklin & Jefferson Counties, Missouri",
-  primaryCounties: [
-    "Warren County",
-    "Lincoln County",
-    "St. Charles County",
-    "Franklin County",
-    "Jefferson County",
-  ] as const,
+  serviceAreaLabel: serviceAreaSeoLabel(),
+  primaryCounties: COMPANY_PRIMARY_COUNTIES.map((c) => c.name),
+  extendedCounties: EXTENDED_SERVICE_COUNTIES.map((c) => c.name),
+  servedCounties: ALL_PUBLIC_COUNTIES.map((c) => c.name),
 } as const;
 
 export const DIVISION_SEO = {

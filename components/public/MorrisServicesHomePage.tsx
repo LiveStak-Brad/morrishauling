@@ -9,27 +9,22 @@ import { CompanyStatusBadge } from "@/components/public/CompanyStatusBadge";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
 import { SocialHomeSection } from "@/components/social/SocialHomeSection";
 import { LatestFromWarrentonJunk } from "@/components/social/LatestFromWarrentonJunk";
-import { useDivisionPublicStatus } from "@/components/public/useDivisionPublicStatus";
+import { useAllDivisionPublicStatuses } from "@/components/public/useDivisionPublicStatus";
 import { ButtonLink } from "@/components/ui/button-link";
-import { morrisServicesConfig } from "@/lib/morris-services-config";
+import { morrisServicesConfig, PUBLIC_DIVISION_CARDS } from "@/lib/morris-services-config";
 import {
   MORRIS_STANDARD_PILLARS,
+  PARENT_PROTOCOL,
   SERVICE_AREA,
+  SERVICE_COVERAGE_NOTE,
 } from "@/lib/public-copy";
+import { HOMEPAGE_GOAL_CARDS } from "@/lib/public-nav";
 import { trackMarketingEvent } from "@/lib/seo/analytics";
 import { MorrisProtocolSteps } from "@/components/public/MorrisProtocolSteps";
+import type { DivisionId } from "@/lib/divisions";
 
 export function MorrisServicesHomePage() {
-  const junk = morrisServicesConfig.operatingCompanies[0];
-  const hauling = morrisServicesConfig.haulingDivision;
-  const { status: junkStatus } = useDivisionPublicStatus("junk_removal");
-  const { status: haulingStatus } = useDivisionPublicStatus("hauling");
-  const { status: landStatus } = useDivisionPublicStatus("land_clearing");
-  const { status: siteStatus } = useDivisionPublicStatus("site_work");
-  const { status: equipStatus } = useDivisionPublicStatus("equipment_services");
-  const junkCanBook = junkStatus?.acceptsBookings || junkStatus?.acceptsEstimateRequests;
-  const haulingCanBook =
-    haulingStatus?.acceptsBookings || haulingStatus?.acceptsEstimateRequests;
+  const { byId } = useAllDivisionPublicStatuses();
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-[#F7F5F2]">
@@ -46,7 +41,7 @@ export function MorrisServicesHomePage() {
         />
         <div className="relative mx-auto flex w-full max-w-5xl flex-col items-center px-4 pb-16 pt-10 text-center sm:pb-20 sm:pt-14 md:pb-24 md:pt-16">
           <p className="animate-fade-in text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-primary opacity-0 sm:text-xs">
-            {morrisServicesConfig.publicBrandName}
+            {morrisServicesConfig.parentLegalName}
           </p>
 
           <div
@@ -68,11 +63,16 @@ export function MorrisServicesHomePage() {
             {morrisServicesConfig.promise}
           </h1>
           <p
-            className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground opacity-0 animate-slide-up sm:text-lg"
+            className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground opacity-0 animate-slide-up sm:text-lg"
             style={{ animationFillMode: "forwards", animationDelay: "0.18s" }}
           >
-            {morrisServicesConfig.tagline} Junk Removal · Hauling · Land Clearing · Site Work ·
-            Equipment Services across {SERVICE_AREA}.
+            {morrisServicesConfig.heroSupport}
+          </p>
+          <p
+            className="mt-3 max-w-xl text-sm font-medium text-foreground/80 opacity-0 animate-slide-up"
+            style={{ animationFillMode: "forwards", animationDelay: "0.2s" }}
+          >
+            {morrisServicesConfig.serviceCategoriesLine.replace(/ · /g, " • ")}
           </p>
 
           <div
@@ -85,200 +85,118 @@ export function MorrisServicesHomePage() {
               className="h-12 min-h-[48px] w-full rounded-full bg-brand-primary px-8 text-base font-semibold shadow-lg shadow-brand-primary/20 hover:bg-brand-primary/90 sm:w-auto"
               onClick={() => trackMarketingEvent("estimate_start", { division: "parent", label: "hero" })}
             >
-              Request an estimate
+              Request an Estimate
               <ArrowRight className="ml-2 h-5 w-5" />
             </ButtonLink>
             <ButtonLink
-              href="/#companies"
+              href="/services"
               size="lg"
               variant="outline"
               className="h-12 min-h-[48px] w-full rounded-full border-foreground/15 bg-white/70 sm:w-auto"
             >
-              Choose a service
+              Explore Services
             </ButtonLink>
           </div>
 
           <p
-            className="mt-6 flex items-center gap-2 text-sm text-muted-foreground opacity-0 animate-fade-in"
+            className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground opacity-0 animate-fade-in"
             style={{ animationFillMode: "forwards", animationDelay: "0.35s" }}
           >
-            <MapPin className="h-4 w-4 text-brand-primary" aria-hidden />
-            {SERVICE_AREA}
+            <MapPin className="h-4 w-4 shrink-0 text-brand-primary" aria-hidden />
+            <span>{SERVICE_AREA}</span>
           </p>
         </div>
       </section>
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-14 sm:pt-16 md:pb-20 md:pt-20">
+        <section className="scroll-mt-24">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
+            Start here
+          </p>
+          <h2 className="mt-2 font-heading text-3xl font-medium tracking-tight sm:text-4xl">
+            What are you trying to accomplish?
+          </h2>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {HOMEPAGE_GOAL_CARDS.map((goal) => (
+              <Link
+                key={goal.href}
+                href={goal.href}
+                className="flex min-h-[5.5rem] flex-col justify-between rounded-2xl border border-black/5 bg-white p-4 shadow-sm transition hover:border-brand-primary/25 hover:shadow-md"
+              >
+                <p className="text-sm font-semibold leading-snug tracking-tight">{goal.title}</p>
+                <p className="mt-3 inline-flex items-center text-xs font-semibold text-brand-primary">
+                  {PUBLIC_DIVISION_CARDS.find((d) => d.divisionId === goal.divisionId)?.name.replace(
+                    "Morris ",
+                    ""
+                  )}
+                  <ArrowRight className="ml-1 h-3.5 w-3.5" aria-hidden />
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         <MorrisProtocolSteps
           id="how-it-works"
-          className="scroll-mt-24"
+          className="mt-16 scroll-mt-24 sm:mt-20"
           eyebrow="How Morris works"
-          heading="A calm protocol for every craft we add."
+          heading="A clear path from first photo to finished job."
+          steps={PARENT_PROTOCOL}
         />
 
         <section id="companies" className="mt-16 scroll-mt-24 sm:mt-20">
           <div className="mb-8 flex flex-col gap-2 sm:mb-10">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
-              Operating now
+              Morris Service Group
             </p>
             <h2 className="font-heading text-3xl font-medium tracking-tight sm:text-4xl">
-              One parent company. Focused operating divisions.
+              Five services. One Morris standard.
             </h2>
             <p className="max-w-2xl text-muted-foreground">
-              Morris Service Group LLC is the parent. Morris Junk Removal and Morris Hauling
-              remain the home-service and transport divisions. Land Clearing, Site Work, and
-              Equipment Services extend the same family into vegetation and compact-equipment
-              work — without competing for the same keywords.
+              Morris Service Group LLC is a Missouri property and equipment contractor. Morris Junk
+              Removal remains the careful residential and commercial cleanout brand. Land Clearing,
+              Site Work, and Equipment Services handle heavier property work.
             </p>
           </div>
 
-          <div className="overflow-hidden rounded-[1.75rem] border border-black/5 bg-white shadow-[0_24px_80px_-40px_rgba(10,10,10,0.35)]">
-            <div className="grid lg:grid-cols-12">
-              <div className="flex w-full min-w-0 flex-col items-center justify-center bg-gradient-to-br from-brand-primary/8 via-white to-[#F7F5F2] p-6 text-center sm:p-8 lg:col-span-5 lg:p-12">
-                <div className="mx-auto w-full max-w-[11.5rem] sm:max-w-[14rem] md:max-w-[16rem] lg:max-w-[18rem]">
-                  <MorrisServicesLogo
-                    height={288}
-                    priority
-                    href={junk.hubPath}
-                    alt={junk.name}
-                    className="mx-auto h-auto w-full !max-h-none !max-w-full"
-                  />
-                </div>
-                <CompanyStatusBadge
-                  divisionStatus={junkStatus?.launchStatus ?? "setup"}
-                  label={junkStatus?.statusLabel}
-                  className="mt-6"
-                />
-                <p className="mt-4 font-heading text-2xl font-medium text-foreground sm:text-3xl">
-                  {junk.tagline}
-                </p>
-              </div>
-
-              <div className="flex flex-col justify-center border-t border-black/5 p-6 sm:p-8 lg:col-span-7 lg:border-l lg:border-t-0 lg:p-10 xl:p-12">
-                <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">{junk.name}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                  Residential and commercial junk removal, estate and garage cleanouts, furniture,
-                  appliances, and full property clearances — under the Morris Standard.
-                </p>
-                <ul className="mt-6 grid gap-2 sm:grid-cols-2">
-                  {junk.services.slice(0, 8).map((service) => (
-                    <li key={service} className="flex items-center gap-2 text-sm text-foreground/90">
-                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-primary" aria-hidden />
-                      {service}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <ButtonLink href={junk.hubPath} className="h-11 rounded-full px-6">
-                    Enter Junk Removal
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </ButtonLink>
-                  <ButtonLink
-                    href={junkCanBook ? junkStatus?.bookPath ?? "/book?division=junk_removal" : "/contact"}
-                    variant="outline"
-                    className="h-11 rounded-full px-6"
-                  >
-                    {junkCanBook ? junkStatus?.bookingCtaLabel ?? "Request estimate" : "Contact us"}
-                  </ButtonLink>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-10">
-          <div className="overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-sm sm:flex sm:items-center sm:justify-between">
-            <div className="flex flex-col items-center gap-4 p-6 sm:flex-row sm:items-center sm:gap-6 sm:p-8">
-              <MorrisServicesLogo
-                height={180}
-                href={hauling.hubPath}
-                alt={hauling.name}
-                className="max-h-36 sm:max-h-40"
-              />
-              <div className="text-center sm:text-left">
-                <CompanyStatusBadge
-                  divisionStatus={haulingStatus?.launchStatus ?? "setup"}
-                  label={haulingStatus?.statusLabel}
-                />
-                <h3 className="mt-3 text-xl font-semibold tracking-tight">{hauling.name}</h3>
-                <p className="mt-2 max-w-xl text-sm text-muted-foreground">{hauling.tagline}</p>
-              </div>
-            </div>
-            <div className="flex flex-col gap-2 border-t border-black/5 px-6 pb-6 sm:border-t-0 sm:px-8 sm:pb-0 sm:pr-8">
-              <ButtonLink href={hauling.hubPath} className="h-11 w-full rounded-full sm:w-auto">
-                Enter Hauling
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </ButtonLink>
-              <ButtonLink
-                href={
-                  haulingCanBook
-                    ? haulingStatus?.bookPath ?? "/book?division=hauling"
-                    : "/contact"
-                }
-                variant="outline"
-                className="h-11 w-full rounded-full sm:w-auto"
-              >
-                {haulingCanBook
-                  ? haulingStatus?.bookingCtaLabel ?? "Request estimate"
-                  : "Contact us"}
-              </ButtonLink>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-10 grid gap-4 md:grid-cols-3">
-          {morrisServicesConfig.propertyDivisions.map((div) => (
-            <article
-              key={div.slug}
-              className="flex flex-col rounded-[1.5rem] border border-black/5 bg-white p-6 shadow-sm"
-            >
-              <CompanyStatusBadge
-                className="max-w-full"
-                divisionStatus={
-                  div.divisionId === "land_clearing"
-                    ? landStatus?.launchStatus
-                    : div.divisionId === "site_work"
-                      ? siteStatus?.launchStatus
-                      : equipStatus?.launchStatus
-                }
-                status="launching_soon"
-                label={
-                  div.divisionId === "land_clearing"
-                    ? landStatus?.statusLabel
-                    : div.divisionId === "site_work"
-                      ? siteStatus?.statusLabel
-                      : equipStatus?.statusLabel
-                }
-              />
-              <h3 className="mt-4 text-xl font-semibold tracking-tight">{div.name}</h3>
-              <p className="mt-2 flex-1 text-sm text-muted-foreground">{div.tagline}</p>
-              <div className="mt-6 flex flex-col gap-2">
-                <ButtonLink href={div.hubPath} className="h-11 w-full rounded-full">
-                  Enter {div.name.replace("Morris ", "")}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </ButtonLink>
-                <ButtonLink
-                  href={
-                    (div.divisionId === "land_clearing"
-                      ? landStatus
-                      : div.divisionId === "site_work"
-                        ? siteStatus
-                        : equipStatus
-                    )?.bookPath ?? `/book?division=${div.divisionId}`
-                  }
-                  variant="outline"
-                  className="h-11 w-full rounded-full"
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {PUBLIC_DIVISION_CARDS.map((div) => {
+              const status = byId[div.divisionId as DivisionId];
+              const canRequest =
+                status?.acceptsBookings || status?.acceptsEstimateRequests || status?.acceptsInterest;
+              return (
+                <article
+                  key={div.divisionId}
+                  className="flex flex-col rounded-[1.5rem] border border-black/5 bg-white p-6 shadow-sm"
                 >
-                  {(div.divisionId === "land_clearing"
-                    ? landStatus
-                    : div.divisionId === "site_work"
-                      ? siteStatus
-                      : equipStatus
-                  )?.bookingCtaLabel ?? "Request an Upcoming Project Estimate"}
-                </ButtonLink>
-              </div>
-            </article>
-          ))}
+                  {status ? (
+                    <CompanyStatusBadge
+                      className="max-w-full self-start"
+                      divisionStatus={status.launchStatus}
+                      label={status.statusLabel}
+                    />
+                  ) : (
+                    <div className="h-7" aria-hidden />
+                  )}
+                  <h3 className="mt-4 text-xl font-semibold tracking-tight">{div.name}</h3>
+                  <p className="mt-2 flex-1 text-sm text-muted-foreground">{div.description}</p>
+                  <div className="mt-6 flex flex-col gap-2">
+                    <ButtonLink href={div.hubPath} className="h-11 w-full rounded-full">
+                      {div.name.replace("Morris ", "")}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </ButtonLink>
+                    <ButtonLink
+                      href={canRequest ? status?.bookPath ?? `/book?division=${div.divisionId}` : "/contact"}
+                      variant="outline"
+                      className="h-11 w-full rounded-full"
+                    >
+                      {status?.bookingCtaLabel ?? "Request an Estimate"}
+                    </ButtonLink>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </section>
 
         <section id="standard" className="mt-16 scroll-mt-24 sm:mt-20">
@@ -291,22 +209,15 @@ export function MorrisServicesHomePage() {
               Trust you can inspect — not slogans you have to believe.
             </h2>
 
-            {/* Mobile: compact stacked rows */}
-            <ul className="mt-5 divide-y divide-white/10 sm:hidden">
+            <ul className="mt-5 divide-y divide-white/10 sm:mt-7 sm:grid sm:grid-cols-3 sm:gap-6 sm:divide-y-0">
               {MORRIS_STANDARD_PILLARS.map((pillar) => (
-                <li key={pillar.title} className="py-2.5">
-                  <h3 className="text-sm font-semibold leading-5 tracking-tight">{pillar.title}</h3>
-                  <p className="mt-0.5 text-xs leading-snug text-white/65">{pillar.description}</p>
-                </li>
-              ))}
-            </ul>
-
-            {/* Tablet/desktop: tight three-up */}
-            <ul className="mt-7 hidden gap-6 sm:grid sm:grid-cols-3">
-              {MORRIS_STANDARD_PILLARS.map((pillar) => (
-                <li key={pillar.title}>
-                  <h3 className="text-base font-semibold tracking-tight">{pillar.title}</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-white/65">{pillar.description}</p>
+                <li key={pillar.title} className="py-2.5 sm:py-0">
+                  <h3 className="text-sm font-semibold leading-5 tracking-tight sm:text-base">
+                    {pillar.title}
+                  </h3>
+                  <p className="mt-0.5 text-xs leading-snug text-white/65 sm:mt-1.5 sm:text-sm sm:leading-relaxed">
+                    {pillar.description}
+                  </p>
                 </li>
               ))}
             </ul>
@@ -324,69 +235,45 @@ export function MorrisServicesHomePage() {
 
         <section className="mt-20 sm:mt-24">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
-            The Morris Atlas
+            The Morris Service Network
           </p>
           <h2 className="mt-3 font-heading text-3xl font-medium tracking-tight sm:text-4xl">
-            More crafts. Same seal.
+            Built as one contractor. Specialized where it matters.
           </h2>
           <p className="mt-3 max-w-xl text-muted-foreground">
-            Next crafts are everyday home services — lightest to start first, one division at a
-            time, fully before the next.
+            {morrisServicesConfig.tagline} More property and equipment services as our fleet grows.
           </p>
           <div className="mt-8 flex flex-wrap gap-2">
-            <Link
-              href="/junk-removal"
-              className="rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-white"
-            >
-              Junk Removal · booking
-            </Link>
-            <Link
-              href="/hauling"
-              className="rounded-full bg-brand-primary/90 px-4 py-2 text-sm font-semibold text-white"
-            >
-              Hauling · booking
-            </Link>
-            <Link
-              href="/land-clearing"
-              className="rounded-full bg-brand-primary/80 px-4 py-2 text-sm font-semibold text-white"
-            >
-              Land Clearing · estimates
-            </Link>
-            <Link
-              href="/site-work"
-              className="rounded-full bg-brand-primary/80 px-4 py-2 text-sm font-semibold text-white"
-            >
-              Site Work · estimates
-            </Link>
-            <Link
-              href="/equipment-services"
-              className="rounded-full bg-brand-primary/80 px-4 py-2 text-sm font-semibold text-white"
-            >
-              Equipment Services · estimates
-            </Link>
-            {morrisServicesConfig.futureCompanies.map((co) => (
-              <span
-                key={co.name}
-                className="rounded-full border border-black/10 bg-white/80 px-4 py-2 text-sm text-muted-foreground"
-              >
-                {co.craft}
-              </span>
-            ))}
+            {PUBLIC_DIVISION_CARDS.map((div) => {
+              const status = byId[div.divisionId];
+              return (
+                <Link
+                  key={div.divisionId}
+                  href={div.hubPath}
+                  className="rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-white"
+                >
+                  {div.name.replace("Morris ", "")}
+                  {status?.statusLabel ? ` · ${status.statusLabel}` : ""}
+                </Link>
+              );
+            })}
           </div>
+          <p className="mt-5 max-w-xl text-xs leading-relaxed text-muted-foreground">
+            Looking ahead: {morrisServicesConfig.futureCapabilities.join(", ").toLowerCase()}. These
+            are not offered until they are listed as available services.
+          </p>
         </section>
 
         <section className="mt-20 sm:mt-24">
           <div className="flex flex-col items-start justify-between gap-8 rounded-[1.75rem] border border-black/5 bg-white p-8 shadow-sm sm:flex-row sm:items-center sm:p-10">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
-                Concierge
+                Talk with Morris
               </p>
               <h2 className="mt-3 font-heading text-2xl font-medium tracking-tight sm:text-3xl">
                 Ready for an estimate or have a question?
               </h2>
-              <p className="mt-2 max-w-md text-muted-foreground">
-                Call for scheduling, commercial accounts, or careers.
-              </p>
+              <p className="mt-2 max-w-md text-muted-foreground">{SERVICE_COVERAGE_NOTE}</p>
             </div>
             <div className="flex w-full flex-col gap-3 sm:w-auto">
               <a
@@ -400,7 +287,7 @@ export function MorrisServicesHomePage() {
                 Call (636) 751-4645
               </a>
               <ButtonLink href="/book" variant="outline" className="h-11 rounded-full">
-                Request an estimate
+                Request an Estimate
               </ButtonLink>
             </div>
           </div>

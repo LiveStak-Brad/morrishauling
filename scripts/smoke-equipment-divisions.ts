@@ -42,8 +42,12 @@ assert.ok(page);
 assert.ok(!page.title.toLowerCase().includes("official bobcat"));
 
 const prelaunch = ctaLabelForLaunchStatus("accepting_estimate_requests", "land_clearing");
+assert.equal(prelaunch.statusLabel, "Now Accepting Estimates");
 assert.equal(prelaunch.bookingCtaLabel, "Request an Upcoming Project Estimate");
 assert.equal(ctaLabelForServiceStatus("active"), "Request an Estimate");
+const junkBookable = ctaLabelForLaunchStatus("accepting_bookings", "junk_removal");
+assert.equal(junkBookable.bookingCtaLabel, "Book now");
+assert.ok(!prelaunch.bookingCtaLabel.toLowerCase().includes("book now"));
 
 const bobcat = getEquipmentService("equipment_services", "bobcat-services");
 assert.ok(bobcat?.intro.some((p) => p.includes("not because Morris Service Group is affiliated")));

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Phone } from "lucide-react";
+import { Phone } from "lucide-react";
 import { PublicHeader } from "@/components/public/PublicHeader";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge";
@@ -9,14 +9,14 @@ import { FacebookFollow } from "@/components/seo/FacebookFollow";
 import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
 import { ButtonLink } from "@/components/ui/button-link";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
+import { PUBLIC_DIVISION_CARDS } from "@/lib/morris-services-config";
 import {
   MORRIS_STANDARD_PILLARS,
-  PRELAUNCH_SERVICE_AREA,
+  SERVICE_COVERAGE_NOTE,
 } from "@/lib/public-copy";
 
 export default function AboutPage() {
   const junk = morrisServicesConfig.operatingCompanies[0];
-  const hauling = morrisServicesConfig.haulingDivision;
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-[#F7F5F2]">
@@ -24,27 +24,25 @@ export default function AboutPage() {
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12 pb-28 sm:px-6 md:py-16">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">About</p>
         <h1 className="mt-3 font-heading text-4xl font-medium tracking-tight sm:text-5xl">
-          {morrisServicesConfig.promise}
+          A Missouri property and service contractor.
         </h1>
         <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-          {morrisServicesConfig.publicBrandName} exists to raise the standard for how American homes get
-          cared for — one craft, one county, one crew at a time.
+          {morrisServicesConfig.tagline} We work for homeowners, landowners, acreage owners, landlords,
+          contractors, farms, and property managers.
         </p>
 
         <article className="mt-12 space-y-6 text-base leading-relaxed text-foreground/90">
           <p>
-            Most home-service experiences feel loud, opaque, and disposable. We are building the opposite:
-            a calm relationship with a company that shows its work, explains its price, and treats your
-            property like it matters.
+            Morris Service Group LLC is the parent company. Morris Junk Removal remains the careful
+            residential and commercial cleanout brand — shoe covers, respectful crews, and a home that
+            still feels like a home. Morris Hauling moves equipment and material. Land Clearing, Site
+            Work, and Equipment Services handle heavier property work.
           </p>
           <p>
-            We start in {PRELAUNCH_SERVICE_AREA} with {junk.name} — junk removal and property cleanouts
-            done with protocol, not chaos. When that craft meets the Morris Standard, we add the next —
-            including {hauling.name} for equipment and material transport.
+            {SERVICE_COVERAGE_NOTE} We show our work, explain the price, and treat the property like it
+            matters — whether that property is a house, a wooded lot, or a jobsite.
           </p>
-          <p className="font-medium text-foreground">
-            {morrisServicesConfig.footerMission}
-          </p>
+          <p className="font-medium text-foreground">{morrisServicesConfig.footerMission}</p>
         </article>
 
         <section className="mt-12">
@@ -72,16 +70,19 @@ export default function AboutPage() {
               className="max-h-60 sm:max-h-64"
             />
             <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
-              Flagship craft
+              Morris Junk Removal
             </p>
           </div>
           <div className="border-t border-black/5 p-6 sm:p-8">
             <h2 className="text-xl font-semibold tracking-tight">{junk.name}</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{junk.tagline}</p>
-            <ButtonLink href={junk.hubPath} className="mt-6 h-11 rounded-full">
-              Enter Junk Removal
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </ButtonLink>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {PUBLIC_DIVISION_CARDS.map((div) => (
+                <ButtonLink key={div.divisionId} href={div.hubPath} variant="outline" className="h-10 rounded-full">
+                  {div.name.replace("Morris ", "")}
+                </ButtonLink>
+              ))}
+            </div>
           </div>
         </section>
 

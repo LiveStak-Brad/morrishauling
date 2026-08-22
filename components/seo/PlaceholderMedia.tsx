@@ -25,7 +25,7 @@ export function PlaceholderMedia({
       />
       <div className="relative flex min-h-[12rem] flex-col items-center justify-center px-6 py-10 text-center sm:min-h-[16rem]">
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">
-          Media placeholder
+          Decorative panel
         </p>
         <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/80">{label}</p>
       </div>

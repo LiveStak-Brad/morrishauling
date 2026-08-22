@@ -10,13 +10,14 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { breadcrumbSchema, webPageSchema } from "@/lib/seo/schema";
 import { SEO_ORG } from "@/lib/seo/site";
+import { SERVICE_COVERAGE_NOTE } from "@/lib/public-copy";
 
 const PATH = "/service-area";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Service Area | Morris Services",
   description:
-    "Morris Services covers Warren, Lincoln, St. Charles, Franklin, and Jefferson Counties in Missouri. Call for estimate-based scheduling — by appointment.",
+    "Primary and extended service throughout Warren, Lincoln, St. Charles, Franklin, and Jefferson Counties. Availability and travel depend on project type.",
   path: PATH,
   keywords: [
     "Morris Services service area",
@@ -39,8 +40,7 @@ export default function ServiceAreaPage() {
         data={[
           webPageSchema({
             name: "Service Area | Morris Services",
-            description:
-              "Service coverage across Warren, Lincoln, St. Charles, Franklin, and Jefferson Counties, Missouri.",
+            description: SERVICE_COVERAGE_NOTE,
             path: PATH,
           }),
           breadcrumbSchema(crumbs.map((c) => ({ name: c.name, path: c.href ?? PATH }))),
@@ -56,8 +56,7 @@ export default function ServiceAreaPage() {
           Service Area
         </h1>
         <p className="mt-4 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-          {SEO_ORG.serviceAreaLabel}. We schedule by appointment based on estimates — not walk-in
-          storefront hours.
+          {SERVICE_COVERAGE_NOTE} We schedule by appointment — not walk-in storefront hours.
         </p>
         <div className="mt-8">
           <MarketingImage
@@ -106,24 +105,40 @@ export default function ServiceAreaPage() {
               </li>
             ))}
           </ul>
+          <h3 className="mt-8 font-heading text-xl font-medium">Extended counties</h3>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+            {SEO_ORG.extendedCounties.map((county) => (
+              <li
+                key={county}
+                className="rounded-xl border border-black/5 bg-white px-4 py-3 text-sm font-medium text-foreground shadow-sm"
+              >
+                {county}
+              </li>
+            ))}
+          </ul>
           <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-            Extended communities nearby may still be reviewable. Travel expectations are disclosed
-            before you book. We do not list a public retail storefront address for walk-ins.
+            A listed county is not a guarantee of service on every project. Travel expectations are
+            disclosed before work is scheduled. We do not list a public retail storefront address
+            for walk-ins.
           </p>
         </section>
 
         <RelatedLinks
-          title="Explore coverage & book"
+          title="Services and local pages"
           links={[
             { href: "/junk-removal/areas", label: "Junk removal service areas" },
+            { href: "/junk-removal/areas/warrenton", label: "Warrenton" },
+            { href: "/junk-removal/areas/warren-county", label: "Warren County" },
+            { href: "/land-clearing", label: "Land Clearing" },
+            { href: "/site-work", label: "Site Work" },
+            { href: "/equipment-services", label: "Equipment Services" },
             { href: "/hauling", label: "Morris Hauling" },
             { href: "/junk-removal", label: "Morris Junk Removal" },
             {
               href: "/junk-removal/tools/service-area-checker",
               label: "Service area checker tool",
             },
-            { href: "/contact", label: "Contact" },
-            { href: "/book", label: "Book / request an estimate" },
+            { href: "/book", label: "Request an estimate" },
           ]}
         />
 

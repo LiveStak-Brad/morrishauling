@@ -11,14 +11,12 @@ export function ctaLabelForLaunchStatus(
   switch (status) {
     case "accepting_bookings":
       return {
-        statusLabel: "Now booking",
+        statusLabel: "Available",
         bookingCtaLabel: equipment ? "Request an Estimate" : "Book now",
       };
     case "accepting_estimate_requests":
       return {
-        statusLabel: equipment
-          ? "Now accepting upcoming project estimates"
-          : "Accepting estimates",
+        statusLabel: "Now Accepting Estimates",
         bookingCtaLabel: equipment
           ? "Request an Upcoming Project Estimate"
           : "Request estimate",

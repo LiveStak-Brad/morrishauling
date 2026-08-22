@@ -1,6 +1,9 @@
 /** Public marketing copy — operational businesses. */
 
-export const SERVICE_AREA = "Warren, Lincoln & St. Charles Counties, MO";
+import { SERVICE_AREA_PUBLIC_BLURB, serviceAreaShortLabel } from "@/lib/service-coverage";
+
+export const SERVICE_AREA = serviceAreaShortLabel();
+export const SERVICE_COVERAGE_NOTE = SERVICE_AREA_PUBLIC_BLURB;
 
 /** @deprecated Use SERVICE_AREA */
 export const PRELAUNCH_SERVICE_AREA = SERVICE_AREA;
@@ -48,6 +51,36 @@ export const PRELAUNCH_CAREERS_PAY_NOTE = CAREERS_PAY_NOTE;
 export const FOUNDING_INVITE =
   "Book online or call — we are accepting customers for Junk Removal and Hauling.";
 
+/** Parent-company process — not junk-removal specific. */
+export const PARENT_PROTOCOL = [
+  {
+    step: "01",
+    title: "Tell us about the project",
+    description: "Describe the work. Photos and short video are welcome — they keep the estimate honest.",
+  },
+  {
+    step: "02",
+    title: "We review the scope",
+    description: "We determine the service, equipment, access, and project requirements before we quote.",
+  },
+  {
+    step: "03",
+    title: "Receive a clear estimate",
+    description: "Scope and pricing are reviewed with you before work begins.",
+  },
+  {
+    step: "04",
+    title: "Schedule the work",
+    description: "Choose an available project window once the estimate is accepted.",
+  },
+  {
+    step: "05",
+    title: "We complete the job",
+    description: "Professional work with clear communication from start to finish.",
+  },
+] as const;
+
+/** Junk Removal / Hauling process — residential-care language stays here. */
 export const HAULING_PROTOCOL = [
   {
     step: "01",
@@ -83,7 +116,7 @@ export const MORRIS_STANDARD_PILLARS = [
   },
   {
     title: "One relationship",
-    description: "A Morris account that grows with every craft we add under the seal.",
+    description: "A Morris account that grows with every service we add under the seal.",
   },
   {
     title: "Hospitality in the last mile",

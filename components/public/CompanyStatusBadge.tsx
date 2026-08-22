@@ -6,11 +6,11 @@ import type { DivisionLaunchStatus } from "@/lib/divisions";
 import type { CompanyLaunchStatus } from "@/lib/morris-services-config";
 
 const DIVISION_LABELS: Record<DivisionLaunchStatus, string> = {
-  setup: "Coming soon",
+  setup: "Coming Soon",
   internal_testing: "Internal testing",
   accepting_interest: "Accepting interest",
-  accepting_estimate_requests: "Accepting estimates",
-  accepting_bookings: "Now booking",
+  accepting_estimate_requests: "Now Accepting Estimates",
+  accepting_bookings: "Available",
   temporarily_paused: "Temporarily paused",
 };
 
@@ -24,10 +24,10 @@ const DIVISION_STYLES: Record<DivisionLaunchStatus, string> = {
 };
 
 const LEGACY_LABELS: Record<CompanyLaunchStatus, string> = {
-  open: "Now booking",
-  launching_soon: "Launching soon",
-  coming_soon: "Coming soon",
-  future_expansion: "Future craft",
+  open: "Available",
+  launching_soon: "Now Accepting Estimates",
+  coming_soon: "Coming Soon",
+  future_expansion: "As the fleet grows",
 };
 
 const LEGACY_STYLES: Record<CompanyLaunchStatus, string> = {

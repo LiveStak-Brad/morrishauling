@@ -4,7 +4,7 @@ import { buildPageMetadata } from "@/lib/seo/metadata";
 export const metadata: Metadata = buildPageMetadata({
   title: "About Morris Service Group LLC",
   description:
-    "Morris Service Group LLC builds professional local home services — starting with Morris Junk Removal and Morris Hauling across Warren County and nearby Missouri communities.",
+    "Morris Service Group LLC is a Missouri property and equipment contractor — junk removal, hauling, land clearing, site work, and equipment services.",
   path: "/about",
   ogImage: "/og/og-morris-services.png",
 });

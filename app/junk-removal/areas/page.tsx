@@ -7,6 +7,7 @@ import { MarketingBreadcrumbs } from "@/components/seo/MarketingBreadcrumbs";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { areasForDivision } from "@/lib/seo/locations";
 import { DIVISION_SEO } from "@/lib/seo/site";
+import { SERVICE_COVERAGE_NOTE } from "@/lib/public-copy";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Junk Removal Service Areas",
@@ -33,8 +34,7 @@ export default function JunkAreasIndexPage() {
         />
         <h1 className="mt-6 font-heading text-4xl font-medium tracking-tight">Junk removal service areas</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
-          Primary coverage in Warren, Lincoln, and St. Charles Counties, with extended-area service nearby.
-          Travel expectations are disclosed before you book.
+          {SERVICE_COVERAGE_NOTE} Travel expectations are disclosed before you book.
         </p>
         <h2 className="mt-10 text-lg font-semibold">Counties</h2>
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">

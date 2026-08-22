@@ -22,11 +22,11 @@ const fraunces = Fraunces({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.morris-services.com"),
   title: {
-    default: "Morris Service Group LLC | Professional Missouri Home Services",
+    default: "Morris Service Group | Junk Removal, Hauling, Land Clearing & Site Work",
     template: "%s | Morris Services",
   },
   description:
-    "Morris Services — Junk Removal and Hauling for Warren County and nearby Missouri communities. Request an estimate or call (636) 751-4645.",
+    "Morris Service Group LLC — junk removal, hauling, land clearing, site work, and equipment services. Request an estimate or call (636) 751-4645.",
   manifest: "/manifest.json",
   icons: {
     icon: [{ url: "/MorrisServicesLogo.png?v=6", type: "image/png" }],
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     siteName: "Morris Services",
     title: "Morris Service Group LLC | Morris Services",
     description:
-      "Professional local home services — Morris Junk Removal and Morris Hauling across Warren County and nearby Missouri communities.",
+      "Junk removal, hauling, land clearing, site work, and equipment services from Morris Service Group LLC.",
     images: [
       {
         url: "/og/og-morris-services.png",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Morris Service Group LLC | Morris Services",
     description:
-      "Professional local home services — Morris Junk Removal and Morris Hauling across Warren County and nearby Missouri communities.",
+      "Junk removal, hauling, land clearing, site work, and equipment services from Morris Service Group LLC.",
     images: ["/og/og-morris-services.png"],
   },
   verification: {

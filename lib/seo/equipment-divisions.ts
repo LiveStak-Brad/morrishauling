@@ -5,6 +5,11 @@
 
 import type { DivisionId } from "@/lib/divisions";
 
+export type EquipmentMarketingSection = {
+  heading: string;
+  body: string[];
+};
+
 export type EquipmentMarketingService = {
   slug: string;
   division: Extract<DivisionId, "land_clearing" | "site_work" | "equipment_services">;
@@ -14,6 +19,7 @@ export type EquipmentMarketingService = {
   description: string;
   h1: string;
   intro: string[];
+  detailSections?: EquipmentMarketingSection[];
   whoFor: string[];
   included: string[];
   needed: string[];
@@ -39,9 +45,77 @@ export const LAND_CLEARING_SERVICES: EquipmentMarketingService[] = [
       "Forestry mulching for overgrown acreage, brush, and small trees around Warrenton and nearby Missouri counties. Request an upcoming project estimate — pricing depends on density, terrain, and access.",
     h1: "Forestry Mulching",
     intro: [
-      `Forestry mulching turns standing brush and small trees into a ground cover on the same property. For many ${AREA} parcels, that is a cleaner way to reclaim land than cutting everything and hauling piles away.`,
-      "We review acreage, vegetation size, density, slope, and access before we quote. There is no published per-acre price — two four-acre tracts can be very different jobs.",
-      "This service is currently accepting upcoming project estimates. We confirm equipment, timing, and scope after we see photos or walk the property.",
+      `Forestry mulching turns standing brush and small trees into a usable ground cover on the same property. For many ${AREA} parcels, that is a cleaner way to reclaim land than cutting everything and hauling piles away.`,
+      "We review acreage, vegetation, density, slope, and access before we quote. There is no published per-acre price — two similar-looking tracts can be very different jobs.",
+      "This service is currently accepting upcoming project estimates. We confirm equipment, timing, and scope after we see photos or walk the property. We do not claim a specific machine is owned until that record is active.",
+    ],
+    detailSections: [
+      {
+        heading: "What forestry mulching is",
+        body: [
+          "A tracked forestry machine works the vegetation in place. Brush, honeysuckle, and small trees are ground into mulch that stays on the property instead of being stacked and hauled.",
+          "The result is usually walkable or mowable ground with a wood-chip layer — not a landscaped yard and not a bare dirt pad unless we agree to a different finish.",
+        ],
+      },
+      {
+        heading: "What problems it solves",
+        body: [
+          "Overgrown acreage that you can no longer walk, mow, or use.",
+          "Fence lines, trails, and access paths buried in brush.",
+          "Invasive vegetation that has taken a woods or field edge.",
+          "Land that needs to be opened for a future building site, pasture, or just to see the property again.",
+        ],
+      },
+      {
+        heading: "Typical vegetation",
+        body: [
+          "Mixed Missouri brush, honeysuckle, briars, saplings, and small trees are the usual fit.",
+          "We will not publish a maximum tree diameter we can always handle. Size, species, lean, and what sits behind the tree all matter. Photos next to a fence post or person help more than a guess.",
+        ],
+      },
+      {
+        heading: "Benefits versus traditional clearing",
+        body: [
+          "Material usually stays on site as mulch, so there is less hauling and fewer burn piles.",
+          "The ground cover can help with erosion compared with scraping a site bare.",
+          "Traditional cut-and-haul still makes sense when logs must leave, large trees dominate, or you need a clean dirt finish. We will say so.",
+        ],
+      },
+      {
+        heading: "What happens to the mulch",
+        body: [
+          "The usual result is a layer of chips left where the vegetation stood. It settles over time.",
+          "If you need piles removed, that is a separate hauling conversation — not assumed in a mulching estimate.",
+        ],
+      },
+      {
+        heading: "Terrain and access",
+        body: [
+          "Slope, wet ground, rock, overhead wires, gates, and tight turns decide whether tracked forestry equipment can work the property safely.",
+          "Tell us about creeks, septic, unmarked lines, and the narrowest access point. We may decline ground that looks unsafe from photos or from an onsite look.",
+        ],
+      },
+      {
+        heading: "How estimates work",
+        body: [
+          "Send photos or a short walkthrough video with the address, approximate acreage, and the finish you want.",
+          "We review density, access, and what should stay standing. You receive a written estimate — not an instant guaranteed price.",
+        ],
+      },
+      {
+        heading: "Why photos and video help",
+        body: [
+          "A phone video from the road into the thickest stand shows density, stem size, and access better than a paragraph.",
+          "Include the worst patch and the thinnest patch. Note gates, wires, and trees that must stay.",
+        ],
+      },
+      {
+        heading: "When an onsite assessment may be needed",
+        body: [
+          "Larger acreage, mixed debris, unclear boundaries, or photos that cannot show the stand often need a walk before we finalize price.",
+          "If we ask to visit, it is because a written number would be a guess.",
+        ],
+      },
     ],
     whoFor: [
       "Landowners opening overgrown acreage",
@@ -600,8 +674,8 @@ export const EQUIPMENT_SERVICES_PAGES: EquipmentMarketingService[] = [
       "Professional skid steer and compact track loader services in east-central Missouri — grading, grapple, forks, and property work. Upcoming project estimates.",
     h1: "Skid Steer Services",
     intro: [
-      "Some customers know they need a machine and an operator more than they know the service name. This page is for that: professional skid steer and compact-track-loader work on a property or jobsite.",
-      "Attachments decide what we can do — bucket, grapple, forks, or a forestry mulcher. Tell us the outcome. We will infer the attachment on our side.",
+      "Some customers know they need a machine and an operator more than they know the service name. This page is for professional skid steer and compact-track-loader work on a property or jobsite.",
+      "Tell us the job: cleanup, brush or log handling, gravel or dirt placement, rough grading, site preparation, or storm debris. We match a grapple, bucket, pallet forks, or forestry mulching equipment on our side.",
     ],
     whoFor: [
       "Property owners who need machine help",
@@ -764,20 +838,20 @@ export const DIVISION_HUB_COPY: Record<
     description:
       "Forestry mulching, brush clearing, lot clearing, and overgrown property reclamation from Morris Service Group. Upcoming project estimates for Warren County and nearby Missouri communities.",
     h1: "Morris Land Clearing",
-    lede: "Reclaim usable ground. Forestry mulching, brush clearing, lot clearing, and property reclamation — controlled work with a clear finish in mind.",
+    lede: "Reclaim overgrown acreage, restore usable property, open trails and fence lines, and control invasive vegetation — so the land is ready for its next use.",
     tone: "capable",
     secondary: [
       "Right-of-way and access clearing on private property",
-      "Brush and tree pile cleanup (often with a grapple)",
-      "Invasive vegetation such as honeysuckle",
+      "Brush and tree pile cleanup",
+      "Honeysuckle and invasive vegetation",
     ],
   },
   site_work: {
     title: "Site Work in Warrenton & East-Central Missouri | Morris Site Work",
     description:
-      "Rough grading, site preparation, gravel spreading, dirt moving, and driveway grading from Morris Service Group. Upcoming estimates. Excavation is not listed until it is enabled.",
+      "Rough grading, site preparation, gravel spreading, dirt moving, and driveway grading from Morris Service Group. Upcoming estimates. Excavation is not a current service.",
     h1: "Morris Site Work",
-    lede: "Practical dirt work: grading, gravel, backfill, and getting a property ready for the next step — without advertising excavation we do not yet offer.",
+    lede: "Practical dirt work with a standard bucket: rough grading, site preparation, gravel spreading, backfilling, and driveway maintenance. We do not advertise excavation, trenching, or drainage work until those services are listed.",
     tone: "practical",
     secondary: [
       "Construction and demolition site cleanup with a machine",
@@ -788,8 +862,8 @@ export const DIVISION_HUB_COPY: Record<
     title: "Skid Steer and Equipment Services | Morris Equipment Services",
     description:
       "Professional skid steer and Bobcat services, grapple work, and material handling in east-central Missouri. Independent contractor. Upcoming project estimates.",
-    h1: "Morris Equipment Services",
-    lede: "When you need a compact machine and an operator — not a brand dealership. Skid steer, grapple, bucket, and fork work described in plain language.",
+    h1: "Skid Steer & Equipment Services",
+    lede: "When you know you need a machine and an operator — for property cleanup, brush and log handling, material movement, gravel or dirt placement, rough grading, site preparation, storm debris, or construction cleanup.",
     tone: "direct",
     secondary: [
       "Construction cleanup and storm debris handling",

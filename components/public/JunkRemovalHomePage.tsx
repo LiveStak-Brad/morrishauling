@@ -12,9 +12,7 @@ import { StickyMobileConcierge } from "@/components/public/StickyMobileConcierge
 import { useDivisionPublicStatus } from "@/components/public/useDivisionPublicStatus";
 import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
-import {
-  SERVICE_AREA,
-} from "@/lib/public-copy";
+import { SERVICE_AREA, SERVICE_COVERAGE_NOTE } from "@/lib/public-copy";
 import { ButtonLink } from "@/components/ui/button-link";
 import { FaqAccordion } from "@/components/seo/FaqAccordion";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -361,8 +359,7 @@ export function JunkRemovalHomePage() {
             <div>
               <h2 className="font-heading text-3xl font-medium tracking-tight">Service area</h2>
               <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-                Primary coverage in Warren, Lincoln, and St. Charles Counties, with extended-area
-                service nearby. Travel expectations are disclosed before you book.
+                {SERVICE_COVERAGE_NOTE} Travel expectations are disclosed before you book.
               </p>
             </div>
             <ButtonLink href="/junk-removal/areas" variant="outline" className="h-11 rounded-full">

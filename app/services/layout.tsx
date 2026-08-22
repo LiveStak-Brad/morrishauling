@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Junk Removal Services Overview",
+  title: "Services | Junk Removal, Hauling, Land Clearing & Site Work",
   description:
-    "Browse Morris Junk Removal services — furniture, appliances, cleanouts, and more — or jump to detailed service pages and request an estimate.",
+    "Everything Morris Service Group currently offers: junk removal, free scrap pickup, hauling, land clearing, site work, and equipment services.",
   path: "/services",
-  ogImage: "/og/og-junk-removal.png",
+  ogImage: "/og/og-morris-services.png",
 });
 
 export default function ServicesLayout({ children }: { children: React.ReactNode }) {

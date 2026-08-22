@@ -1,4 +1,5 @@
 import type { CareerCategory, EmploymentType, HiringMode } from "@/types/hr/ats";
+import { serviceAreaShortLabel } from "@/lib/service-coverage";
 
 export interface ReferencePositionSeed {
   id: string;
@@ -21,7 +22,7 @@ export interface ReferencePositionSeed {
   sortOrder: number;
 }
 
-const LOCATION = "Warren, Lincoln & St. Charles Counties, MO";
+const LOCATION = serviceAreaShortLabel();
 
 export const REFERENCE_POSITIONS: ReferencePositionSeed[] = [
   {

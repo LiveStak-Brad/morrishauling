@@ -23,7 +23,7 @@ export function organizationSchema() {
     telephone: SEO_ORG.phone,
     email: SEO_ORG.email,
     sameAs: socialSameAsUrls(),
-    areaServed: SEO_ORG.primaryCounties.map((name) => ({
+    areaServed: SEO_ORG.servedCounties.map((name) => ({
       "@type": "AdministrativeArea",
       name,
     })),
@@ -59,7 +59,7 @@ export function localBusinessSchema(division: SeoDivisionId) {
     // Service-area business: intentionally omit PostalAddress and streetAddress.
     areaServed: [
       { "@type": "City", name: "Warrenton", containedInPlace: { "@type": "State", name: "Missouri" } },
-      ...SEO_ORG.primaryCounties.map((name) => ({
+      ...SEO_ORG.servedCounties.map((name) => ({
         "@type": "AdministrativeArea",
         name,
       })),
@@ -96,7 +96,7 @@ export function serviceSchema(input: {
     description: input.description,
     url: `${SITE_ORIGIN}${input.path}`,
     provider: { "@id": `${SITE_ORIGIN}${d.path}#business` },
-    areaServed: SEO_ORG.primaryCounties.map((name) => ({
+    areaServed: SEO_ORG.servedCounties.map((name) => ({
       "@type": "AdministrativeArea",
       name,
     })),

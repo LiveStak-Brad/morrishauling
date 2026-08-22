@@ -66,8 +66,8 @@ export async function EquipmentDivisionHub({
             <PlaceholderMedia
               label={
                 division === "land_clearing"
-                  ? "Land-clearing photography will be added from completed properties."
-                  : "On-site equipment photography will be added from real jobs."
+                  ? "Decorative panel only. Land-clearing photos will be added from completed Morris properties."
+                  : "Decorative panel only. Equipment photos will be added from completed Morris jobs."
               }
             />
           </div>
@@ -76,8 +76,7 @@ export async function EquipmentDivisionHub({
         <section className="mt-14">
           <h2 className="font-heading text-3xl font-medium tracking-tight">Services</h2>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Each page is written for a real search and a real job type. We do not clone city names
-            onto thin pages.
+            Choose the job that sounds closest. Photos and a short video help us confirm the fit.
           </p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {services.map((s) => (
@@ -97,7 +96,7 @@ export async function EquipmentDivisionHub({
           <section className="mt-14">
             <h2 className="font-heading text-2xl font-medium">Also requested</h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              These show up in the estimate form. They do not each need a separate page.
+              Related work we often discuss on the same estimate.
             </p>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               {copy.secondary.map((item) => (
@@ -109,10 +108,10 @@ export async function EquipmentDivisionHub({
 
         {division === "site_work" && (
           <section className="mt-14 rounded-2xl border border-black/5 bg-white p-6">
-            <h2 className="font-heading text-2xl font-medium">Later expansion</h2>
+            <h2 className="font-heading text-2xl font-medium">Not offered yet</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Excavation, trenching, drainage, culverts, stump removal, and related excavator work
-              are planned. They are not listed as available until those capabilities are enabled.
+              Excavation, trenching, drainage, and culvert installation are not current services.
+              More property and equipment work will be added as our fleet grows.
             </p>
           </section>
         )}
@@ -126,11 +125,12 @@ export async function EquipmentDivisionHub({
           <section className="mt-14">
             <h2 className="font-heading text-2xl font-medium">Projects</h2>
             <p className="mt-3 text-sm text-muted-foreground">
-              Completed jobs will be published at{" "}
+              Project photos and case studies will be added as completed Morris projects are
+              documented. See{" "}
               <Link href="/projects" className="font-medium text-brand-primary hover:underline">
-                /projects
+                projects
               </Link>{" "}
-              with real photos. Nothing here is fabricated.
+              when real jobs are published.
             </p>
           </section>
         )}

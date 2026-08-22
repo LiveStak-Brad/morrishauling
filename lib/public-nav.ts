@@ -1,20 +1,27 @@
+import type { DivisionId } from "@/lib/divisions";
+
 export type PublicNavLink = {
   href: string;
   label: string;
   highlight?: boolean;
   external?: boolean;
+  /** Visual indent in desktop menus (subservice under a hub). */
+  nested?: boolean;
 };
 
 export type PublicNavGroup = {
   id: string;
   label: string;
   items: PublicNavLink[];
+  /** Compact list for the mobile sheet. Falls back to items. */
+  mobileItems?: PublicNavLink[];
 };
 
-/** Top-level Free Scrap Fridays — high-visibility marketing funnel. */
+/** Kept for promotional CTAs. Not a standalone header item. */
 export const SCRAP_FRIDAYS_NAV: PublicNavLink = {
   href: "/free-scrap-fridays",
-  label: "Scrap Pickup",
+  label: "Free Scrap Pickup",
+  highlight: true,
 };
 
 export const PUBLIC_NAV_GROUPS: PublicNavGroup[] = [
@@ -23,22 +30,32 @@ export const PUBLIC_NAV_GROUPS: PublicNavGroup[] = [
     label: "Services",
     items: [
       { href: "/junk-removal", label: "Junk Removal" },
-      {
-        href: "/free-scrap-fridays",
-        label: "Scrap Pickup",
-        highlight: true,
-      },
+      { href: "/free-scrap-fridays", label: "Free Scrap Pickup", highlight: true },
       { href: "/hauling", label: "Hauling" },
       { href: "/land-clearing", label: "Land Clearing" },
-      { href: "/land-clearing/forestry-mulching", label: "Forestry Mulching" },
-      { href: "/land-clearing/brush-clearing", label: "Brush Clearing" },
+      { href: "/land-clearing/forestry-mulching", label: "Forestry Mulching", nested: true },
+      { href: "/land-clearing/brush-clearing", label: "Brush Clearing", nested: true },
+      { href: "/land-clearing/lot-clearing", label: "Lot Clearing", nested: true },
+      { href: "/land-clearing/property-reclamation", label: "Property Reclamation", nested: true },
       { href: "/site-work", label: "Site Work" },
-      { href: "/site-work/rough-grading", label: "Rough Grading" },
+      { href: "/site-work/rough-grading", label: "Rough Grading", nested: true },
+      { href: "/site-work/site-preparation", label: "Site Preparation", nested: true },
+      { href: "/site-work/gravel-spreading", label: "Gravel Spreading", nested: true },
+      { href: "/site-work/driveway-grading", label: "Driveway Grading", nested: true },
       { href: "/equipment-services", label: "Equipment Services" },
-      { href: "/equipment-services/skid-steer-services", label: "Skid Steer Services" },
-      { href: "/equipment-services/bobcat-services", label: "Bobcat Services" },
-      { href: "/junk-removal/demolition", label: "Demolition" },
-      { href: "/projects", label: "Projects" },
+      { href: "/equipment-services/skid-steer-services", label: "Skid Steer Services", nested: true },
+      { href: "/equipment-services/bobcat-services", label: "Bobcat Services", nested: true },
+      { href: "/equipment-services/grapple-services", label: "Grapple Services", nested: true },
+      { href: "/equipment-services/material-handling", label: "Material Handling", nested: true },
+      { href: "/services", label: "All Services" },
+    ],
+    mobileItems: [
+      { href: "/junk-removal", label: "Junk Removal" },
+      { href: "/free-scrap-fridays", label: "Free Scrap Pickup", highlight: true },
+      { href: "/hauling", label: "Hauling" },
+      { href: "/land-clearing", label: "Land Clearing" },
+      { href: "/site-work", label: "Site Work" },
+      { href: "/equipment-services", label: "Equipment Services" },
       { href: "/services", label: "All Services" },
     ],
   },
@@ -92,10 +109,45 @@ export const PUBLIC_NAV_GROUPS: PublicNavGroup[] = [
     items: [
       { href: "/about", label: "About" },
       { href: "/#standard", label: "The Morris Standard" },
+      { href: "/projects", label: "Projects" },
       { href: "/contact", label: "Contact" },
       { href: "/careers", label: "Careers" },
     ],
   },
+];
+
+export const FOOTER_SERVICE_LINKS: PublicNavLink[] = [
+  { href: "/junk-removal", label: "Junk Removal" },
+  { href: "/free-scrap-fridays", label: "Free Scrap Pickup" },
+  { href: "/hauling", label: "Hauling" },
+  { href: "/land-clearing", label: "Land Clearing" },
+  { href: "/land-clearing/forestry-mulching", label: "Forestry Mulching" },
+  { href: "/site-work", label: "Site Work" },
+  { href: "/equipment-services", label: "Equipment Services" },
+];
+
+export const FOOTER_JUNK_LINKS: PublicNavLink[] = [
+  { href: "/junk-removal/services", label: "Junk removal services" },
+  { href: "/junk-removal/demolition", label: "Demolition & structure removal" },
+  { href: "/junk-removal/areas", label: "Junk removal areas" },
+  { href: "/junk-removal/responsible-disposal", label: "Responsible disposal" },
+  { href: "/junk-removal/resources", label: "Resource center" },
+  { href: "/junk-removal/faq", label: "FAQs" },
+  { href: "/junk-removal/latest", label: "Latest jobs" },
+  { href: "/junk-removal/gallery", label: "Before & after gallery" },
+  { href: "/junk-removal/items", label: "What we can take" },
+];
+
+export const HOMEPAGE_GOAL_CARDS: Array<{
+  title: string;
+  href: string;
+  divisionId: DivisionId;
+}> = [
+  { title: "Clear junk or debris", href: "/junk-removal", divisionId: "junk_removal" },
+  { title: "Move equipment or material", href: "/hauling", divisionId: "hauling" },
+  { title: "Clear brush or overgrown land", href: "/land-clearing", divisionId: "land_clearing" },
+  { title: "Grade or prepare property", href: "/site-work", divisionId: "site_work" },
+  { title: "Need a machine or operator", href: "/equipment-services", divisionId: "equipment_services" },
 ];
 
 export function navLinkIsActive(pathname: string, href: string): boolean {
@@ -111,5 +163,11 @@ export function navLinkIsActive(pathname: string, href: string): boolean {
 }
 
 export function navGroupIsActive(pathname: string, group: PublicNavGroup): boolean {
-  return group.items.some((item) => navLinkIsActive(pathname, item.href));
+  const items = [...group.items, ...(group.mobileItems ?? [])];
+  return items.some((item) => navLinkIsActive(pathname, item.href));
+}
+
+export function navItemsForViewport(group: PublicNavGroup, mobile: boolean): PublicNavLink[] {
+  if (mobile && group.mobileItems) return group.mobileItems;
+  return group.items;
 }

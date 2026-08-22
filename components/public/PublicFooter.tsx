@@ -5,7 +5,8 @@ import { useCompany } from "@/lib/company-context";
 import { morrisServicesConfig } from "@/lib/morris-services-config";
 import { MorrisServicesLogo } from "@/components/brand/MorrisServicesLogo";
 import { SocialFooterBlock } from "@/components/social/SocialFooterBlock";
-import { PRELAUNCH_SERVICE_AREA } from "@/lib/public-copy";
+import { SERVICE_AREA, SERVICE_COVERAGE_NOTE } from "@/lib/public-copy";
+import { FOOTER_JUNK_LINKS, FOOTER_SERVICE_LINKS } from "@/lib/public-nav";
 import { WARRENTON_JUNK_SOCIAL, socialPlatformById } from "@/lib/social/config";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +14,9 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
   const { company } = useCompany();
   const junk = morrisServicesConfig.operatingCompanies[0];
   const isUmbrella = variant === "umbrella";
+  const serviceLinks = isUmbrella
+    ? FOOTER_SERVICE_LINKS
+    : [...FOOTER_JUNK_LINKS, ...FOOTER_SERVICE_LINKS.filter((l) => l.href !== "/junk-removal")];
 
   return (
     <footer
@@ -58,126 +62,15 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
               Services
             </p>
             <nav className="mt-3 flex flex-col gap-2 text-sm" aria-label="Footer services">
-              <Link
-                href="/junk-removal"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Morris Junk Removal
-              </Link>
-              <Link
-                href="/free-scrap-fridays"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Free Scrap Fridays
-              </Link>
-              <Link
-                href="/junk-removal/services"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Junk removal services
-              </Link>
-              <Link
-                href="/junk-removal/demolition"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Demolition &amp; structure removal
-              </Link>
-              <Link
-                href="/junk-removal/areas"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Junk removal areas
-              </Link>
-              <Link
-                href="/junk-removal/responsible-disposal"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Responsible disposal
-              </Link>
-              <Link
-                href="/junk-removal/resources"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Resource center
-              </Link>
-              <Link
-                href="/junk-removal/faq"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                FAQs
-              </Link>
-              <Link
-                href="/junk-removal/latest"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Latest jobs
-              </Link>
-              <Link
-                href="/junk-removal/videos"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Videos
-              </Link>
-              <Link
-                href="/junk-removal/gallery"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Before &amp; after gallery
-              </Link>
-              <Link
-                href="/junk-removal/community"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Community
-              </Link>
-              <Link
-                href="/junk-removal/items"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                What we can take
-              </Link>
-              <Link
-                href="/land-clearing"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Morris Land Clearing
-              </Link>
-              <Link
-                href="/site-work"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Morris Site Work
-              </Link>
-              <Link
-                href="/equipment-services"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Morris Equipment Services
-              </Link>
-              <Link
-                href="/projects"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Projects
-              </Link>
-              <Link
-                href="/hauling"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Morris Hauling
-              </Link>
-              <Link
-                href="/hauling/services"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Hauling services
-              </Link>
-              <Link
-                href="/hauling/areas"
-                className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
-              >
-                Hauling areas
-              </Link>
+              {serviceLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </nav>
           </div>
 
@@ -199,6 +92,9 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
               </Link>
               <Link href="/service-area" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
                 Service area
+              </Link>
+              <Link href="/projects" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
+                Projects
               </Link>
               <Link href="/pricing" className={cn(isUmbrella ? "hover:text-brand-primary hover:underline" : "text-white/90 hover:underline")}>
                 Pricing
@@ -236,10 +132,10 @@ export function PublicFooter({ variant = "umbrella" }: { variant?: "umbrella" | 
               </a>
             </p>
             <p className={cn("mt-2 text-sm", isUmbrella ? "text-muted-foreground" : "text-white/70")}>
-              {PRELAUNCH_SERVICE_AREA}
+              {SERVICE_AREA}
             </p>
-            <p className={cn("mt-1 text-xs", isUmbrella ? "text-muted-foreground" : "text-white/50")}>
-              Service-area business — no public storefront.
+            <p className={cn("mt-1 text-xs leading-relaxed", isUmbrella ? "text-muted-foreground" : "text-white/50")}>
+              {SERVICE_COVERAGE_NOTE} Service-area business — no public storefront.
             </p>
             <a
               href={socialPlatformById("facebook")?.profileUrl}

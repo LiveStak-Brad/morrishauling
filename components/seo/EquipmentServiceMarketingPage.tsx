@@ -77,9 +77,24 @@ export async function EquipmentServiceMarketingPage({
             />
           </div>
           <div className="lg:col-span-2">
-            <PlaceholderMedia label="Equipment and completed-project photography will replace this panel. This is not a stock job photo." />
+            <PlaceholderMedia label="Decorative panel only — not a completed Morris job. Project photography will replace this when real work is documented." />
           </div>
         </div>
+
+        {service.detailSections?.length ? (
+          <section className="mt-14 space-y-8">
+            {service.detailSections.map((section) => (
+              <div key={section.heading}>
+                <h2 className="font-heading text-2xl font-medium">{section.heading}</h2>
+                {section.body.map((p) => (
+                  <p key={p.slice(0, 48)} className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    {p}
+                  </p>
+                ))}
+              </div>
+            ))}
+          </section>
+        ) : null}
 
         <section className="mt-14 grid gap-8 md:grid-cols-2">
           <div>

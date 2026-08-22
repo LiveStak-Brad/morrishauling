@@ -108,7 +108,7 @@ export function ServiceAreaStrip({ className }: { className?: string }) {
           Service area
         </p>
         <p className="mt-0.5 text-sm font-semibold leading-snug sm:text-base">
-          {company.serviceArea.label ?? "Warren, Lincoln & St. Charles Counties, MO"}
+          {company.serviceArea.label}
         </p>
       </div>
       <a

@@ -56,8 +56,7 @@ checks.push(
 checks.push(
   assert(
     "Operational home — Junk Removal booking CTA",
-    read("components/public/JunkRemovalHomePage.tsx").includes("Book junk removal") &&
-      read("components/public/JunkRemovalHomePage.tsx").includes('status="open"') &&
+    read("components/public/JunkRemovalHomePage.tsx").includes("Request your junk removal estimate") &&
       !read("components/public/JunkRemovalHomePage.tsx").includes("Launching soon")
   )
 );
@@ -65,16 +64,20 @@ checks.push(
 checks.push(
   assert(
     "Operational home — Hauling booking CTA",
-    read("components/public/HaulingComingSoonPage.tsx").includes("Book hauling") &&
+    read("components/public/HaulingComingSoonPage.tsx").includes("Request a hauling estimate") &&
       !read("components/public/HaulingComingSoonPage.tsx").includes("Coming soon.")
   )
 );
 
 checks.push(
   assert(
-    "Morris Services home operational",
-    read("components/public/MorrisServicesHomePage.tsx").includes("Book service") &&
-      read("components/public/MorrisServicesHomePage.tsx").includes("Operating now")
+    "Morris Services home is the multi-division parent",
+    read("components/public/MorrisServicesHomePage.tsx").includes("Request an Estimate") &&
+      read("components/public/MorrisServicesHomePage.tsx").includes("Explore Services") &&
+      read("components/public/MorrisServicesHomePage.tsx").includes("What are you trying to accomplish?") &&
+      read("components/public/MorrisServicesHomePage.tsx").includes("The Morris Service Network") &&
+      !read("components/public/MorrisServicesHomePage.tsx").includes("The standard for home services") &&
+      !read("components/public/MorrisServicesHomePage.tsx").includes("Cleaning")
   )
 );
 
@@ -100,8 +103,7 @@ checks.push(
   assert(
     "Book page is live booking",
     read("app/book/page.tsx").includes("Book service") &&
-      !read("app/book/page.tsx").includes("preview=1") &&
-      !read("app/book/page.tsx").includes("Request an estimate")
+      !read("app/book/page.tsx").includes("preview=1")
   )
 );
 
@@ -116,7 +118,7 @@ checks.push(
 checks.push(
   assert(
     "Stripe gated separately",
-    read("lib/payments/online-payments-enabled.ts").includes("NEXT_PUBLIC_STRIPE_ENABLED")
+    read("lib/payments/stripe-config.ts").includes("NEXT_PUBLIC_STRIPE_ENABLED")
   )
 );
 

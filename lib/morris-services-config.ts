@@ -1,4 +1,13 @@
+import type { DivisionId } from "@/lib/divisions";
+
 export type CompanyLaunchStatus = "open" | "launching_soon" | "coming_soon" | "future_expansion";
+
+export type PublicDivisionCard = {
+  divisionId: DivisionId;
+  name: string;
+  description: string;
+  hubPath: string;
+};
 
 export type OperatingCompany = {
   slug: string;
@@ -23,13 +32,15 @@ export const morrisServicesConfig = {
   logo: "/MorrisServicesLogo.png?v=6",
   publicWebsite: "https://morris-services.com",
   /** Primary emotional promise */
-  promise: "Your home, restored.",
+  promise: "Property work, handled.",
   /** System positioning */
-  tagline: "The standard for home services.",
-  brandTagline: "One relationship. Every craft.",
+  tagline: "Property services. Equipment services. One Morris standard.",
+  brandTagline: "One relationship. Every service.",
   serviceCategoriesLine: "Junk Removal · Hauling · Land Clearing · Site Work · Equipment Services",
+  heroSupport:
+    "Professional junk removal, hauling, land clearing, site work and equipment services across our Missouri service area.",
   footerMission:
-    "We build trusted local service companies one craft at a time — starting in Warren, Lincoln & St. Charles Counties.",
+    "Property services and equipment services under one Morris standard — for homeowners, landowners, contractors, and property managers across our Missouri service area.",
   operatingCompanies: [
     {
       slug: "junk-removal",
@@ -94,7 +105,7 @@ export const morrisServicesConfig = {
       slug: "site-work",
       name: "Morris Site Work",
       status: "launching_soon" as const,
-      tagline: "Grading, site preparation, gravel, dirt work and property improvement.",
+      tagline: "Grading, site preparation, dirt work, gravel and property improvement.",
       logo: "/MorrisServicesLogo.png?v=6",
       services: [
         "Rough Grading",
@@ -111,7 +122,7 @@ export const morrisServicesConfig = {
       slug: "equipment-services",
       name: "Morris Equipment Services",
       status: "launching_soon" as const,
-      tagline: "Skid steer, grapple, bucket, fork and equipment-assisted property services.",
+      tagline: "Skid steer, grapple, bucket, fork and machine-assisted property services.",
       logo: "/MorrisServicesLogo.png?v=6",
       services: [
         "Skid Steer Services",
@@ -124,16 +135,46 @@ export const morrisServicesConfig = {
     },
   ],
   /**
-   * Roadmap order: lightest startup cost / easiest to operate first.
-   * Authority content (lib/authority) is division-tagged so these crafts can reuse
-   * gallery/videos/community without redesign. Social stays @WarrentonJunk.
-   * Seasonal driveway clearing can live under Lawn Care when that division opens.
+   * Internal roadmap only — do not present these as available public services.
+   * Home-service crafts (cleaning, lawn, handyman) are no longer the expansion path.
    */
-  futureCompanies: [
-    { name: "Morris Cleaning", status: "coming_soon" as const, craft: "Cleaning" },
-    { name: "Morris Window Cleaning", status: "coming_soon" as const, craft: "Window Cleaning" },
-    { name: "Morris Power Washing", status: "coming_soon" as const, craft: "Power Washing" },
-    { name: "Morris Lawn Care", status: "coming_soon" as const, craft: "Lawn Care" },
-    { name: "Morris Handyman", status: "coming_soon" as const, craft: "Handyman" },
-  ] satisfies FutureCompany[],
+  futureCompanies: [] satisfies FutureCompany[],
+  futureCapabilities: [
+    "Excavation",
+    "Drainage",
+    "Additional land-management equipment",
+  ] as const,
 };
+
+export const PUBLIC_DIVISION_CARDS: PublicDivisionCard[] = [
+  {
+    divisionId: "junk_removal",
+    name: "Morris Junk Removal",
+    description: "Residential and commercial junk removal, cleanouts and property cleanup.",
+    hubPath: "/junk-removal",
+  },
+  {
+    divisionId: "hauling",
+    name: "Morris Hauling",
+    description: "Equipment, machinery, materials and scheduled transport.",
+    hubPath: "/hauling",
+  },
+  {
+    divisionId: "land_clearing",
+    name: "Morris Land Clearing",
+    description: "Forestry mulching, brush clearing, lot clearing and property reclamation.",
+    hubPath: "/land-clearing",
+  },
+  {
+    divisionId: "site_work",
+    name: "Morris Site Work",
+    description: "Grading, site preparation, dirt work, gravel and property improvement.",
+    hubPath: "/site-work",
+  },
+  {
+    divisionId: "equipment_services",
+    name: "Morris Equipment Services",
+    description: "Skid steer, grapple, bucket, fork and machine-assisted property services.",
+    hubPath: "/equipment-services",
+  },
+];

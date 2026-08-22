@@ -87,13 +87,18 @@ function DesktopNavDropdown({
       >
         {group.label}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" sideOffset={8} className="min-w-[14.5rem] p-1.5">
+      <DropdownMenuContent
+        align="start"
+        sideOffset={8}
+        className="max-h-[min(70vh,28rem)] min-w-[16rem] overflow-y-auto p-1.5"
+      >
         {group.items.map((item) => (
           <DropdownMenuItem
             key={`${group.id}-${item.href}-${item.label}`}
             render={<Link href={item.href} />}
             className={cn(
               "cursor-pointer rounded-lg px-3 py-2.5 text-sm font-medium",
+              item.nested && "pl-6 text-[13px] font-normal text-foreground/80",
               item.highlight && "bg-brand-primary/5 text-brand-primary focus:bg-brand-primary/10",
               navLinkIsActive(pathname, item.href) && "bg-accent"
             )}
@@ -137,7 +142,7 @@ function MobileAccordionGroup({
       </button>
       {open ? (
         <div className="pb-2 pl-2">
-          {group.items.map((item) => {
+          {(group.mobileItems ?? group.items).map((item) => {
             const active = navLinkIsActive(pathname, item.href);
             return (
               <Link
@@ -269,7 +274,7 @@ export function PublicHeader({
               onDark && "bg-brand-primary hover:bg-brand-primary/90"
             )}
           >
-            Schedule
+            {variant === "umbrella" ? "Estimate" : "Schedule"}
           </ButtonLink>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -313,7 +318,7 @@ export function PublicHeader({
                   className="min-h-12 w-full rounded-xl"
                   onClick={() => setMobileOpen(false)}
                 >
-                  Schedule
+                  {variant === "umbrella" ? "Estimate" : "Schedule"}
                 </ButtonLink>
               </div>
 

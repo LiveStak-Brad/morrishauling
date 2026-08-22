@@ -42,9 +42,10 @@ export default async function ProjectsIndexPage() {
         </p>
 
         {projects.length === 0 ? (
-          <p className="mt-10 rounded-2xl border border-black/5 bg-white p-6 text-sm text-muted-foreground">
-            No projects have been published yet. After land-clearing and equipment jobs are
-            completed, they will appear here with city, service type, and before/after media.
+          <p className="mt-10 rounded-2xl border border-black/5 bg-white p-6 text-sm leading-relaxed text-muted-foreground">
+            Project photos and case studies will be added as completed Morris projects are
+            documented. We do not publish placeholder job stories, invented acreage, or stock
+            photos captioned as finished work.
           </p>
         ) : (
           <ul className="mt-10 grid gap-4 sm:grid-cols-2">

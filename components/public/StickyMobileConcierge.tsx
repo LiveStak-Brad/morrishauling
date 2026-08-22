@@ -43,9 +43,11 @@ export function StickyMobileConcierge({
     preferred?.acceptsBookings || preferred?.acceptsEstimateRequests
       ? preferred.bookPath
       : "/contact";
-  const estimateLabel =
-    preferred?.bookingCtaLabel ??
-    (canEstimate ? "Request estimate" : "Contact us");
+  const estimateLabel = preferred?.acceptsBookings
+    ? "Schedule"
+    : canEstimate
+      ? "Estimate"
+      : "Contact us";
 
   return (
     <div

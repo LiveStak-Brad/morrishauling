@@ -14,21 +14,32 @@ export type DivisionPublicStatus = {
   bookPath: string;
 };
 
-export function useDivisionPublicStatus(divisionId: DivisionId) {
-  const [status, setStatus] = useState<DivisionPublicStatus | null>(null);
+type StatusMap = Partial<Record<DivisionId, DivisionPublicStatus>>;
+
+let cached: Promise<StatusMap> | null = null;
+
+function fetchDivisionStatuses(): Promise<StatusMap> {
+  if (!cached) {
+    cached = fetch("/api/public/divisions/status")
+      .then((r) => r.json())
+      .then((json) => (json?.data?.divisions ?? {}) as StatusMap)
+      .catch(() => {
+        cached = null;
+        return {} as StatusMap;
+      });
+  }
+  return cached;
+}
+
+export function useAllDivisionPublicStatuses() {
+  const [byId, setById] = useState<StatusMap>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/public/divisions/status")
-      .then((r) => r.json())
-      .then((json) => {
-        if (cancelled) return;
-        const row = json?.data?.divisions?.[divisionId];
-        if (row) setStatus(row as DivisionPublicStatus);
-      })
-      .catch(() => {
-        /* keep null — callers show conservative CTA */
+    fetchDivisionStatuses()
+      .then((rows) => {
+        if (!cancelled) setById(rows);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -36,7 +47,12 @@ export function useDivisionPublicStatus(divisionId: DivisionId) {
     return () => {
       cancelled = true;
     };
-  }, [divisionId]);
+  }, []);
 
-  return { status, loading };
+  return { byId, loading };
+}
+
+export function useDivisionPublicStatus(divisionId: DivisionId) {
+  const { byId, loading } = useAllDivisionPublicStatuses();
+  return { status: byId[divisionId] ?? null, loading };
 }

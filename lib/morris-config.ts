@@ -1,6 +1,7 @@
 import type { CompanyConfig } from "@/types";
 import { COMMON_JUNK_ITEMS } from "@/lib/common-junk-items";
 import { socialPlatformById } from "@/lib/social/config";
+import { serviceAreaShortLabel } from "@/lib/service-coverage";
 
 export const MORRIS_COMPANY_ID = "morris-hauling" as const;
 
@@ -54,7 +55,7 @@ export const morrisConfig = {
   serviceArea: {
     center: { lat: 38.8178812, lng: -91.1428926 },
     radiusMiles: 45,
-    label: "Warren, Lincoln & St. Charles Counties, MO",
+    label: serviceAreaShortLabel(),
     /** Service ZIPs (not the operating-base ZIP). Base ZIP is always 63383. */
     zipCodes: ["63301", "63303", "63304", "63368", "63376", "63383", "63379", "63390", "63049", "63090"],
   },
